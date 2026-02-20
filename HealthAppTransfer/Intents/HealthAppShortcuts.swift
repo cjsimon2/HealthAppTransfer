@@ -31,7 +31,7 @@ struct HealthAppShortcuts: AppShortcutsProvider {
             intent: ExportHealthDataIntent(),
             phrases: [
                 "Export health data from \(.applicationName)",
-                "Export \(\.$types) from \(.applicationName)",
+                "Export my health data with \(.applicationName)",
             ],
             shortTitle: "Export Health Data",
             systemImageName: "square.and.arrow.up"

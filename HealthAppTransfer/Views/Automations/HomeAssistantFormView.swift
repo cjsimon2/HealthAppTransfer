@@ -151,7 +151,7 @@ struct HomeAssistantFormView: View {
                         .foregroundStyle(result.success ? .green : .red)
                     Text(result.message)
                         .font(.caption)
-                        .foregroundStyle(result.success ? .primary : .red)
+                        .foregroundStyle(result.success ? Color.primary : Color.red)
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel("Connection test: \(result.message)")

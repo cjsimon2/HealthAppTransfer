@@ -147,8 +147,7 @@ actor CloudKitSyncService {
                 let (savedResults, _) = try await database.modifyRecords(
                     saving: records,
                     deleting: [],
-                    savePolicy: .changedKeys,
-                    atomicZone: false
+                    savePolicy: .changedKeys
                 )
                 totalSaved += savedResults.count
             } catch let error as CKError {
@@ -237,7 +236,7 @@ actor CloudKitSyncService {
     ) async throws -> ([HealthSampleDTO], CKServerChangeToken?, Bool) {
         let zoneID = CloudKitRecordMapper.zoneID
 
-        var options = CKFetchRecordZoneChangesOperation.ZoneConfiguration()
+        let options = CKFetchRecordZoneChangesOperation.ZoneConfiguration()
         options.previousServerChangeToken = token
 
         let operation = CKFetchRecordZoneChangesOperation(

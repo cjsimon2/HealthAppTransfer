@@ -74,7 +74,7 @@ class MQTTAutomation: NSObject {
     private var publishContinuation: CheckedContinuation<Void, Error>?
 
     /// Shared connection state for UI observation.
-    let connectionState = MQTTConnectionState()
+    @MainActor let connectionState = MQTTConnectionState()
 
     // MARK: - Constants
 
@@ -251,7 +251,7 @@ class MQTTAutomation: NSObject {
                     "manufacturer": "Apple Health",
                     "model": "iOS"
                 ],
-                "unit_of_measurement": type.defaultUnit ?? ""
+                "unit_of_measurement": type.isQuantityType ? HealthSampleMapper.preferredUnit(for: type).unitString : ""
             ]
 
             let data = try JSONSerialization.data(withJSONObject: config, options: [.sortedKeys])
