@@ -1,0 +1,817 @@
+{
+  "phases": [
+    {
+      "name": "Foundation Fixes & HealthKit Expansion",
+      "subtasks": [
+        {
+          "id": "1.1",
+          "title": "Fix sampleCount() to use HKStatisticsQuery",
+          "description": "Replace the current sampleCount() implementation that fetches ALL samples just to count them. Use HKStatisticsQuery for quantity types and HKSampleQuery with limit 0 + anchor for category/workout types. This is a critical performance fix before scaling to 150+ types.",
+          "acceptance_criteria": [
+            "sampleCount() for quantity types uses HKStatisticsQuery",
+            "sampleCount() for non-quantity types uses a count-only query (not fetching all samples)",
+            "Existing callers (availableTypes, DashboardViewModel, HealthDataViewModel) work unchanged",
+            "Unit tests cover quantity, category, and workout counting"
+          ],
+          "dependencies": [],
+          "estimated_files": [
+            "HealthAppTransfer/Services/HealthKit/HealthKitService.swift",
+            "HealthAppTransfer/Services/HealthKit/HealthStoreProtocol.swift",
+            "HealthAppTransferTests/HealthKitServiceTests.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "1.2",
+          "title": "Parallelize availableTypes() with TaskGroup",
+          "description": "Replace the sequential for-loop in availableTypes() with a TaskGroup that queries all types concurrently. At 150+ types, sequential querying would take 30+ seconds. TaskGroup with structured concurrency keeps it under 2-3 seconds.",
+          "acceptance_criteria": [
+            "availableTypes() uses TaskGroup for parallel execution",
+            "Results are still sorted consistently (alphabetical or by category)",
+            "Dashboard and HealthData views load noticeably faster",
+            "No data races (actor isolation maintained)"
+          ],
+          "dependencies": [
+            "1.1"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Services/HealthKit/HealthKitService.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "1.3",
+          "title": "Expand HealthDataType to 150+ types with category grouping",
+          "description": "Expand the HealthDataType enum from 34 to 150+ types. Add all missing HKQuantityType identifiers (60+ nutrition types, reproductive health, mobility, respiratory, UV exposure, etc.), HKCategoryType identifiers (appetite changes, pregnancy, symptoms, etc.), HKCorrelationType (blood pressure, food), HKCharacteristicType (biological sex, blood type, DOB, skin type, wheelchair use), and clinical record types. Add a `category` property for UI grouping (Activity, Heart, Vitals, Body, Nutrition, Reproductive, Symptoms, Mobility, etc.). Refactor sampleType, quantityTypeIdentifier, displayName, and preferredUnit to handle the new types. Use static dictionaries instead of giant switch statements where possible.",
+          "acceptance_criteria": [
+            "HealthDataType has 150+ cases covering all public HKQuantityType, HKCategoryType, HKCorrelationType, and HKCharacteristicType identifiers",
+            "Each type has correct sampleType, displayName, category, and (where applicable) preferredUnit",
+            "Characteristic types are handled separately (HKCharacteristicType, not sample-based)",
+            "HealthSampleMapper.preferredUnit() covers all new quantity types",
+            "Authorization request includes all new types",
+            "Build succeeds on both iOS and macOS targets"
+          ],
+          "dependencies": [
+            "1.2"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Models/HealthDataType.swift",
+            "HealthAppTransfer/Services/HealthKit/HealthSampleMapper.swift",
+            "HealthAppTransfer/Services/HealthKit/HealthKitService.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "1.4",
+          "title": "Update HealthSampleMapper for new sample types",
+          "description": "Extend HealthSampleMapper to handle correlation samples (blood pressure as a single correlated reading, food with calories+nutrients), characteristic types (read-once values like DOB, blood type), and clinical records. Add workout route extraction for GPX export later. Extend HealthSampleDTO to support correlation values.",
+          "acceptance_criteria": [
+            "Correlation types (bloodPressure, food) are mapped with both sub-values",
+            "Characteristic types produce a DTO with the static value",
+            "HealthSampleDTO has optional correlationValues field for multi-value types",
+            "All new category types map their categoryValue correctly",
+            "Unit tests cover each new sample type category"
+          ],
+          "dependencies": [
+            "1.3"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Services/HealthKit/HealthSampleMapper.swift",
+            "HealthAppTransfer/Models/HealthSampleDTO.swift",
+            "HealthAppTransferTests/HealthSampleMapperTests.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "1.5",
+          "title": "Update Dashboard and HealthData views for grouped types",
+          "description": "Refactor Dashboard and HealthData views to display types grouped by category (Activity, Heart, Body, Nutrition, etc.) instead of a flat list. Use Section headers. Add search/filter. This is essential UX when showing 150+ types.",
+          "acceptance_criteria": [
+            "HealthDataView shows types grouped by category with Section headers",
+            "DashboardView shows summary cards per category (not 150 rows)",
+            "Search bar filters types by name",
+            "Accessibility labels on all interactive elements",
+            "Both iOS and macOS views work correctly"
+          ],
+          "dependencies": [
+            "1.3"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Views/Dashboard/DashboardView.swift",
+            "HealthAppTransfer/Views/HealthData/HealthDataView.swift",
+            "HealthAppTransfer/ViewModels/DashboardViewModel.swift",
+            "HealthAppTransfer/ViewModels/HealthDataViewModel.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "name": "Export Engine & Aggregation",
+      "subtasks": [
+        {
+          "id": "2.1",
+          "title": "Build ExportFormatter protocol and JSON v1/v2 formatters",
+          "description": "Create an ExportFormatter protocol with format(samples:type:options:) -> Data. Implement JSONv1Formatter (flat array of DTOs, matching Health Auto Export v6 schema) and JSONv2Formatter (grouped by type, with metadata header including device info, export date, date range). These are the primary export formats.",
+          "acceptance_criteria": [
+            "ExportFormatter protocol defined with format() returning Data",
+            "JSONv1Formatter outputs flat array matching Health Auto Export v6 JSON schema",
+            "JSONv2Formatter outputs { metadata: {...}, data: { typeName: [...] } } structure",
+            "Both formatters handle all sample types (quantity, category, workout, correlation)",
+            "Date encoding uses ISO 8601",
+            "Unit tests verify output structure for each formatter"
+          ],
+          "dependencies": [
+            "1.4"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Services/Export/ExportFormatter.swift",
+            "HealthAppTransfer/Services/Export/JSONv1Formatter.swift",
+            "HealthAppTransfer/Services/Export/JSONv2Formatter.swift",
+            "HealthAppTransferTests/ExportFormatterTests.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "2.2",
+          "title": "Build CSV and GPX formatters",
+          "description": "Implement CSVFormatter (one row per sample, columns vary by type, header row included) and GPXFormatter (for workout routes \u2014 extracts HKWorkoutRoute location data as GPX trackpoints with timestamps, elevation, heart rate). GPX only applies to workout types with route data.",
+          "acceptance_criteria": [
+            "CSVFormatter outputs valid CSV with header row and proper escaping",
+            "CSVFormatter handles mixed types by including type column",
+            "GPXFormatter outputs valid GPX 1.1 XML with <trk><trkseg><trkpt> elements",
+            "GPXFormatter extracts CLLocation data from HKWorkoutRoute",
+            "GPX includes elevation, timestamp, and optional heart rate extensions",
+            "Unit tests verify CSV escaping and GPX XML structure"
+          ],
+          "dependencies": [
+            "2.1"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Services/Export/CSVFormatter.swift",
+            "HealthAppTransfer/Services/Export/GPXFormatter.swift",
+            "HealthAppTransfer/Services/HealthKit/HealthKitService.swift",
+            "HealthAppTransferTests/CSVFormatterTests.swift",
+            "HealthAppTransferTests/GPXFormatterTests.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "2.3",
+          "title": "Build Aggregation Engine",
+          "description": "Create AggregationEngine that computes statistical aggregates (sum, average, min, max, count, latest) over configurable time intervals (hourly, daily, weekly, monthly, yearly). Uses HKStatisticsCollectionQuery for efficient server-side aggregation instead of fetching raw samples. This is key for dashboards and automation payloads that need aggregated data.",
+          "acceptance_criteria": [
+            "AggregationEngine supports sum, average, min, max, count, latest operations",
+            "Supports hourly, daily, weekly, monthly, yearly intervals",
+            "Uses HKStatisticsCollectionQuery for efficient HealthKit-native aggregation",
+            "Results returned as AggregatedSample structs (interval start/end, values)",
+            "Handles quantity types that only support discrete statistics (not cumulative)",
+            "Unit tests verify aggregation logic with mock data"
+          ],
+          "dependencies": [
+            "1.3"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Services/HealthKit/AggregationEngine.swift",
+            "HealthAppTransfer/Models/AggregatedSample.swift",
+            "HealthAppTransfer/Services/HealthKit/HealthStoreProtocol.swift",
+            "HealthAppTransferTests/AggregationEngineTests.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "2.4",
+          "title": "Build ExportService and Quick Export UI",
+          "description": "Create ExportService actor that orchestrates the full export pipeline: select types \u2192 fetch/aggregate data \u2192 format \u2192 write to file or share. Build QuickExportView with type picker, format picker, date range, and aggregation options. Integrate with UIActivityViewController (share sheet) for sharing exported files. Record each export in ExportRecord (SwiftData).",
+          "acceptance_criteria": [
+            "ExportService coordinates type selection, data fetching, formatting, and output",
+            "QuickExportView allows picking types, format (JSON v1/v2, CSV, GPX), date range",
+            "Aggregation toggle with interval picker when enabled",
+            "Share sheet presents exported file via UIActivityViewController",
+            "Each export is recorded as ExportRecord in SwiftData",
+            "Export progress shown for large datasets",
+            "Works on both iOS (share sheet) and macOS (NSSavePanel)"
+          ],
+          "dependencies": [
+            "2.2",
+            "2.3"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Services/Export/ExportService.swift",
+            "HealthAppTransfer/Views/Export/QuickExportView.swift",
+            "HealthAppTransfer/ViewModels/ExportViewModel.swift",
+            "HealthAppTransfer/Views/MainTabView.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "name": "Background Sync & Automations",
+      "subtasks": [
+        {
+          "id": "3.1",
+          "title": "Implement BGTaskScheduler + HKObserverQuery background sync",
+          "description": "Implement background health data sync using BGTaskScheduler for periodic refresh and HKObserverQuery for real-time change notifications. Register BGAppRefreshTask and BGProcessingTask in Info.plist. When triggered, fetch new samples since last sync timestamp and push to configured automations. Use SyncConfiguration from SwiftData for settings.",
+          "acceptance_criteria": [
+            "BGAppRefreshTask registered and scheduled in Info.plist and app delegate",
+            "BGProcessingTask registered for heavy data exports",
+            "HKObserverQuery set up for all user-enabled types with background delivery",
+            "enableBackgroundDelivery called for each monitored type",
+            "On trigger: fetches only new data since lastSyncDate",
+            "Updates SyncConfiguration.lastSyncDate and lastSyncSampleCount",
+            "Handles app termination gracefully (BGTaskScheduler reschedules)",
+            "Tested with Xcode simulate background fetch"
+          ],
+          "dependencies": [
+            "1.3"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Services/HealthKit/BackgroundSyncService.swift",
+            "HealthAppTransfer/App/HealthAppTransferApp.swift",
+            "HealthAppTransfer/App/Info.plist",
+            "HealthAppTransfer/Services/HealthKit/HealthKitService.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "3.2",
+          "title": "Build REST API automation push",
+          "description": "Implement the REST API automation that POSTs health data to a user-configured HTTP endpoint. Uses URLSession for outbound requests. Supports JSON v1/v2 and CSV payloads. Includes configurable headers (for auth tokens), retry logic with exponential backoff, and incremental-only mode (send only data since last push). Wire into AutomationConfiguration model.",
+          "acceptance_criteria": [
+            "REST automation sends POST request with health data payload to configured endpoint",
+            "Supports custom headers (Authorization, API keys, etc.)",
+            "Payload format configurable (JSON v1, v2, CSV)",
+            "Incremental mode sends only new data since lastTriggeredAt",
+            "Retry with exponential backoff (3 attempts, 2/4/8 second delays)",
+            "consecutiveFailures counter incremented/reset correctly",
+            "AutomationConfiguration UI form for REST API setup"
+          ],
+          "dependencies": [
+            "2.1",
+            "3.1"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Services/Automations/AutomationExecutor.swift",
+            "HealthAppTransfer/Services/Automations/RESTAutomation.swift",
+            "HealthAppTransfer/Views/Automations/RESTAutomationFormView.swift",
+            "HealthAppTransfer/Views/Automations/AutomationsView.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "3.3",
+          "title": "Build MQTT automation with CocoaMQTT",
+          "description": "Implement MQTT publishing automation using CocoaMQTT. Connects to user-configured MQTT broker (host, port, optional TLS, optional credentials). Publishes health data to configurable topic with QoS level. Supports Home Assistant MQTT discovery protocol for auto-entity creation. Wire into the same AutomationExecutor pipeline.",
+          "acceptance_criteria": [
+            "MQTT automation connects to configured broker with optional TLS and credentials",
+            "Publishes JSON payload to configured topic on health data change",
+            "QoS level configurable (0, 1, 2)",
+            "Home Assistant MQTT discovery messages published for auto-entity setup",
+            "Connection state tracked and shown in UI",
+            "Reconnection logic on disconnect",
+            "MQTT automation form view for broker setup"
+          ],
+          "dependencies": [
+            "3.2"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Services/Automations/MQTTAutomation.swift",
+            "HealthAppTransfer/Views/Automations/MQTTAutomationFormView.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "3.4",
+          "title": "Build Home Assistant REST integration",
+          "description": "Implement direct Home Assistant integration via its REST API. User provides HA URL + long-lived access token. Creates/updates sensor entities for each health metric. Uses HA's /api/states/<entity_id> endpoint. Follows HA naming conventions (sensor.health_step_count, etc.).",
+          "acceptance_criteria": [
+            "Posts sensor state updates to Home Assistant REST API",
+            "Creates entities following HA naming conventions",
+            "Includes unit_of_measurement, device_class, and state_class attributes",
+            "Validates HA connection on setup (test API call)",
+            "Form view for HA URL and long-lived access token",
+            "Token stored in Keychain, not in SwiftData"
+          ],
+          "dependencies": [
+            "3.2"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Services/Automations/HomeAssistantAutomation.swift",
+            "HealthAppTransfer/Views/Automations/HomeAssistantFormView.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "3.5",
+          "title": "Build Cloud Storage and Calendar automations",
+          "description": "Cloud storage: export files to iCloud Drive folder (using FileManager + ubiquityContainerURL). Calendar: create EventKit events for workouts (start/end time, duration, calories in notes). These are lighter-weight automations that use system frameworks only.",
+          "acceptance_criteria": [
+            "iCloud Drive automation saves export files to app's ubiquity container",
+            "Files organized by date and export format",
+            "Calendar automation creates EKEvent for each workout",
+            "Workout events include activity type, duration, calories, distance in notes",
+            "EventKit permission requested on first use",
+            "Both automations have setup forms in AutomationsView"
+          ],
+          "dependencies": [
+            "3.2"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Services/Automations/CloudStorageAutomation.swift",
+            "HealthAppTransfer/Services/Automations/CalendarAutomation.swift",
+            "HealthAppTransfer/Views/Automations/CloudStorageFormView.swift",
+            "HealthAppTransfer/Views/Automations/CalendarFormView.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "3.6",
+          "title": "Build AutomationScheduler to orchestrate all automations",
+          "description": "Create AutomationScheduler actor that reads active AutomationConfigurations from SwiftData, dispatches to the correct AutomationExecutor implementation (REST, MQTT, HA, Cloud, Calendar), handles scheduling (on-change via HKObserverQuery, interval-based via Timer), and manages the lifecycle. Wire into BackgroundSyncService so automations fire in background too.",
+          "acceptance_criteria": [
+            "AutomationScheduler loads all active AutomationConfigurations on startup",
+            "Dispatches to correct executor based on automationType",
+            "On-change trigger fires when HKObserverQuery delivers updates",
+            "Interval trigger fires on configured cadence",
+            "Background execution via BackgroundSyncService integration",
+            "Automation status (last run, failures) visible in AutomationsView",
+            "Adding/removing automations updates scheduler without restart"
+          ],
+          "dependencies": [
+            "3.2",
+            "3.3",
+            "3.4",
+            "3.5"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Services/Automations/AutomationScheduler.swift",
+            "HealthAppTransfer/Services/HealthKit/BackgroundSyncService.swift",
+            "HealthAppTransfer/Views/Automations/AutomationsView.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "name": "Visualization: Charts & Maps",
+      "subtasks": [
+        {
+          "id": "4.1",
+          "title": "Build reusable HealthChart component with Swift Charts",
+          "description": "Create a reusable HealthChartView using Swift Charts that renders time-series health data. Supports line, bar, and area mark types. Date range picker (day/week/month/year). Handles different data densities (raw samples vs aggregated). Respects Dynamic Type and dark mode.",
+          "acceptance_criteria": [
+            "HealthChartView renders line/bar/area charts from [AggregatedSample] data",
+            "Date range selector (day, week, month, year, custom)",
+            "Y-axis shows correct units for the data type",
+            "Chart adapts to dark mode and Dynamic Type",
+            "Tap/hover interaction shows value tooltip",
+            "Scrollable for large date ranges",
+            "VoiceOver audio graph support via accessibilityChartDescriptor"
+          ],
+          "dependencies": [
+            "2.3"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Views/Charts/HealthChartView.swift",
+            "HealthAppTransfer/Views/Charts/ChartStyleModifier.swift",
+            "HealthAppTransfer/ViewModels/ChartViewModel.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "4.2",
+          "title": "Build data detail view with charts",
+          "description": "Create HealthDataDetailView that shows when tapping a health type in HealthDataView. Displays the HealthChartView, latest value, min/max/avg stats, and a sample list. This replaces the current non-interactive list rows.",
+          "acceptance_criteria": [
+            "Tapping a health type in HealthDataView navigates to HealthDataDetailView",
+            "Shows chart (default: last 7 days), stats card (min/max/avg/latest), and recent samples list",
+            "Export button to quick-export this single type",
+            "Works on both iOS and macOS",
+            "Loading state while fetching data"
+          ],
+          "dependencies": [
+            "4.1",
+            "1.5"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Views/HealthData/HealthDataDetailView.swift",
+            "HealthAppTransfer/ViewModels/HealthDataDetailViewModel.swift",
+            "HealthAppTransfer/Views/HealthData/HealthDataView.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "4.3",
+          "title": "Build workout map view with MapKit",
+          "description": "Create WorkoutMapView that displays workout routes on a MapKit map. Extracts CLLocation array from HKWorkoutRoute, renders as a polyline overlay with color gradient based on pace/heart rate. Shows start/end pins and distance markers.",
+          "acceptance_criteria": [
+            "WorkoutMapView renders route polyline from HKWorkoutRoute location data",
+            "Map auto-zooms to fit the route",
+            "Start/end pins displayed",
+            "Optional color gradient overlay (pace or heart rate)",
+            "Accessible to VoiceOver (route summary description)",
+            "Falls back gracefully when workout has no route data"
+          ],
+          "dependencies": [
+            "4.2"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Views/Charts/WorkoutMapView.swift",
+            "HealthAppTransfer/Services/HealthKit/HealthKitService.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "4.4",
+          "title": "Rebuild Dashboard with chart cards",
+          "description": "Redesign DashboardView to show summary cards with mini Swift Charts sparklines for key metrics (steps, heart rate, sleep, active energy, etc.). User can configure which metrics appear. Tap a card to navigate to detail view.",
+          "acceptance_criteria": [
+            "Dashboard shows configurable grid of metric cards",
+            "Each card shows: icon, metric name, latest value, sparkline chart (7-day trend)",
+            "Tapping a card navigates to HealthDataDetailView",
+            "Gear button to configure which metrics are shown",
+            "Cards adapt to iPad/Mac with multi-column grid",
+            "VoiceOver reads each card's value and trend direction"
+          ],
+          "dependencies": [
+            "4.1",
+            "4.2"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Views/Dashboard/DashboardView.swift",
+            "HealthAppTransfer/Views/Dashboard/MetricCardView.swift",
+            "HealthAppTransfer/ViewModels/DashboardViewModel.swift",
+            "HealthAppTransfer/Models/Persistence/UserPreferences.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "name": "Widgets, Live Activities & Shortcuts",
+      "subtasks": [
+        {
+          "id": "5.1",
+          "title": "Build WidgetKit extension with health metric widgets",
+          "description": "Create a WidgetKit extension with small/medium/large widget families showing health metric summaries. Small: single metric with value and sparkline. Medium: 2-3 metrics. Large: mini dashboard. Uses HealthKit in widget timeline provider. Requires App Group for shared data access.",
+          "acceptance_criteria": [
+            "Widget extension target created with App Group entitlement",
+            "Small widget shows single configurable metric with current value",
+            "Medium widget shows 2-3 metrics with sparklines",
+            "Large widget shows mini dashboard with 4-6 metrics",
+            "Widget configuration intent lets user pick which metrics to display",
+            "Timeline refreshes every 15 minutes (HealthKit budget)",
+            "Widgets support StandbyMode and Lock Screen on iOS 17+"
+          ],
+          "dependencies": [
+            "2.3"
+          ],
+          "estimated_files": [
+            "HealthAppTransferWidget/HealthAppTransferWidget.swift",
+            "HealthAppTransferWidget/HealthMetricProvider.swift",
+            "HealthAppTransferWidget/HealthWidgetViews.swift",
+            "HealthAppTransferWidget/Info.plist",
+            "HealthAppTransfer/App/HealthAppTransfer.entitlements"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "5.2",
+          "title": "Build Live Activities with ActivityKit",
+          "description": "Create Live Activity for active workout tracking and ongoing background sync status. Shows real-time metrics (duration, calories, heart rate) on Dynamic Island and Lock Screen during active sync or workout. Requires ActivityKit attributes model.",
+          "acceptance_criteria": [
+            "ActivityAttributes model for health sync live activity",
+            "Live Activity shows during active background sync (types synced, progress %)",
+            "Dynamic Island compact/expanded views implemented",
+            "Lock Screen live activity view with progress and current metric",
+            "Activity starts when background sync begins, ends on completion",
+            "Handles app termination (activity auto-ends)"
+          ],
+          "dependencies": [
+            "3.1"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Models/SyncActivityAttributes.swift",
+            "HealthAppTransfer/Services/HealthKit/BackgroundSyncService.swift",
+            "HealthAppTransferWidget/LiveActivityView.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "5.3",
+          "title": "Build App Intents for Shortcuts integration",
+          "description": "Create App Intents (iOS 16+ API) for Shortcuts automation: ExportHealthData (format, types, date range), SyncNow (trigger manual sync), GetLatestValue (type \u2192 value). These enable Siri Shortcuts, Shortcuts app automation, and Action button integration.",
+          "acceptance_criteria": [
+            "ExportHealthDataIntent: parameters for format, types, date range \u2192 returns file",
+            "SyncNowIntent: triggers immediate background sync \u2192 returns status",
+            "GetLatestValueIntent: takes health type \u2192 returns latest value as text",
+            "All intents have proper parameter summaries and descriptions",
+            "Intents discoverable in Shortcuts app",
+            "Intents work from Lock Screen and Action button"
+          ],
+          "dependencies": [
+            "2.4",
+            "3.1"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Intents/ExportHealthDataIntent.swift",
+            "HealthAppTransfer/Intents/SyncNowIntent.swift",
+            "HealthAppTransfer/Intents/GetLatestValueIntent.swift",
+            "HealthAppTransfer/Intents/HealthTypeEntityQuery.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "5.4",
+          "title": "Add Share Sheet integration for Quick Export",
+          "description": "Add a share button to QuickExportView and HealthDataDetailView that creates a temporary file and presents UIActivityViewController (iOS) / NSSharingServicePicker (macOS). Support sharing via AirDrop, Files, Mail, etc. Register as a document provider for .json, .csv, .gpx file types.",
+          "acceptance_criteria": [
+            "Share button on QuickExportView presents system share sheet",
+            "Share button on HealthDataDetailView exports that single type",
+            "Exported file has correct UTType (.json, .csv, .gpx)",
+            "Works via AirDrop, Files, Mail, Messages",
+            "macOS uses NSSharingServicePicker",
+            "Temporary files cleaned up after sharing"
+          ],
+          "dependencies": [
+            "2.4"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Views/Export/QuickExportView.swift",
+            "HealthAppTransfer/Views/HealthData/HealthDataDetailView.swift",
+            "HealthAppTransfer/Extensions/ShareSheet.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "name": "CloudKit Sync & macOS Companion",
+      "subtasks": [
+        {
+          "id": "6.1",
+          "title": "Build CloudKit sync for health data transfer",
+          "description": "Implement CloudKit private database sync to transfer health data between iPhone and Mac. Create CKRecord schema matching HealthSampleDTO. Use CKModifyRecordsOperation for upload, CKQueryOperation for download. Delta sync via CKServerChangeToken. This supplements LAN sync for when devices aren't on the same network. Entitlements already include CloudKit.",
+          "acceptance_criteria": [
+            "CKRecord schema defined for HealthSampleDTO fields",
+            "Upload pushes new samples to CloudKit private DB in batches of 400",
+            "Download pulls new records since last CKServerChangeToken",
+            "Delta sync avoids re-downloading already-synced records",
+            "Sync errors handled gracefully (quota, network, conflict)",
+            "Sync status persisted in SyncConfiguration",
+            "Works in background via BackgroundSyncService"
+          ],
+          "dependencies": [
+            "3.1",
+            "1.4"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Services/Sync/CloudKitSyncService.swift",
+            "HealthAppTransfer/Services/Sync/CloudKitRecordMapper.swift",
+            "HealthAppTransfer/Models/Persistence/SyncConfiguration.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "6.2",
+          "title": "Enhance macOS companion with received data views",
+          "description": "The macOS target already has NavigationSplitView shell, Bonjour discovery, and LAN sync client. Enhance it to display health data received via CloudKit or LAN sync. Add a local SwiftData store on Mac that holds synced samples. Mac doesn't have HealthKit, so it reads from its local SwiftData store. Add export functionality from the Mac store.",
+          "acceptance_criteria": [
+            "macOS app stores received health samples in SwiftData",
+            "Dashboard shows data from local SwiftData store (not HealthKit)",
+            "HealthDataView on Mac lists synced types and sample counts",
+            "Export works from Mac's local store (same export engine)",
+            "CloudKit sync pulls new data automatically on launch",
+            "LAN sync pull button works alongside CloudKit",
+            "Mac-specific menu bar items for quick export"
+          ],
+          "dependencies": [
+            "6.1",
+            "2.4"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Models/Persistence/SyncedHealthSample.swift",
+            "HealthAppTransfer/Models/Persistence/SchemaVersions.swift",
+            "HealthAppTransfer/ViewModels/DashboardViewModel.swift",
+            "HealthAppTransfer/ViewModels/HealthDataViewModel.swift",
+            "HealthAppTransfer/App/HealthAppTransferApp.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "6.3",
+          "title": "Build LAN sync settings and manual sync UI",
+          "description": "Enhance Settings > LAN Sync with: sync frequency picker, type selection (which types to sync), manual sync trigger button, sync history log, and data usage stats. Integrate with both CloudKit and LAN sync services.",
+          "acceptance_criteria": [
+            "Sync settings view with CloudKit toggle and LAN sync toggle",
+            "Type picker for selecting which health types to sync",
+            "Frequency picker (every 15min, 30min, 1hr, 4hr, daily, manual only)",
+            "Manual 'Sync Now' button with progress indicator",
+            "Sync history showing last 20 syncs with sample counts and status",
+            "Data usage estimate for CloudKit (approximate record count)"
+          ],
+          "dependencies": [
+            "6.1",
+            "6.2"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Views/Settings/SyncSettingsView.swift",
+            "HealthAppTransfer/ViewModels/SyncSettingsViewModel.swift",
+            "HealthAppTransfer/Views/Settings/SettingsView.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "name": "Onboarding, Accessibility & Polish",
+      "subtasks": [
+        {
+          "id": "7.1",
+          "title": "Build onboarding flow",
+          "description": "Create a 4-screen onboarding flow shown on first launch: Welcome, HealthKit Authorization, Notification Permission, Quick Setup (pick dashboard metrics, enable sync). Uses PageTabViewStyle. Stores completion in UserPreferences.hasCompletedOnboarding. Skippable but encourages full setup.",
+          "acceptance_criteria": [
+            "4-step onboarding: Welcome \u2192 HealthKit \u2192 Notifications \u2192 Quick Setup",
+            "Welcome screen shows app capabilities",
+            "HealthKit screen explains data access and triggers authorization",
+            "Notification screen requests push notification permission",
+            "Quick Setup lets user pick 4-6 dashboard metrics and toggle sync",
+            "Completion stored in UserPreferences.hasCompletedOnboarding",
+            "Skip button available on each screen",
+            "Works on both iOS and macOS (macOS skips notification step)"
+          ],
+          "dependencies": [
+            "1.5"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Views/Onboarding/OnboardingView.swift",
+            "HealthAppTransfer/Views/Onboarding/WelcomeStepView.swift",
+            "HealthAppTransfer/Views/Onboarding/HealthKitStepView.swift",
+            "HealthAppTransfer/Views/Onboarding/NotificationStepView.swift",
+            "HealthAppTransfer/Views/Onboarding/QuickSetupStepView.swift",
+            "HealthAppTransfer/Views/ContentView.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "7.2",
+          "title": "Accessibility audit and enhancement",
+          "description": "Comprehensive accessibility pass across all views. Add accessibility labels to all interactive elements, ensure minimum 44x44 touch targets, verify Dynamic Type scaling, add accessibilityChartDescriptor to all charts, test VoiceOver navigation flow. Add accessibility identifiers for UI testing.",
+          "acceptance_criteria": [
+            "All buttons, toggles, and interactive elements have accessibility labels",
+            "All tap targets are minimum 44x44 points",
+            "Dynamic Type works up to AX5 without layout breakage",
+            "Chart views have accessibilityChartDescriptor for VoiceOver",
+            "Navigation flow is logical with VoiceOver (no skipped elements)",
+            "High contrast mode renders correctly",
+            "Accessibility identifiers added for all key UI elements (for UI tests)"
+          ],
+          "dependencies": [
+            "4.4",
+            "7.1"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Views/Dashboard/DashboardView.swift",
+            "HealthAppTransfer/Views/Dashboard/MetricCardView.swift",
+            "HealthAppTransfer/Views/HealthData/HealthDataView.swift",
+            "HealthAppTransfer/Views/HealthData/HealthDataDetailView.swift",
+            "HealthAppTransfer/Views/Charts/HealthChartView.swift",
+            "HealthAppTransfer/Views/Automations/AutomationsView.swift",
+            "HealthAppTransfer/Views/Export/QuickExportView.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "7.3",
+          "title": "Add localization infrastructure",
+          "description": "Set up String Catalogs (Xcode 15+ .xcstrings) for localization. Extract all user-facing strings into catalogs. Add initial English strings with context comments. Set up Localizable.xcstrings and InfoPlist.xcstrings. This doesn't add translations yet, just makes the app localizable.",
+          "acceptance_criteria": [
+            "Localizable.xcstrings created with all user-facing strings",
+            "InfoPlist.xcstrings created for Info.plist strings",
+            "All hardcoded strings in views replaced with LocalizedStringKey",
+            "String context comments added for translator clarity",
+            "Pluralization rules for sample counts (\"1 sample\" vs \"5 samples\")",
+            "Date/number formatters use locale-aware formatting",
+            "Build succeeds with localization infrastructure"
+          ],
+          "dependencies": [
+            "7.1"
+          ],
+          "estimated_files": [
+            "HealthAppTransfer/Resources/Localizable.xcstrings",
+            "HealthAppTransfer/Resources/InfoPlist.xcstrings",
+            "HealthAppTransfer/Views/**/*.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "7.4",
+          "title": "Introduce DI container to replace ContentView.init() service creation",
+          "description": "All services are currently created in ContentView.init(), which the discovery doc flagged as a scaling problem. Introduce a simple ServiceContainer (no framework \u2014 just a struct with lazy properties) that holds all service instances. Pass it through the environment. This cleans up ContentView and makes testing easier.",
+          "acceptance_criteria": [
+            "ServiceContainer struct holds all service instances",
+            "Services created lazily on first access",
+            "ContentView receives ServiceContainer from HealthAppTransferApp",
+            "All views access services through environment or passed references",
+            "No change to existing service interfaces (just wiring)",
+            "Unit tests can substitute mock ServiceContainer",
+            "ContentView.init() reduced to < 5 lines"
+          ],
+          "dependencies": [],
+          "estimated_files": [
+            "HealthAppTransfer/Services/ServiceContainer.swift",
+            "HealthAppTransfer/App/HealthAppTransferApp.swift",
+            "HealthAppTransfer/Views/ContentView.swift",
+            "HealthAppTransfer/Views/MainTabView.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        },
+        {
+          "id": "7.5",
+          "title": "Write comprehensive unit and integration tests",
+          "description": "Replace the placeholder test with real tests. Cover: HealthDataType mapping (all 150+ types), ExportFormatters (JSON/CSV/GPX output), AggregationEngine, AutomationExecutor (mock HTTP), HealthSampleMapper, CloudKitRecordMapper. Use MockHealthStore from HealthStoreProtocol for HealthKit tests.",
+          "acceptance_criteria": [
+            "HealthDataType tests verify sampleType, displayName, unit for all cases",
+            "ExportFormatter tests verify JSON v1/v2, CSV, GPX output correctness",
+            "AggregationEngine tests verify sum/avg/min/max calculations",
+            "HealthSampleMapper tests cover all sample type categories",
+            "MockHealthStore used for isolated HealthKit testing",
+            "REST automation tests use URLProtocol mock",
+            "Test coverage > 60% for Services/ and Models/",
+            "All tests pass on both iOS and macOS"
+          ],
+          "dependencies": [
+            "3.6",
+            "2.4",
+            "6.1"
+          ],
+          "estimated_files": [
+            "HealthAppTransferTests/HealthDataTypeTests.swift",
+            "HealthAppTransferTests/ExportFormatterTests.swift",
+            "HealthAppTransferTests/AggregationEngineTests.swift",
+            "HealthAppTransferTests/HealthSampleMapperTests.swift",
+            "HealthAppTransferTests/RESTAutomationTests.swift",
+            "HealthAppTransferTests/CloudKitRecordMapperTests.swift",
+            "HealthAppTransferTests/Mocks/MockHealthStore.swift"
+          ],
+          "status": "completed",
+          "notes": null
+        }
+      ]
+    }
+  ],
+  "risks": [
+    "HIGH \u2014 HealthKit type expansion: Adding 120+ enum cases to HealthDataType touches every file that switches on it (mapper, service, views). A missed case causes a build failure. Mitigate by using default cases where possible and batching the expansion with compiler-assisted exhaustiveness checks.",
+    "HIGH \u2014 Background execution limits: iOS severely limits background execution time (30 seconds for BGAppRefreshTask, ~minutes for BGProcessingTask). Syncing 150+ types with large datasets may not complete. Mitigate with incremental-only sync and prioritizing user-selected types.",
+    "HIGH \u2014 CloudKit quota: Free tier allows 1GB asset storage and 40 requests/second. Heavy health data (years of minute-by-minute heart rate) could hit quota. Mitigate with aggregation-only CloudKit sync option and user warnings about data volume.",
+    "MEDIUM \u2014 CocoaMQTT Swift 6 concurrency: CocoaMQTT uses delegate callbacks that may not be Sendable-compliant. May need wrapper actor to isolate callback handling. Test early.",
+    "MEDIUM \u2014 SwiftData schema migration: Adding SyncedHealthSample model requires SchemaV2 migration. Lightweight migration should work if no field renames, but test on existing installs.",
+    "MEDIUM \u2014 HKWorkoutRoute availability: Not all workouts have route data (only outdoor GPS activities). GPX export and map view must handle missing route gracefully.",
+    "LOW \u2014 Widget HealthKit access: WidgetKit extensions have limited HealthKit access. May need App Group shared container to pass data from main app to widget rather than direct HealthKit queries.",
+    "LOW \u2014 macOS HealthKit: macOS has HealthKit since macOS 13 but with very limited read-only access. Mac companion should primarily rely on CloudKit/LAN synced data, not direct HealthKit."
+  ],
+  "notes": [
+    "The existing codebase is well-structured with actor-based services, MVVM, and SwiftData. The plan extends it without restructuring.",
+    "Phase 1 (Foundation) is critical path \u2014 everything else depends on the expanded HealthDataType. Start here.",
+    "Subtask 7.4 (DI container) has no dependencies and can be done in parallel with Phase 1 to unblock the service creation bottleneck in ContentView.",
+    "The discovery doc correctly identified the three critical bottlenecks: sequential availableTypes(), sampleCount() fetching all samples, and ContentView service creation. These are addressed in 1.1, 1.2, and 7.4.",
+    "Export formats should match Health Auto Export schemas where possible for user migration compatibility.",
+    "All new services should follow the existing pattern: Swift actor, injected dependencies, Loggers for structured logging.",
+    "Entitlements already include HealthKit background-delivery and CloudKit \u2014 no entitlement changes needed for core features. Widget extension will need its own entitlements file.",
+    "The project has iPhone 17 Pro simulator (no iPhone 16) \u2014 use that for xcodebuild commands per LEARNINGS.md.",
+    "xcodegen overwrites .entitlements \u2014 always restore after running xcodegen per LEARNINGS.md.",
+    "CocoaMQTT has transitive deps (Starscream, MqttCocoaAsyncSocket) \u2014 these are expected per LEARNINGS.md."
+  ],
+  "version": 2
+}
