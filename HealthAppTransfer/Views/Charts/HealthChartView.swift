@@ -94,7 +94,7 @@ struct HealthChartView: View {
     private var chartTypeSelector: some View {
         Picker("Chart Type", selection: $viewModel.markType) {
             ForEach(ChartMarkType.allCases) { type in
-                Label(type.rawValue, systemImage: type.iconName).tag(type)
+                Label(type.displayName, systemImage: type.iconName).tag(type)
             }
         }
         .pickerStyle(.segmented)
@@ -279,7 +279,7 @@ struct HealthChartDescriptor: AXChartDescriptorRepresentable {
         let xRange = minX == maxX ? minX...(maxX + 3600) : minX...maxX
 
         let xAxis = AXNumericDataAxisDescriptor(
-            title: "Date",
+            title: String(localized: "Date", comment: "Chart X-axis title"),
             range: xRange,
             gridlinePositions: []
         ) { value in
@@ -314,7 +314,7 @@ struct HealthChartDescriptor: AXChartDescriptorRepresentable {
 
         return AXChartDescriptor(
             title: "\(dataType.displayName) — \(rangeName)",
-            summary: "\(samples.count) data points",
+            summary: String(localized: "\(samples.count) data points"),
             xAxis: xAxis,
             yAxis: yAxis,
             additionalAxes: [],
@@ -331,12 +331,12 @@ struct HealthChartDescriptor: AXChartDescriptorRepresentable {
     private var emptyDescriptor: AXChartDescriptor {
         AXChartDescriptor(
             title: dataType.displayName,
-            summary: "No data",
+            summary: String(localized: "No data", comment: "Empty chart accessibility summary"),
             xAxis: AXNumericDataAxisDescriptor(
-                title: "Date", range: 0...1, gridlinePositions: []
+                title: String(localized: "Date", comment: "Chart X-axis title"), range: 0...1, gridlinePositions: []
             ) { _ in "" },
             yAxis: AXNumericDataAxisDescriptor(
-                title: "Value", range: 0...1, gridlinePositions: []
+                title: String(localized: "Value", comment: "Chart Y-axis title"), range: 0...1, gridlinePositions: []
             ) { _ in "" },
             series: []
         )

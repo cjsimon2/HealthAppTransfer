@@ -61,7 +61,7 @@ struct PairedDevicesView: View {
                     }
                 }
             } header: {
-                Text("\(devices.count) device(s)")
+                Text("\(devices.count) devices")
             } footer: {
                 Text("Revoking a device disconnects it and requires re-pairing to access health data.")
             }

@@ -157,7 +157,8 @@ private struct iOSPairingView: View {
     private var countdownText: String {
         let minutes = viewModel.timeRemaining / 60
         let seconds = viewModel.timeRemaining % 60
-        return "Expires in \(minutes):\(String(format: "%02d", seconds))"
+        let time = "\(minutes):\(String(format: "%02d", seconds))"
+        return String(localized: "pairing.expiresIn \(time)")
     }
 
     private func errorBanner(_ message: String) -> some View {

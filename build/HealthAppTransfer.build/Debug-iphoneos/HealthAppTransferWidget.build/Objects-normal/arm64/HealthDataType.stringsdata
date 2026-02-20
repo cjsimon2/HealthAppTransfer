@@ -1,0 +1,161 @@
+{
+  "source": "/Users/caseysimon/HealthAppTransfer/HealthAppTransfer/Models/HealthDataType.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "category.activity",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 39
+        },
+        "value": "Activity"
+      },
+      {
+        "comment": "",
+        "key": "category.heart",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 40
+        },
+        "value": "Heart"
+      },
+      {
+        "comment": "",
+        "key": "category.vitals",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 41
+        },
+        "value": "Vitals"
+      },
+      {
+        "comment": "",
+        "key": "category.bodyMeasurements",
+        "location": {
+          "startingColumn": 58,
+          "startingLine": 42
+        },
+        "value": "Body Measurements"
+      },
+      {
+        "comment": "",
+        "key": "category.metabolic",
+        "location": {
+          "startingColumn": 51,
+          "startingLine": 43
+        },
+        "value": "Metabolic"
+      },
+      {
+        "comment": "",
+        "key": "category.nutrition",
+        "location": {
+          "startingColumn": 51,
+          "startingLine": 44
+        },
+        "value": "Nutrition"
+      },
+      {
+        "comment": "",
+        "key": "category.respiratory",
+        "location": {
+          "startingColumn": 53,
+          "startingLine": 45
+        },
+        "value": "Respiratory"
+      },
+      {
+        "comment": "",
+        "key": "category.mobility",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 46
+        },
+        "value": "Mobility"
+      },
+      {
+        "comment": "",
+        "key": "category.fitness",
+        "location": {
+          "startingColumn": 49,
+          "startingLine": 47
+        },
+        "value": "Fitness"
+      },
+      {
+        "comment": "",
+        "key": "category.audioExposure",
+        "location": {
+          "startingColumn": 55,
+          "startingLine": 48
+        },
+        "value": "Audio Exposure"
+      },
+      {
+        "comment": "",
+        "key": "category.sleep",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 49
+        },
+        "value": "Sleep"
+      },
+      {
+        "comment": "",
+        "key": "category.mindfulness",
+        "location": {
+          "startingColumn": 53,
+          "startingLine": 50
+        },
+        "value": "Mindfulness"
+      },
+      {
+        "comment": "",
+        "key": "category.reproductiveHealth",
+        "location": {
+          "startingColumn": 60,
+          "startingLine": 51
+        },
+        "value": "Reproductive Health"
+      },
+      {
+        "comment": "",
+        "key": "category.symptoms",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 52
+        },
+        "value": "Symptoms"
+      },
+      {
+        "comment": "",
+        "key": "category.other",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 53
+        },
+        "value": "Other"
+      },
+      {
+        "comment": "",
+        "key": "category.workouts",
+        "location": {
+          "startingColumn": 49,
+          "startingLine": 54
+        },
+        "value": "Workouts"
+      },
+      {
+        "comment": "",
+        "key": "category.characteristics",
+        "location": {
+          "startingColumn": 57,
+          "startingLine": 55
+        },
+        "value": "Characteristics"
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,40 @@
+{
+  "source": "/Users/caseysimon/HealthAppTransfer/HealthAppTransferWidget/HealthWidgetViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%@: %@ %@",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 64
+        }
+      },
+      {
+        "comment": "",
+        "key": "Health Dashboard",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 101
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@: %@ %@",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 155
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@: %@ %@",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 193
+        }
+      }
+    ]
+  },
+  "version": 1
+}

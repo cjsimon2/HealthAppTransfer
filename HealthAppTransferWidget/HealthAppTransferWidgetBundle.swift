@@ -5,5 +5,6 @@ import WidgetKit
 struct HealthAppTransferWidgetBundle: WidgetBundle {
     var body: some Widget {
         SyncLiveActivity()
+        HealthMetricWidget()
     }
 }

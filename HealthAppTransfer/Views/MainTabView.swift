@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 
 // MARK: - Main Tab View
@@ -104,10 +105,10 @@ enum AppTab: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .dashboard: "Dashboard"
-        case .healthData: "Health Data"
-        case .automations: "Automations"
-        case .settings: "Settings"
+        case .dashboard: String(localized: "tab.dashboard", defaultValue: "Dashboard")
+        case .healthData: String(localized: "tab.healthData", defaultValue: "Health Data")
+        case .automations: String(localized: "tab.automations", defaultValue: "Automations")
+        case .settings: String(localized: "tab.settings", defaultValue: "Settings")
         }
     }
 

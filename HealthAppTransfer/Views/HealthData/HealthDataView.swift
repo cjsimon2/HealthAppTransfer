@@ -8,9 +8,14 @@ struct HealthDataView: View {
 
     @StateObject private var viewModel: HealthDataViewModel
 
+    // MARK: - Dependencies
+
+    private let healthKitService: HealthKitService
+
     // MARK: - Init
 
     init(healthKitService: HealthKitService) {
+        self.healthKitService = healthKitService
         _viewModel = StateObject(wrappedValue: HealthDataViewModel(healthKitService: healthKitService))
     }
 
@@ -55,7 +60,18 @@ struct HealthDataView: View {
             ForEach(viewModel.filteredGroups) { group in
                 Section {
                     ForEach(group.types) { typeInfo in
-                        typeRow(typeInfo)
+                        if typeInfo.type.isSampleBased {
+                            NavigationLink {
+                                HealthDataDetailView(
+                                    dataType: typeInfo.type,
+                                    healthKitService: healthKitService
+                                )
+                            } label: {
+                                typeRow(typeInfo)
+                            }
+                        } else {
+                            typeRow(typeInfo)
+                        }
                     }
                 } header: {
                     Label(group.category.displayName, systemImage: group.category.iconName)

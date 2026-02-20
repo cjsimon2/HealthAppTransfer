@@ -1,0 +1,72 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+
+    "CFBundleDisplayName" : {
+      "comment" : "The user-visible name of the app shown on the Home Screen",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HealthAppTransfer"
+          }
+        }
+      }
+    },
+
+    "CFBundleName" : {
+      "comment" : "Short bundle name used in menus and the Dock",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HealthAppTransfer"
+          }
+        }
+      }
+    },
+
+    "NSHealthShareUsageDescription" : {
+      "comment" : "Permission dialog: explains why the app needs read access to HealthKit data",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This app needs access to your health data to transfer it between devices."
+          }
+        }
+      }
+    },
+
+    "NSFaceIDUsageDescription" : {
+      "comment" : "Permission dialog: explains why the app uses Face ID for authentication",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This app uses Face ID to protect access to your health data and sensitive settings."
+          }
+        }
+      }
+    },
+
+    "NSLocalNetworkUsageDescription" : {
+      "comment" : "Permission dialog: explains why the app needs local network access for device discovery",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This app uses the local network to discover and transfer health data to nearby devices."
+          }
+        }
+      }
+    }
+
+  },
+  "version" : "1.0"
+}

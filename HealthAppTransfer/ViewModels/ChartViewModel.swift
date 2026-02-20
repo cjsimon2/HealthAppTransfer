@@ -14,11 +14,11 @@ enum ChartDateRange: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .day: return "D"
-        case .week: return "W"
-        case .month: return "M"
-        case .year: return "Y"
-        case .custom: return "…"
+        case .day: return String(localized: "chartRange.day", defaultValue: "D")
+        case .week: return String(localized: "chartRange.week", defaultValue: "W")
+        case .month: return String(localized: "chartRange.month", defaultValue: "M")
+        case .year: return String(localized: "chartRange.year", defaultValue: "Y")
+        case .custom: return String(localized: "chartRange.custom", defaultValue: "…")
         }
     }
 
@@ -52,11 +52,19 @@ enum ChartDateRange: String, CaseIterable, Identifiable {
 
 /// Visual mark type for chart rendering.
 enum ChartMarkType: String, CaseIterable, Identifiable {
-    case line = "Line"
-    case bar = "Bar"
-    case area = "Area"
+    case line
+    case bar
+    case area
 
     var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .line: return String(localized: "chartType.line", defaultValue: "Line")
+        case .bar: return String(localized: "chartType.bar", defaultValue: "Bar")
+        case .area: return String(localized: "chartType.area", defaultValue: "Area")
+        }
+    }
 
     var iconName: String {
         switch self {

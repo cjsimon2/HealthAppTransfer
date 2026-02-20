@@ -21,11 +21,11 @@ class LANSyncViewModel: ObservableObject {
 
         var displayText: String {
             switch self {
-            case .disconnected: return "Disconnected"
-            case .searching: return "Searching..."
-            case .connecting(let name): return "Connecting to \(name)..."
-            case .connected(let name): return "Connected to \(name)"
-            case .failed(let error): return "Failed: \(error)"
+            case .disconnected: return String(localized: "connectionStatus.disconnected", defaultValue: "Disconnected")
+            case .searching: return String(localized: "connectionStatus.searching", defaultValue: "Searching…")
+            case .connecting(let name): return String(localized: "connectionStatus.connecting \(name)")
+            case .connected(let name): return String(localized: "connectionStatus.connected \(name)")
+            case .failed(let error): return String(localized: "connectionStatus.failed \(error)")
             }
         }
 

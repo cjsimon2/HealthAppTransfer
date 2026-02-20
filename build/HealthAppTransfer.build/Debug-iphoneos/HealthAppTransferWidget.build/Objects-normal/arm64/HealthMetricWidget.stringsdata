@@ -1,0 +1,64 @@
+{
+  "source": "/Users/caseysimon/HealthAppTransfer/HealthAppTransferWidget/HealthMetricWidget.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Health Metric",
+        "location": {
+          "startingColumn": 76,
+          "startingLine": 9
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 18
+        }
+      },
+      {
+        "comment": "",
+        "key": "Health Metrics",
+        "location": {
+          "startingColumn": 49,
+          "startingLine": 69
+        }
+      },
+      {
+        "comment": "",
+        "key": "Choose which health metrics to display.",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 70
+        }
+      },
+      {
+        "comment": "",
+        "key": "Metrics",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 72
+        }
+      },
+      {
+        "comment": "",
+        "key": "Health Metrics",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 90
+        }
+      },
+      {
+        "comment": "",
+        "key": "View your health data at a glance.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 91
+        }
+      }
+    ]
+  },
+  "version": 1
+}

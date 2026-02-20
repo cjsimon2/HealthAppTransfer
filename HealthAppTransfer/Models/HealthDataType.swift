@@ -1,3 +1,4 @@
+import Foundation
 import HealthKit
 
 // MARK: - Data Type Kind
@@ -35,23 +36,23 @@ enum HealthDataCategory: String, CaseIterable, Codable, Sendable {
 
     var displayName: String {
         switch self {
-        case .activity: return "Activity"
-        case .heart: return "Heart"
-        case .vitals: return "Vitals"
-        case .bodyMeasurements: return "Body Measurements"
-        case .metabolic: return "Metabolic"
-        case .nutrition: return "Nutrition"
-        case .respiratory: return "Respiratory"
-        case .mobility: return "Mobility"
-        case .fitness: return "Fitness"
-        case .audioExposure: return "Audio Exposure"
-        case .sleep: return "Sleep"
-        case .mindfulness: return "Mindfulness"
-        case .reproductiveHealth: return "Reproductive Health"
-        case .symptoms: return "Symptoms"
-        case .other: return "Other"
-        case .workout: return "Workouts"
-        case .characteristics: return "Characteristics"
+        case .activity: return String(localized: "category.activity", defaultValue: "Activity")
+        case .heart: return String(localized: "category.heart", defaultValue: "Heart")
+        case .vitals: return String(localized: "category.vitals", defaultValue: "Vitals")
+        case .bodyMeasurements: return String(localized: "category.bodyMeasurements", defaultValue: "Body Measurements")
+        case .metabolic: return String(localized: "category.metabolic", defaultValue: "Metabolic")
+        case .nutrition: return String(localized: "category.nutrition", defaultValue: "Nutrition")
+        case .respiratory: return String(localized: "category.respiratory", defaultValue: "Respiratory")
+        case .mobility: return String(localized: "category.mobility", defaultValue: "Mobility")
+        case .fitness: return String(localized: "category.fitness", defaultValue: "Fitness")
+        case .audioExposure: return String(localized: "category.audioExposure", defaultValue: "Audio Exposure")
+        case .sleep: return String(localized: "category.sleep", defaultValue: "Sleep")
+        case .mindfulness: return String(localized: "category.mindfulness", defaultValue: "Mindfulness")
+        case .reproductiveHealth: return String(localized: "category.reproductiveHealth", defaultValue: "Reproductive Health")
+        case .symptoms: return String(localized: "category.symptoms", defaultValue: "Symptoms")
+        case .other: return String(localized: "category.other", defaultValue: "Other")
+        case .workout: return String(localized: "category.workouts", defaultValue: "Workouts")
+        case .characteristics: return String(localized: "category.characteristics", defaultValue: "Characteristics")
         }
     }
 

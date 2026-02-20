@@ -59,6 +59,9 @@ targets:
       - target: HealthAppTransferWidget
     entitlements:
       path: HealthAppTransfer/App/HealthAppTransfer.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.caseysimon.HealthAppTransfer
     info:
       path: HealthAppTransfer/App/Info.plist
       properties:
@@ -78,14 +81,28 @@ targets:
       - path: HealthAppTransferWidget
         excludes:
           - "Info.plist"
+          - "HealthAppTransferWidget.entitlements"
       - path: HealthAppTransfer/Models/SyncActivityAttributes.swift
+      - path: HealthAppTransfer/Models/HealthDataType.swift
+      - path: HealthAppTransfer/Models/WidgetMetricSnapshot.swift
+      - path: HealthAppTransfer/Services/Widget/WidgetDataStore.swift
     settings:
       base:
         INFOPLIST_FILE: HealthAppTransferWidget/Info.plist
+        CODE_SIGN_ENTITLEMENTS: HealthAppTransferWidget/HealthAppTransferWidget.entitlements
         PRODUCT_BUNDLE_IDENTIFIER: com.caseysimon.HealthAppTransfer.Widget
         CURRENT_PROJECT_VERSION: 1
         MARKETING_VERSION: 1.0.0
         SWIFT_EMIT_LOC_STRINGS: "YES"
+    entitlements:
+      path: HealthAppTransferWidget/HealthAppTransferWidget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.caseysimon.HealthAppTransfer
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+    dependencies:
+      - sdk: HealthKit.framework
     info:
       path: HealthAppTransferWidget/Info.plist
 

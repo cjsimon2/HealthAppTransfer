@@ -1,0 +1,582 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+
+    "%lld samples" : {
+      "comment" : "Number of health data samples for a data type (e.g. '5 samples')",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld sample"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld samples"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "%lld devices" : {
+      "comment" : "Number of paired devices shown in section header",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld device"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld devices"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "%lld selected" : {
+      "comment" : "Number of selected dashboard categories during onboarding setup",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld selected"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld selected"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "%lld data points" : {
+      "comment" : "Chart accessibility summary showing number of data points",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld data point"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld data points"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "%lld data types with data" : {
+      "comment" : "Dashboard accessibility label showing how many health data types have data",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld data type with data"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld data types with data"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "tab.dashboard" : {
+      "comment" : "Tab bar item: main health overview screen",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dashboard"
+          }
+        }
+      }
+    },
+
+    "tab.healthData" : {
+      "comment" : "Tab bar item: browse all health data types",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Health Data"
+          }
+        }
+      }
+    },
+
+    "tab.automations" : {
+      "comment" : "Tab bar item: automation rules for syncing",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automations"
+          }
+        }
+      }
+    },
+
+    "tab.settings" : {
+      "comment" : "Tab bar item: app settings and device management",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+
+    "category.activity" : {
+      "comment" : "Health data category: activity metrics like steps, calories",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activity"
+          }
+        }
+      }
+    },
+
+    "category.heart" : {
+      "comment" : "Health data category: heart rate, HRV, etc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heart"
+          }
+        }
+      }
+    },
+
+    "category.vitals" : {
+      "comment" : "Health data category: blood pressure, body temperature, etc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vitals"
+          }
+        }
+      }
+    },
+
+    "category.bodyMeasurements" : {
+      "comment" : "Health data category: weight, height, BMI, etc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body Measurements"
+          }
+        }
+      }
+    },
+
+    "category.metabolic" : {
+      "comment" : "Health data category: blood glucose, insulin, etc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metabolic"
+          }
+        }
+      }
+    },
+
+    "category.nutrition" : {
+      "comment" : "Health data category: dietary intake, water, caffeine",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nutrition"
+          }
+        }
+      }
+    },
+
+    "category.respiratory" : {
+      "comment" : "Health data category: respiratory rate, oxygen saturation",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Respiratory"
+          }
+        }
+      }
+    },
+
+    "category.mobility" : {
+      "comment" : "Health data category: walking speed, step length, etc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mobility"
+          }
+        }
+      }
+    },
+
+    "category.fitness" : {
+      "comment" : "Health data category: VO2 max, exercise minutes",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fitness"
+          }
+        }
+      }
+    },
+
+    "category.audioExposure" : {
+      "comment" : "Health data category: headphone and environmental audio levels",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio Exposure"
+          }
+        }
+      }
+    },
+
+    "category.sleep" : {
+      "comment" : "Health data category: sleep analysis data",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sleep"
+          }
+        }
+      }
+    },
+
+    "category.mindfulness" : {
+      "comment" : "Health data category: mindful minutes",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindfulness"
+          }
+        }
+      }
+    },
+
+    "category.reproductiveHealth" : {
+      "comment" : "Health data category: menstrual cycle, fertility data",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproductive Health"
+          }
+        }
+      }
+    },
+
+    "category.symptoms" : {
+      "comment" : "Health data category: symptom tracking",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Symptoms"
+          }
+        }
+      }
+    },
+
+    "category.other" : {
+      "comment" : "Health data category: uncategorized data types",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        }
+      }
+    },
+
+    "category.workouts" : {
+      "comment" : "Health data category: workout sessions",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts"
+          }
+        }
+      }
+    },
+
+    "category.characteristics" : {
+      "comment" : "Health data category: biological sex, blood type, etc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Characteristics"
+          }
+        }
+      }
+    },
+
+    "connectionStatus.disconnected" : {
+      "comment" : "LAN sync status: not connected to any device",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disconnected"
+          }
+        }
+      }
+    },
+
+    "connectionStatus.searching" : {
+      "comment" : "LAN sync status: scanning local network for devices",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching…"
+          }
+        }
+      }
+    },
+
+    "connectionStatus.connecting %@" : {
+      "comment" : "LAN sync status: actively connecting to named device",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecting to %@…"
+          }
+        }
+      }
+    },
+
+    "connectionStatus.connected %@" : {
+      "comment" : "LAN sync status: successfully connected to named device",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected to %@"
+          }
+        }
+      }
+    },
+
+    "connectionStatus.failed %@" : {
+      "comment" : "LAN sync status: connection failed with error message",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed: %@"
+          }
+        }
+      }
+    },
+
+    "chartRange.day" : {
+      "comment" : "Chart date range picker: single-character abbreviation for Day",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D"
+          }
+        }
+      }
+    },
+
+    "chartRange.week" : {
+      "comment" : "Chart date range picker: single-character abbreviation for Week",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W"
+          }
+        }
+      }
+    },
+
+    "chartRange.month" : {
+      "comment" : "Chart date range picker: single-character abbreviation for Month",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "M"
+          }
+        }
+      }
+    },
+
+    "chartRange.year" : {
+      "comment" : "Chart date range picker: single-character abbreviation for Year",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Y"
+          }
+        }
+      }
+    },
+
+    "chartRange.custom" : {
+      "comment" : "Chart date range picker: ellipsis indicating custom range",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "…"
+          }
+        }
+      }
+    },
+
+    "chartType.line" : {
+      "comment" : "Chart type selector: line chart",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Line"
+          }
+        }
+      }
+    },
+
+    "chartType.bar" : {
+      "comment" : "Chart type selector: bar chart",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bar"
+          }
+        }
+      }
+    },
+
+    "chartType.area" : {
+      "comment" : "Chart type selector: area (filled) chart",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Area"
+          }
+        }
+      }
+    },
+
+    "pairing.expiresIn %@" : {
+      "comment" : "Countdown showing when a pairing code expires (e.g. 'Expires in 4:30')",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expires in %@"
+          }
+        }
+      }
+    }
+
+  },
+  "version" : "1.0"
+}

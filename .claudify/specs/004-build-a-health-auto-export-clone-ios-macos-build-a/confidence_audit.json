@@ -161,6 +161,29 @@
       },
       "output_preview": "Added three project-specific learnings: xcodegen now works, AggregatedSample value extraction pattern, and pre-existing CloudKit build error.",
       "action_taken": "proceed"
+    },
+    {
+      "timestamp": "2026-02-20T14:44:20.401641+00:00",
+      "agent_name": "Coder",
+      "spec_id": "004",
+      "subtask_id": "5.1",
+      "score": {
+        "value": 0.825,
+        "reasoning": "High confidence: Output appears complete and certain.",
+        "factors": {
+          "completeness": 0.3,
+          "uncertainty": 1.0,
+          "tool_success": 1.0,
+          "length_appropriateness": 1.0,
+          "error_free": 1.0
+        },
+        "needs_human_review": false,
+        "escalation_reasons": [
+          "incomplete_output"
+        ]
+      },
+      "output_preview": "Added one project-specific insight: XcodeGen overwrites entitlements files \u2014 must use `entitlements.properties` in `project.yml` instead of editing the plist directly. Discovered this when my App Grou",
+      "action_taken": "proceed"
     }
   ]
 }
