@@ -3,7 +3,7 @@ import HealthKit
 
 // MARK: - HealthKit Service
 
-/// Actor managing all HealthKit data access. Reads the 34 supported health data types.
+/// Actor managing all HealthKit data access. Reads 180+ supported health data types.
 actor HealthKitService {
 
     // MARK: - Properties
@@ -19,7 +19,7 @@ actor HealthKitService {
 
     /// Request read authorization for all supported health data types.
     func requestAuthorization() async throws {
-        let readTypes: Set<HKObjectType> = Set(HealthDataType.allCases.map { $0.sampleType as HKObjectType })
+        let readTypes = HealthDataType.allObjectTypes
         try await store.requestAuthorization(toShare: nil, read: readTypes)
         isAuthorized = true
         Loggers.healthKit.info("HealthKit authorization granted for \(HealthDataType.allCases.count) types")
@@ -117,12 +117,15 @@ actor HealthKitService {
     /// Returns 0 (no data) or 1 (has data). Uses efficient server-side queries
     /// (HKStatisticsQuery for quantity types, limit-1 query for others)
     /// instead of fetching all samples into memory.
+    /// Characteristic types always return 0 (not sample-based).
     func sampleCount(for type: HealthDataType) async throws -> Int {
-        try await store.dataExists(for: type.sampleType) ? 1 : 0
+        guard type.isSampleBased else { return 0 }
+        return try await store.dataExists(for: type.sampleType) ? 1 : 0
     }
 
     /// Get available types with their sample counts.
-    /// Uses TaskGroup for parallel HealthKit queries — ~10x faster than sequential with 150+ types.
+    /// Uses TaskGroup for parallel HealthKit queries — ~10x faster than sequential with 180+ types.
+    /// Skips characteristic types (not sample-based).
     func availableTypes() async -> [(type: HealthDataType, count: Int)] {
         let store = self.store
 
@@ -130,7 +133,7 @@ actor HealthKitService {
             of: (HealthDataType, Int)?.self,
             returning: [(type: HealthDataType, count: Int)].self
         ) { group in
-            for dataType in HealthDataType.allCases {
+            for dataType in HealthDataType.allCases where dataType.isSampleBased {
                 group.addTask {
                     do {
                         let exists = try await store.dataExists(for: dataType.sampleType)

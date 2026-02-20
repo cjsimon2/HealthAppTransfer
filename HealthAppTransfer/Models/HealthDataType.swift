@@ -1,169 +1,938 @@
 import HealthKit
 
+// MARK: - Data Type Kind
+
+/// Classifies a HealthDataType by its underlying HealthKit type.
+enum DataTypeKind: String, Codable, Sendable {
+    case quantity
+    case category
+    case correlation
+    case characteristic
+    case workout
+}
+
+// MARK: - Health Data Category
+
+/// UI grouping for health data types.
+enum HealthDataCategory: String, CaseIterable, Codable, Sendable {
+    case activity
+    case heart
+    case vitals
+    case bodyMeasurements
+    case metabolic
+    case nutrition
+    case respiratory
+    case mobility
+    case fitness
+    case audioExposure
+    case sleep
+    case mindfulness
+    case reproductiveHealth
+    case symptoms
+    case other
+    case workout
+    case characteristics
+
+    var displayName: String {
+        switch self {
+        case .activity: return "Activity"
+        case .heart: return "Heart"
+        case .vitals: return "Vitals"
+        case .bodyMeasurements: return "Body Measurements"
+        case .metabolic: return "Metabolic"
+        case .nutrition: return "Nutrition"
+        case .respiratory: return "Respiratory"
+        case .mobility: return "Mobility"
+        case .fitness: return "Fitness"
+        case .audioExposure: return "Audio Exposure"
+        case .sleep: return "Sleep"
+        case .mindfulness: return "Mindfulness"
+        case .reproductiveHealth: return "Reproductive Health"
+        case .symptoms: return "Symptoms"
+        case .other: return "Other"
+        case .workout: return "Workouts"
+        case .characteristics: return "Characteristics"
+        }
+    }
+}
+
 // MARK: - Health Data Type
 
-/// All 34 HealthKit data types supported for transfer.
+/// All HealthKit data types supported for transfer.
 enum HealthDataType: String, CaseIterable, Codable, Sendable {
 
-    // MARK: - Activity
+    // MARK: - Activity (Quantity)
     case stepCount
     case distanceWalkingRunning
+    case distanceCycling
+    case distanceSwimming
+    case distanceWheelchair
+    case distanceDownhillSnowSports
     case flightsClimbed
     case activeEnergyBurned
     case basalEnergyBurned
     case appleExerciseTime
     case appleStandTime
+    case appleMoveTime
+    case pushCount
+    case swimmingStrokeCount
+    case nikeFuel
+    case physicalEffort
+    case cyclingSpeed
+    case cyclingPower
+    case cyclingFunctionalThresholdPower
+    case cyclingCadence
+    case runningSpeed
+    case runningPower
+    case runningStrideLength
+    case runningVerticalOscillation
+    case runningGroundContactTime
+    case underwaterDepth
+    case waterTemperature
 
-    // MARK: - Heart
+    // MARK: - Heart (Quantity)
     case heartRate
     case restingHeartRate
     case walkingHeartRateAverage
     case heartRateVariabilitySDNN
+    case heartRateRecoveryOneMinute
+    case atrialFibrillationBurden
+    case peripheralPerfusionIndex
 
-    // MARK: - Vitals
+    // MARK: - Vitals (Quantity)
     case oxygenSaturation
     case bodyTemperature
+    case basalBodyTemperature
     case bloodPressureSystolic
     case bloodPressureDiastolic
     case respiratoryRate
+    case appleSleepingWristTemperature
 
-    // MARK: - Body Measurements
+    // MARK: - Body Measurements (Quantity)
     case bodyMass
     case bodyMassIndex
     case bodyFatPercentage
     case leanBodyMass
     case height
     case waistCircumference
+    case electrodermalActivity
 
-    // MARK: - Metabolic
+    // MARK: - Metabolic (Quantity)
     case bloodGlucose
+    case insulinDelivery
+    case numberOfAlcoholicBeverages
+    case bloodAlcoholContent
 
-    // MARK: - Nutrition
+    // MARK: - Nutrition (Quantity)
     case dietaryEnergyConsumed
     case dietaryCarbohydrates
     case dietaryFatTotal
+    case dietaryFatPolyunsaturated
+    case dietaryFatMonounsaturated
+    case dietaryFatSaturated
+    case dietaryCholesterol
     case dietaryProtein
+    case dietarySugar
+    case dietaryFiber
+    case dietarySodium
+    case dietaryCalcium
+    case dietaryIron
+    case dietaryPotassium
+    case dietaryVitaminA
+    case dietaryVitaminB6
+    case dietaryVitaminB12
+    case dietaryVitaminC
+    case dietaryVitaminD
+    case dietaryVitaminE
+    case dietaryVitaminK
+    case dietaryBiotin
+    case dietaryThiamin
+    case dietaryRiboflavin
+    case dietaryNiacin
+    case dietaryFolate
+    case dietaryPantothenicAcid
+    case dietaryPhosphorus
+    case dietaryIodine
+    case dietaryMagnesium
+    case dietaryZinc
+    case dietarySelenium
+    case dietaryCopper
+    case dietaryManganese
+    case dietaryChromium
+    case dietaryMolybdenum
+    case dietaryChloride
     case dietaryWater
     case dietaryCaffeine
 
-    // MARK: - Audio Exposure
+    // MARK: - Respiratory (Quantity)
+    case peakExpiratoryFlowRate
+    case forcedExpiratoryVolume1
+    case forcedVitalCapacity
+    case inhalerUsage
+
+    // MARK: - Mobility (Quantity)
+    case walkingSpeed
+    case walkingStepLength
+    case walkingDoubleSupportPercentage
+    case walkingAsymmetryPercentage
+    case sixMinuteWalkTestDistance
+    case stairAscentSpeed
+    case stairDescentSpeed
+    case appleWalkingSteadiness
+
+    // MARK: - Fitness (Quantity)
+    case vo2Max
+
+    // MARK: - Audio Exposure (Quantity)
     case environmentalAudioExposure
     case headphoneAudioExposure
 
-    // MARK: - Fitness
-    case vo2Max
+    // MARK: - Other Measurements (Quantity)
+    case uvExposure
+    case numberOfTimesFallen
+    case timeInDaylight
 
-    // MARK: - Sleep
+    // MARK: - Sleep (Category)
     case sleepAnalysis
+
+    // MARK: - Mindfulness (Category)
+    case mindfulSession
+
+    // MARK: - Activity Events (Category)
+    case appleStandHour
+
+    // MARK: - Heart Events (Category)
+    case highHeartRateEvent
+    case lowHeartRateEvent
+    case irregularHeartRhythmEvent
+    case lowCardioFitnessEvent
+
+    // MARK: - Reproductive Health (Category)
+    case menstrualFlow
+    case cervicalMucusQuality
+    case ovulationTestResult
+    case sexualActivity
+    case intermenstrualBleeding
+    case contraceptive
+    case lactation
+    case pregnancy
+    case pregnancyTestResult
+    case progesteroneTestResult
+    case infrequentMenstrualCycles
+    case irregularMenstrualCycles
+    case prolongedMenstrualPeriods
+    case persistentIntermenstrualBleeding
+
+    // MARK: - Symptoms (Category)
+    case abdominalCramps
+    case acne
+    case appetiteChanges
+    case bladderIncontinence
+    case bloating
+    case breastPain
+    case chestTightnessOrPain
+    case chills
+    case constipation
+    case coughing
+    case diarrhea
+    case dizziness
+    case drySkin
+    case fainting
+    case fatigue
+    case fever
+    case generalizedBodyAche
+    case hairLoss
+    case headache
+    case heartburn
+    case hotFlashes
+    case lossOfSmell
+    case lossOfTaste
+    case lowerBackPain
+    case memoryLapse
+    case moodChanges
+    case nausea
+    case nightSweats
+    case pelvicPain
+    case rapidPoundingOrFlutteringHeartbeat
+    case runnyNose
+    case shortnessOfBreath
+    case sinusCongestion
+    case skippedHeartbeat
+    case sleepChanges
+    case soreThroat
+    case vaginalDryness
+    case vomiting
+    case wheezing
+
+    // MARK: - Hygiene (Category)
+    case toothbrushingEvent
+    case handwashingEvent
+
+    // MARK: - Audio Events (Category)
+    case environmentalAudioExposureEvent
+    case headphoneAudioExposureEvent
+
+    // MARK: - Correlations
+    case bloodPressure
+    case food
+
+    // MARK: - Characteristics
+    case biologicalSex
+    case bloodType
+    case dateOfBirth
+    case fitzpatrickSkinType
+    case wheelchairUse
+    case activityMoveMode
 
     // MARK: - Workouts
     case workout
+}
 
-    // MARK: - HealthKit Mapping
+// MARK: - Core Properties
 
-    /// The corresponding `HKSampleType` for reading from HealthKit.
-    var sampleType: HKSampleType {
+extension HealthDataType {
+
+    /// The underlying HealthKit type kind.
+    var kind: DataTypeKind {
+        if Self.quantityIdentifiers[self] != nil { return .quantity }
+        if Self.categoryIdentifiers[self] != nil { return .category }
+        if Self.correlationIdentifiers[self] != nil { return .correlation }
+        if Self.characteristicIdentifiers[self] != nil { return .characteristic }
+        if self == .workout { return .workout }
+        fatalError("No kind defined for \(self)")
+    }
+
+    /// UI category for grouping.
+    var category: HealthDataCategory {
         switch self {
+        case .stepCount, .distanceWalkingRunning, .distanceCycling, .distanceSwimming,
+             .distanceWheelchair, .distanceDownhillSnowSports, .flightsClimbed,
+             .activeEnergyBurned, .basalEnergyBurned, .appleExerciseTime, .appleStandTime,
+             .appleMoveTime, .pushCount, .swimmingStrokeCount, .nikeFuel, .physicalEffort,
+             .cyclingSpeed, .cyclingPower, .cyclingFunctionalThresholdPower, .cyclingCadence,
+             .runningSpeed, .runningPower, .runningStrideLength, .runningVerticalOscillation,
+             .runningGroundContactTime, .underwaterDepth, .waterTemperature, .appleStandHour:
+            return .activity
+
+        case .heartRate, .restingHeartRate, .walkingHeartRateAverage, .heartRateVariabilitySDNN,
+             .heartRateRecoveryOneMinute, .atrialFibrillationBurden, .peripheralPerfusionIndex,
+             .highHeartRateEvent, .lowHeartRateEvent, .irregularHeartRhythmEvent, .lowCardioFitnessEvent:
+            return .heart
+
+        case .oxygenSaturation, .bodyTemperature, .basalBodyTemperature,
+             .bloodPressureSystolic, .bloodPressureDiastolic, .respiratoryRate,
+             .appleSleepingWristTemperature, .bloodPressure:
+            return .vitals
+
+        case .bodyMass, .bodyMassIndex, .bodyFatPercentage, .leanBodyMass,
+             .height, .waistCircumference, .electrodermalActivity:
+            return .bodyMeasurements
+
+        case .bloodGlucose, .insulinDelivery, .numberOfAlcoholicBeverages, .bloodAlcoholContent:
+            return .metabolic
+
+        case .dietaryEnergyConsumed, .dietaryCarbohydrates, .dietaryFatTotal,
+             .dietaryFatPolyunsaturated, .dietaryFatMonounsaturated, .dietaryFatSaturated,
+             .dietaryCholesterol, .dietaryProtein, .dietarySugar, .dietaryFiber,
+             .dietarySodium, .dietaryCalcium, .dietaryIron, .dietaryPotassium,
+             .dietaryVitaminA, .dietaryVitaminB6, .dietaryVitaminB12, .dietaryVitaminC,
+             .dietaryVitaminD, .dietaryVitaminE, .dietaryVitaminK, .dietaryBiotin,
+             .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryFolate,
+             .dietaryPantothenicAcid, .dietaryPhosphorus, .dietaryIodine, .dietaryMagnesium,
+             .dietaryZinc, .dietarySelenium, .dietaryCopper, .dietaryManganese,
+             .dietaryChromium, .dietaryMolybdenum, .dietaryChloride, .dietaryWater,
+             .dietaryCaffeine, .food:
+            return .nutrition
+
+        case .peakExpiratoryFlowRate, .forcedExpiratoryVolume1, .forcedVitalCapacity, .inhalerUsage:
+            return .respiratory
+
+        case .walkingSpeed, .walkingStepLength, .walkingDoubleSupportPercentage,
+             .walkingAsymmetryPercentage, .sixMinuteWalkTestDistance,
+             .stairAscentSpeed, .stairDescentSpeed, .appleWalkingSteadiness:
+            return .mobility
+
+        case .vo2Max:
+            return .fitness
+
+        case .environmentalAudioExposure, .headphoneAudioExposure,
+             .environmentalAudioExposureEvent, .headphoneAudioExposureEvent:
+            return .audioExposure
+
         case .sleepAnalysis:
-            return HKCategoryType(.sleepAnalysis)
+            return .sleep
+
+        case .mindfulSession:
+            return .mindfulness
+
+        case .menstrualFlow, .cervicalMucusQuality, .ovulationTestResult, .sexualActivity,
+             .intermenstrualBleeding, .contraceptive, .lactation, .pregnancy,
+             .pregnancyTestResult, .progesteroneTestResult, .infrequentMenstrualCycles,
+             .irregularMenstrualCycles, .prolongedMenstrualPeriods, .persistentIntermenstrualBleeding:
+            return .reproductiveHealth
+
+        case .abdominalCramps, .acne, .appetiteChanges, .bladderIncontinence, .bloating,
+             .breastPain, .chestTightnessOrPain, .chills, .constipation, .coughing,
+             .diarrhea, .dizziness, .drySkin, .fainting, .fatigue, .fever,
+             .generalizedBodyAche, .hairLoss, .headache, .heartburn, .hotFlashes,
+             .lossOfSmell, .lossOfTaste, .lowerBackPain, .memoryLapse, .moodChanges,
+             .nausea, .nightSweats, .pelvicPain, .rapidPoundingOrFlutteringHeartbeat,
+             .runnyNose, .shortnessOfBreath, .sinusCongestion, .skippedHeartbeat,
+             .sleepChanges, .soreThroat, .vaginalDryness, .vomiting, .wheezing:
+            return .symptoms
+
+        case .uvExposure, .numberOfTimesFallen, .timeInDaylight,
+             .toothbrushingEvent, .handwashingEvent:
+            return .other
+
+        case .workout:
+            return .workout
+
+        case .biologicalSex, .bloodType, .dateOfBirth, .fitzpatrickSkinType,
+             .wheelchairUse, .activityMoveMode:
+            return .characteristics
+        }
+    }
+
+    /// Whether this type can be queried as an HKSampleType.
+    var isSampleBased: Bool {
+        kind != .characteristic
+    }
+
+    /// Whether this is a quantity type (vs. category, correlation, characteristic, or workout).
+    var isQuantityType: Bool {
+        kind == .quantity
+    }
+}
+
+// MARK: - HealthKit Mapping
+
+extension HealthDataType {
+
+    /// The corresponding `HKObjectType` for authorization requests. Works for all types.
+    var objectType: HKObjectType {
+        switch kind {
+        case .quantity:
+            return HKQuantityType(quantityTypeIdentifier)
+        case .category:
+            return HKCategoryType(categoryTypeIdentifier)
+        case .correlation:
+            return HKCorrelationType(correlationTypeIdentifier)
+        case .characteristic:
+            return HKCharacteristicType(characteristicTypeIdentifier)
         case .workout:
             return HKWorkoutType.workoutType()
-        default:
-            return HKQuantityType(quantityTypeIdentifier)
         }
     }
 
-    /// The corresponding `HKQuantityTypeIdentifier` for quantity types.
-    /// Fatal error if called on non-quantity types.
-    var quantityTypeIdentifier: HKQuantityTypeIdentifier {
-        switch self {
-        case .stepCount: return .stepCount
-        case .distanceWalkingRunning: return .distanceWalkingRunning
-        case .flightsClimbed: return .flightsClimbed
-        case .activeEnergyBurned: return .activeEnergyBurned
-        case .basalEnergyBurned: return .basalEnergyBurned
-        case .appleExerciseTime: return .appleExerciseTime
-        case .appleStandTime: return .appleStandTime
-        case .heartRate: return .heartRate
-        case .restingHeartRate: return .restingHeartRate
-        case .walkingHeartRateAverage: return .walkingHeartRateAverage
-        case .heartRateVariabilitySDNN: return .heartRateVariabilitySDNN
-        case .oxygenSaturation: return .oxygenSaturation
-        case .bodyTemperature: return .bodyTemperature
-        case .bloodPressureSystolic: return .bloodPressureSystolic
-        case .bloodPressureDiastolic: return .bloodPressureDiastolic
-        case .respiratoryRate: return .respiratoryRate
-        case .bodyMass: return .bodyMass
-        case .bodyMassIndex: return .bodyMassIndex
-        case .bodyFatPercentage: return .bodyFatPercentage
-        case .leanBodyMass: return .leanBodyMass
-        case .height: return .height
-        case .waistCircumference: return .waistCircumference
-        case .bloodGlucose: return .bloodGlucose
-        case .dietaryEnergyConsumed: return .dietaryEnergyConsumed
-        case .dietaryCarbohydrates: return .dietaryCarbohydrates
-        case .dietaryFatTotal: return .dietaryFatTotal
-        case .dietaryProtein: return .dietaryProtein
-        case .dietaryWater: return .dietaryWater
-        case .dietaryCaffeine: return .dietaryCaffeine
-        case .environmentalAudioExposure: return .environmentalAudioExposure
-        case .headphoneAudioExposure: return .headphoneAudioExposure
-        case .vo2Max: return .vo2Max
-        case .sleepAnalysis, .workout:
-            fatalError("\(self) is not a quantity type")
+    /// The corresponding `HKSampleType` for reading from HealthKit.
+    /// Fatal error if called on characteristic types (use `objectType` instead).
+    var sampleType: HKSampleType {
+        switch kind {
+        case .quantity:
+            return HKQuantityType(quantityTypeIdentifier)
+        case .category:
+            return HKCategoryType(categoryTypeIdentifier)
+        case .correlation:
+            return HKCorrelationType(correlationTypeIdentifier)
+        case .workout:
+            return HKWorkoutType.workoutType()
+        case .characteristic:
+            fatalError("\(self) is a characteristic type with no sample type")
         }
     }
+
+    /// The corresponding `HKQuantityTypeIdentifier`. Fatal error for non-quantity types.
+    var quantityTypeIdentifier: HKQuantityTypeIdentifier {
+        guard let id = Self.quantityIdentifiers[self] else {
+            fatalError("\(self) is not a quantity type")
+        }
+        return id
+    }
+
+    /// The corresponding `HKCategoryTypeIdentifier`. Fatal error for non-category types.
+    var categoryTypeIdentifier: HKCategoryTypeIdentifier {
+        guard let id = Self.categoryIdentifiers[self] else {
+            fatalError("\(self) is not a category type")
+        }
+        return id
+    }
+
+    /// The corresponding `HKCorrelationTypeIdentifier`. Fatal error for non-correlation types.
+    var correlationTypeIdentifier: HKCorrelationTypeIdentifier {
+        guard let id = Self.correlationIdentifiers[self] else {
+            fatalError("\(self) is not a correlation type")
+        }
+        return id
+    }
+
+    /// The corresponding `HKCharacteristicTypeIdentifier`. Fatal error for non-characteristic types.
+    var characteristicTypeIdentifier: HKCharacteristicTypeIdentifier {
+        guard let id = Self.characteristicIdentifiers[self] else {
+            fatalError("\(self) is not a characteristic type")
+        }
+        return id
+    }
+}
+
+// MARK: - Display Properties
+
+extension HealthDataType {
 
     /// Human-readable display name.
     var displayName: String {
-        switch self {
-        case .stepCount: return "Step Count"
-        case .distanceWalkingRunning: return "Walking + Running Distance"
-        case .flightsClimbed: return "Flights Climbed"
-        case .activeEnergyBurned: return "Active Energy"
-        case .basalEnergyBurned: return "Resting Energy"
-        case .appleExerciseTime: return "Exercise Minutes"
-        case .appleStandTime: return "Stand Minutes"
-        case .heartRate: return "Heart Rate"
-        case .restingHeartRate: return "Resting Heart Rate"
-        case .walkingHeartRateAverage: return "Walking Heart Rate"
-        case .heartRateVariabilitySDNN: return "Heart Rate Variability"
-        case .oxygenSaturation: return "Blood Oxygen"
-        case .bodyTemperature: return "Body Temperature"
-        case .bloodPressureSystolic: return "Blood Pressure (Systolic)"
-        case .bloodPressureDiastolic: return "Blood Pressure (Diastolic)"
-        case .respiratoryRate: return "Respiratory Rate"
-        case .bodyMass: return "Weight"
-        case .bodyMassIndex: return "BMI"
-        case .bodyFatPercentage: return "Body Fat"
-        case .leanBodyMass: return "Lean Body Mass"
-        case .height: return "Height"
-        case .waistCircumference: return "Waist Circumference"
-        case .bloodGlucose: return "Blood Glucose"
-        case .dietaryEnergyConsumed: return "Dietary Energy"
-        case .dietaryCarbohydrates: return "Carbohydrates"
-        case .dietaryFatTotal: return "Total Fat"
-        case .dietaryProtein: return "Protein"
-        case .dietaryWater: return "Water"
-        case .dietaryCaffeine: return "Caffeine"
-        case .environmentalAudioExposure: return "Environmental Sound"
-        case .headphoneAudioExposure: return "Headphone Audio"
-        case .vo2Max: return "VO2 Max"
-        case .sleepAnalysis: return "Sleep"
-        case .workout: return "Workouts"
-        }
+        Self.displayNames[self] ?? rawValue
     }
+}
 
-    /// Whether this is a quantity type (vs. category or workout).
-    var isQuantityType: Bool {
-        switch self {
-        case .sleepAnalysis, .workout: return false
-        default: return true
-        }
-    }
+// MARK: - Static Collections
 
-    /// All sample types as a Set for HealthKit authorization requests.
+extension HealthDataType {
+
+    /// All sample-based types as a Set for HealthKit sample queries.
     static var allSampleTypes: Set<HKSampleType> {
-        Set(allCases.map(\.sampleType))
+        Set(allCases.filter(\.isSampleBased).map(\.sampleType))
     }
+
+    /// All types as HKObjectType for HealthKit authorization requests.
+    static var allObjectTypes: Set<HKObjectType> {
+        Set(allCases.map(\.objectType))
+    }
+}
+
+// MARK: - Quantity Type Identifiers
+
+private extension HealthDataType {
+
+    static let quantityIdentifiers: [HealthDataType: HKQuantityTypeIdentifier] = [
+        // Activity
+        .stepCount: .stepCount,
+        .distanceWalkingRunning: .distanceWalkingRunning,
+        .distanceCycling: .distanceCycling,
+        .distanceSwimming: .distanceSwimming,
+        .distanceWheelchair: .distanceWheelchair,
+        .distanceDownhillSnowSports: .distanceDownhillSnowSports,
+        .flightsClimbed: .flightsClimbed,
+        .activeEnergyBurned: .activeEnergyBurned,
+        .basalEnergyBurned: .basalEnergyBurned,
+        .appleExerciseTime: .appleExerciseTime,
+        .appleStandTime: .appleStandTime,
+        .appleMoveTime: .appleMoveTime,
+        .pushCount: .pushCount,
+        .swimmingStrokeCount: .swimmingStrokeCount,
+        .nikeFuel: .nikeFuel,
+        .physicalEffort: .physicalEffort,
+        .cyclingSpeed: .cyclingSpeed,
+        .cyclingPower: .cyclingPower,
+        .cyclingFunctionalThresholdPower: .cyclingFunctionalThresholdPower,
+        .cyclingCadence: .cyclingCadence,
+        .runningSpeed: .runningSpeed,
+        .runningPower: .runningPower,
+        .runningStrideLength: .runningStrideLength,
+        .runningVerticalOscillation: .runningVerticalOscillation,
+        .runningGroundContactTime: .runningGroundContactTime,
+        .underwaterDepth: .underwaterDepth,
+        .waterTemperature: .waterTemperature,
+        // Heart
+        .heartRate: .heartRate,
+        .restingHeartRate: .restingHeartRate,
+        .walkingHeartRateAverage: .walkingHeartRateAverage,
+        .heartRateVariabilitySDNN: .heartRateVariabilitySDNN,
+        .heartRateRecoveryOneMinute: .heartRateRecoveryOneMinute,
+        .atrialFibrillationBurden: .atrialFibrillationBurden,
+        .peripheralPerfusionIndex: .peripheralPerfusionIndex,
+        // Vitals
+        .oxygenSaturation: .oxygenSaturation,
+        .bodyTemperature: .bodyTemperature,
+        .basalBodyTemperature: .basalBodyTemperature,
+        .bloodPressureSystolic: .bloodPressureSystolic,
+        .bloodPressureDiastolic: .bloodPressureDiastolic,
+        .respiratoryRate: .respiratoryRate,
+        .appleSleepingWristTemperature: .appleSleepingWristTemperature,
+        // Body Measurements
+        .bodyMass: .bodyMass,
+        .bodyMassIndex: .bodyMassIndex,
+        .bodyFatPercentage: .bodyFatPercentage,
+        .leanBodyMass: .leanBodyMass,
+        .height: .height,
+        .waistCircumference: .waistCircumference,
+        .electrodermalActivity: .electrodermalActivity,
+        // Metabolic
+        .bloodGlucose: .bloodGlucose,
+        .insulinDelivery: .insulinDelivery,
+        .numberOfAlcoholicBeverages: .numberOfAlcoholicBeverages,
+        .bloodAlcoholContent: .bloodAlcoholContent,
+        // Nutrition
+        .dietaryEnergyConsumed: .dietaryEnergyConsumed,
+        .dietaryCarbohydrates: .dietaryCarbohydrates,
+        .dietaryFatTotal: .dietaryFatTotal,
+        .dietaryFatPolyunsaturated: .dietaryFatPolyunsaturated,
+        .dietaryFatMonounsaturated: .dietaryFatMonounsaturated,
+        .dietaryFatSaturated: .dietaryFatSaturated,
+        .dietaryCholesterol: .dietaryCholesterol,
+        .dietaryProtein: .dietaryProtein,
+        .dietarySugar: .dietarySugar,
+        .dietaryFiber: .dietaryFiber,
+        .dietarySodium: .dietarySodium,
+        .dietaryCalcium: .dietaryCalcium,
+        .dietaryIron: .dietaryIron,
+        .dietaryPotassium: .dietaryPotassium,
+        .dietaryVitaminA: .dietaryVitaminA,
+        .dietaryVitaminB6: .dietaryVitaminB6,
+        .dietaryVitaminB12: .dietaryVitaminB12,
+        .dietaryVitaminC: .dietaryVitaminC,
+        .dietaryVitaminD: .dietaryVitaminD,
+        .dietaryVitaminE: .dietaryVitaminE,
+        .dietaryVitaminK: .dietaryVitaminK,
+        .dietaryBiotin: .dietaryBiotin,
+        .dietaryThiamin: .dietaryThiamin,
+        .dietaryRiboflavin: .dietaryRiboflavin,
+        .dietaryNiacin: .dietaryNiacin,
+        .dietaryFolate: .dietaryFolate,
+        .dietaryPantothenicAcid: .dietaryPantothenicAcid,
+        .dietaryPhosphorus: .dietaryPhosphorus,
+        .dietaryIodine: .dietaryIodine,
+        .dietaryMagnesium: .dietaryMagnesium,
+        .dietaryZinc: .dietaryZinc,
+        .dietarySelenium: .dietarySelenium,
+        .dietaryCopper: .dietaryCopper,
+        .dietaryManganese: .dietaryManganese,
+        .dietaryChromium: .dietaryChromium,
+        .dietaryMolybdenum: .dietaryMolybdenum,
+        .dietaryChloride: .dietaryChloride,
+        .dietaryWater: .dietaryWater,
+        .dietaryCaffeine: .dietaryCaffeine,
+        // Respiratory
+        .peakExpiratoryFlowRate: .peakExpiratoryFlowRate,
+        .forcedExpiratoryVolume1: .forcedExpiratoryVolume1,
+        .forcedVitalCapacity: .forcedVitalCapacity,
+        .inhalerUsage: .inhalerUsage,
+        // Mobility
+        .walkingSpeed: .walkingSpeed,
+        .walkingStepLength: .walkingStepLength,
+        .walkingDoubleSupportPercentage: .walkingDoubleSupportPercentage,
+        .walkingAsymmetryPercentage: .walkingAsymmetryPercentage,
+        .sixMinuteWalkTestDistance: .sixMinuteWalkTestDistance,
+        .stairAscentSpeed: .stairAscentSpeed,
+        .stairDescentSpeed: .stairDescentSpeed,
+        .appleWalkingSteadiness: .appleWalkingSteadiness,
+        // Fitness
+        .vo2Max: .vo2Max,
+        // Audio Exposure
+        .environmentalAudioExposure: .environmentalAudioExposure,
+        .headphoneAudioExposure: .headphoneAudioExposure,
+        // Other
+        .uvExposure: .uvExposure,
+        .numberOfTimesFallen: .numberOfTimesFallen,
+        .timeInDaylight: .timeInDaylight,
+    ]
+}
+
+// MARK: - Category Type Identifiers
+
+private extension HealthDataType {
+
+    static let categoryIdentifiers: [HealthDataType: HKCategoryTypeIdentifier] = [
+        // Sleep & Mindfulness
+        .sleepAnalysis: .sleepAnalysis,
+        .mindfulSession: .mindfulSession,
+        // Activity Events
+        .appleStandHour: .appleStandHour,
+        // Heart Events
+        .highHeartRateEvent: .highHeartRateEvent,
+        .lowHeartRateEvent: .lowHeartRateEvent,
+        .irregularHeartRhythmEvent: .irregularHeartRhythmEvent,
+        .lowCardioFitnessEvent: .lowCardioFitnessEvent,
+        // Reproductive Health
+        .menstrualFlow: .menstrualFlow,
+        .cervicalMucusQuality: .cervicalMucusQuality,
+        .ovulationTestResult: .ovulationTestResult,
+        .sexualActivity: .sexualActivity,
+        .intermenstrualBleeding: .intermenstrualBleeding,
+        .contraceptive: .contraceptive,
+        .lactation: .lactation,
+        .pregnancy: .pregnancy,
+        .pregnancyTestResult: .pregnancyTestResult,
+        .progesteroneTestResult: .progesteroneTestResult,
+        .infrequentMenstrualCycles: .infrequentMenstrualCycles,
+        .irregularMenstrualCycles: .irregularMenstrualCycles,
+        .prolongedMenstrualPeriods: .prolongedMenstrualPeriods,
+        .persistentIntermenstrualBleeding: .persistentIntermenstrualBleeding,
+        // Symptoms
+        .abdominalCramps: .abdominalCramps,
+        .acne: .acne,
+        .appetiteChanges: .appetiteChanges,
+        .bladderIncontinence: .bladderIncontinence,
+        .bloating: .bloating,
+        .breastPain: .breastPain,
+        .chestTightnessOrPain: .chestTightnessOrPain,
+        .chills: .chills,
+        .constipation: .constipation,
+        .coughing: .coughing,
+        .diarrhea: .diarrhea,
+        .dizziness: .dizziness,
+        .drySkin: .drySkin,
+        .fainting: .fainting,
+        .fatigue: .fatigue,
+        .fever: .fever,
+        .generalizedBodyAche: .generalizedBodyAche,
+        .hairLoss: .hairLoss,
+        .headache: .headache,
+        .heartburn: .heartburn,
+        .hotFlashes: .hotFlashes,
+        .lossOfSmell: .lossOfSmell,
+        .lossOfTaste: .lossOfTaste,
+        .lowerBackPain: .lowerBackPain,
+        .memoryLapse: .memoryLapse,
+        .moodChanges: .moodChanges,
+        .nausea: .nausea,
+        .nightSweats: .nightSweats,
+        .pelvicPain: .pelvicPain,
+        .rapidPoundingOrFlutteringHeartbeat: .rapidPoundingOrFlutteringHeartbeat,
+        .runnyNose: .runnyNose,
+        .shortnessOfBreath: .shortnessOfBreath,
+        .sinusCongestion: .sinusCongestion,
+        .skippedHeartbeat: .skippedHeartbeat,
+        .sleepChanges: .sleepChanges,
+        .soreThroat: .soreThroat,
+        .vaginalDryness: .vaginalDryness,
+        .vomiting: .vomiting,
+        .wheezing: .wheezing,
+        // Hygiene
+        .toothbrushingEvent: .toothbrushingEvent,
+        .handwashingEvent: .handwashingEvent,
+        // Audio Events
+        .environmentalAudioExposureEvent: .environmentalAudioExposureEvent,
+        .headphoneAudioExposureEvent: .headphoneAudioExposureEvent,
+    ]
+}
+
+// MARK: - Correlation & Characteristic Identifiers
+
+private extension HealthDataType {
+
+    static let correlationIdentifiers: [HealthDataType: HKCorrelationTypeIdentifier] = [
+        .bloodPressure: .bloodPressure,
+        .food: .food,
+    ]
+
+    static let characteristicIdentifiers: [HealthDataType: HKCharacteristicTypeIdentifier] = [
+        .biologicalSex: .biologicalSex,
+        .bloodType: .bloodType,
+        .dateOfBirth: .dateOfBirth,
+        .fitzpatrickSkinType: .fitzpatrickSkinType,
+        .wheelchairUse: .wheelchairUse,
+        .activityMoveMode: .activityMoveMode,
+    ]
+}
+
+// MARK: - Display Names
+
+private extension HealthDataType {
+
+    static let displayNames: [HealthDataType: String] = [
+        // Activity
+        .stepCount: "Step Count",
+        .distanceWalkingRunning: "Walking + Running Distance",
+        .distanceCycling: "Cycling Distance",
+        .distanceSwimming: "Swimming Distance",
+        .distanceWheelchair: "Wheelchair Distance",
+        .distanceDownhillSnowSports: "Snow Sports Distance",
+        .flightsClimbed: "Flights Climbed",
+        .activeEnergyBurned: "Active Energy",
+        .basalEnergyBurned: "Resting Energy",
+        .appleExerciseTime: "Exercise Minutes",
+        .appleStandTime: "Stand Minutes",
+        .appleMoveTime: "Move Minutes",
+        .pushCount: "Push Count",
+        .swimmingStrokeCount: "Swimming Strokes",
+        .nikeFuel: "Nike Fuel",
+        .physicalEffort: "Physical Effort",
+        .cyclingSpeed: "Cycling Speed",
+        .cyclingPower: "Cycling Power",
+        .cyclingFunctionalThresholdPower: "Cycling FTP",
+        .cyclingCadence: "Cycling Cadence",
+        .runningSpeed: "Running Speed",
+        .runningPower: "Running Power",
+        .runningStrideLength: "Running Stride Length",
+        .runningVerticalOscillation: "Running Vertical Oscillation",
+        .runningGroundContactTime: "Ground Contact Time",
+        .underwaterDepth: "Underwater Depth",
+        .waterTemperature: "Water Temperature",
+        // Heart
+        .heartRate: "Heart Rate",
+        .restingHeartRate: "Resting Heart Rate",
+        .walkingHeartRateAverage: "Walking Heart Rate",
+        .heartRateVariabilitySDNN: "Heart Rate Variability",
+        .heartRateRecoveryOneMinute: "Heart Rate Recovery",
+        .atrialFibrillationBurden: "AFib Burden",
+        .peripheralPerfusionIndex: "Perfusion Index",
+        // Vitals
+        .oxygenSaturation: "Blood Oxygen",
+        .bodyTemperature: "Body Temperature",
+        .basalBodyTemperature: "Basal Body Temperature",
+        .bloodPressureSystolic: "Blood Pressure (Systolic)",
+        .bloodPressureDiastolic: "Blood Pressure (Diastolic)",
+        .respiratoryRate: "Respiratory Rate",
+        .appleSleepingWristTemperature: "Wrist Temperature (Sleep)",
+        // Body Measurements
+        .bodyMass: "Weight",
+        .bodyMassIndex: "BMI",
+        .bodyFatPercentage: "Body Fat",
+        .leanBodyMass: "Lean Body Mass",
+        .height: "Height",
+        .waistCircumference: "Waist Circumference",
+        .electrodermalActivity: "Electrodermal Activity",
+        // Metabolic
+        .bloodGlucose: "Blood Glucose",
+        .insulinDelivery: "Insulin Delivery",
+        .numberOfAlcoholicBeverages: "Alcoholic Beverages",
+        .bloodAlcoholContent: "Blood Alcohol Content",
+        // Nutrition
+        .dietaryEnergyConsumed: "Dietary Energy",
+        .dietaryCarbohydrates: "Carbohydrates",
+        .dietaryFatTotal: "Total Fat",
+        .dietaryFatPolyunsaturated: "Polyunsaturated Fat",
+        .dietaryFatMonounsaturated: "Monounsaturated Fat",
+        .dietaryFatSaturated: "Saturated Fat",
+        .dietaryCholesterol: "Cholesterol",
+        .dietaryProtein: "Protein",
+        .dietarySugar: "Sugar",
+        .dietaryFiber: "Fiber",
+        .dietarySodium: "Sodium",
+        .dietaryCalcium: "Calcium",
+        .dietaryIron: "Iron",
+        .dietaryPotassium: "Potassium",
+        .dietaryVitaminA: "Vitamin A",
+        .dietaryVitaminB6: "Vitamin B6",
+        .dietaryVitaminB12: "Vitamin B12",
+        .dietaryVitaminC: "Vitamin C",
+        .dietaryVitaminD: "Vitamin D",
+        .dietaryVitaminE: "Vitamin E",
+        .dietaryVitaminK: "Vitamin K",
+        .dietaryBiotin: "Biotin",
+        .dietaryThiamin: "Thiamin",
+        .dietaryRiboflavin: "Riboflavin",
+        .dietaryNiacin: "Niacin",
+        .dietaryFolate: "Folate",
+        .dietaryPantothenicAcid: "Pantothenic Acid",
+        .dietaryPhosphorus: "Phosphorus",
+        .dietaryIodine: "Iodine",
+        .dietaryMagnesium: "Magnesium",
+        .dietaryZinc: "Zinc",
+        .dietarySelenium: "Selenium",
+        .dietaryCopper: "Copper",
+        .dietaryManganese: "Manganese",
+        .dietaryChromium: "Chromium",
+        .dietaryMolybdenum: "Molybdenum",
+        .dietaryChloride: "Chloride",
+        .dietaryWater: "Water",
+        .dietaryCaffeine: "Caffeine",
+        // Respiratory
+        .peakExpiratoryFlowRate: "Peak Expiratory Flow",
+        .forcedExpiratoryVolume1: "Forced Expiratory Volume",
+        .forcedVitalCapacity: "Forced Vital Capacity",
+        .inhalerUsage: "Inhaler Usage",
+        // Mobility
+        .walkingSpeed: "Walking Speed",
+        .walkingStepLength: "Walking Step Length",
+        .walkingDoubleSupportPercentage: "Double Support Time",
+        .walkingAsymmetryPercentage: "Walking Asymmetry",
+        .sixMinuteWalkTestDistance: "Six-Minute Walk",
+        .stairAscentSpeed: "Stair Ascent Speed",
+        .stairDescentSpeed: "Stair Descent Speed",
+        .appleWalkingSteadiness: "Walking Steadiness",
+        // Fitness
+        .vo2Max: "VO2 Max",
+        // Audio Exposure
+        .environmentalAudioExposure: "Environmental Sound",
+        .headphoneAudioExposure: "Headphone Audio",
+        // Other
+        .uvExposure: "UV Exposure",
+        .numberOfTimesFallen: "Number of Falls",
+        .timeInDaylight: "Time in Daylight",
+        // Sleep & Mindfulness
+        .sleepAnalysis: "Sleep",
+        .mindfulSession: "Mindful Minutes",
+        // Activity Events
+        .appleStandHour: "Stand Hours",
+        // Heart Events
+        .highHeartRateEvent: "High Heart Rate Event",
+        .lowHeartRateEvent: "Low Heart Rate Event",
+        .irregularHeartRhythmEvent: "Irregular Rhythm Event",
+        .lowCardioFitnessEvent: "Low Cardio Fitness Event",
+        // Reproductive Health
+        .menstrualFlow: "Menstrual Flow",
+        .cervicalMucusQuality: "Cervical Mucus Quality",
+        .ovulationTestResult: "Ovulation Test",
+        .sexualActivity: "Sexual Activity",
+        .intermenstrualBleeding: "Intermenstrual Bleeding",
+        .contraceptive: "Contraceptive",
+        .lactation: "Lactation",
+        .pregnancy: "Pregnancy",
+        .pregnancyTestResult: "Pregnancy Test",
+        .progesteroneTestResult: "Progesterone Test",
+        .infrequentMenstrualCycles: "Infrequent Cycles",
+        .irregularMenstrualCycles: "Irregular Cycles",
+        .prolongedMenstrualPeriods: "Prolonged Periods",
+        .persistentIntermenstrualBleeding: "Persistent Spotting",
+        // Symptoms
+        .abdominalCramps: "Abdominal Cramps",
+        .acne: "Acne",
+        .appetiteChanges: "Appetite Changes",
+        .bladderIncontinence: "Bladder Incontinence",
+        .bloating: "Bloating",
+        .breastPain: "Breast Pain",
+        .chestTightnessOrPain: "Chest Tightness",
+        .chills: "Chills",
+        .constipation: "Constipation",
+        .coughing: "Coughing",
+        .diarrhea: "Diarrhea",
+        .dizziness: "Dizziness",
+        .drySkin: "Dry Skin",
+        .fainting: "Fainting",
+        .fatigue: "Fatigue",
+        .fever: "Fever",
+        .generalizedBodyAche: "Body Aches",
+        .hairLoss: "Hair Loss",
+        .headache: "Headache",
+        .heartburn: "Heartburn",
+        .hotFlashes: "Hot Flashes",
+        .lossOfSmell: "Loss of Smell",
+        .lossOfTaste: "Loss of Taste",
+        .lowerBackPain: "Lower Back Pain",
+        .memoryLapse: "Memory Lapse",
+        .moodChanges: "Mood Changes",
+        .nausea: "Nausea",
+        .nightSweats: "Night Sweats",
+        .pelvicPain: "Pelvic Pain",
+        .rapidPoundingOrFlutteringHeartbeat: "Rapid Heartbeat",
+        .runnyNose: "Runny Nose",
+        .shortnessOfBreath: "Shortness of Breath",
+        .sinusCongestion: "Sinus Congestion",
+        .skippedHeartbeat: "Skipped Heartbeat",
+        .sleepChanges: "Sleep Changes",
+        .soreThroat: "Sore Throat",
+        .vaginalDryness: "Vaginal Dryness",
+        .vomiting: "Vomiting",
+        .wheezing: "Wheezing",
+        // Hygiene
+        .toothbrushingEvent: "Toothbrushing",
+        .handwashingEvent: "Handwashing",
+        // Audio Events
+        .environmentalAudioExposureEvent: "Loud Environment Event",
+        .headphoneAudioExposureEvent: "Loud Headphone Event",
+        // Correlations
+        .bloodPressure: "Blood Pressure",
+        .food: "Food",
+        // Characteristics
+        .biologicalSex: "Biological Sex",
+        .bloodType: "Blood Type",
+        .dateOfBirth: "Date of Birth",
+        .fitzpatrickSkinType: "Skin Type",
+        .wheelchairUse: "Wheelchair Use",
+        .activityMoveMode: "Activity Move Mode",
+        // Workout
+        .workout: "Workouts",
+    ]
 }

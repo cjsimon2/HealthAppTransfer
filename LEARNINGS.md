@@ -19,6 +19,8 @@
 
 ### Architecture Patterns
 <!-- Structural decisions that work well -->
+- HealthDataType uses static dictionaries (not giant switches) for identifier/displayName/unit lookups — keeps the 182-case enum maintainable. `kind` is derived from which identifier dictionary contains the type.
+- HKCharacteristicType has no HKSampleType — guard with `isSampleBased` before calling `sampleType`, `dataExists(for:)`, or sample queries. Use `objectType` (HKObjectType) for authorization which covers all type kinds.
 - All core services are Swift actors (HealthKitService, NetworkServer, CertificateService, PairingService, KeychainStore, AuditService) for thread safety.
 - To parallelize work inside an actor with TaskGroup, capture `Sendable` dependencies as locals (`let store = self.store`) before the group — child tasks don't inherit actor isolation, so direct property access would re-serialize through the actor.
 - Available simulators are iPhone 17 series (17, 17 Pro, 17 Pro Max, Air) — no iPhone 16. Use `iPhone 17 Pro` for xcodebuild commands.

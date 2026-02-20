@@ -84,49 +84,165 @@ enum HealthSampleMapper {
 
     // MARK: - Unit Mapping
 
-    /// Returns the preferred HKUnit for a given data type.
+    /// Returns the preferred HKUnit for a given quantity data type.
     static func preferredUnit(for type: HealthDataType) -> HKUnit {
-        switch type {
-        case .stepCount, .flightsClimbed:
-            return .count()
-        case .distanceWalkingRunning:
-            return .meter()
-        case .activeEnergyBurned, .basalEnergyBurned, .dietaryEnergyConsumed:
-            return .kilocalorie()
-        case .appleExerciseTime, .appleStandTime:
-            return .minute()
-        case .heartRate, .restingHeartRate, .walkingHeartRateAverage:
-            return HKUnit.count().unitDivided(by: .minute())
-        case .heartRateVariabilitySDNN:
-            return .secondUnit(with: .milli)
-        case .oxygenSaturation, .bodyFatPercentage:
-            return .percent()
-        case .bodyTemperature:
-            return .degreeCelsius()
-        case .bloodPressureSystolic, .bloodPressureDiastolic:
-            return .millimeterOfMercury()
-        case .respiratoryRate:
-            return HKUnit.count().unitDivided(by: .minute())
-        case .bodyMass, .leanBodyMass:
-            return .gramUnit(with: .kilo)
-        case .bodyMassIndex:
-            return .count()
-        case .height, .waistCircumference:
-            return .meterUnit(with: .centi)
-        case .bloodGlucose:
-            return HKUnit.gramUnit(with: .milli).unitDivided(by: .literUnit(with: .deci))
-        case .dietaryCarbohydrates, .dietaryFatTotal, .dietaryProtein, .dietaryCaffeine:
-            return .gram()
-        case .dietaryWater:
-            return .literUnit(with: .milli)
-        case .environmentalAudioExposure, .headphoneAudioExposure:
-            return .decibelAWeightedSoundPressureLevel()
-        case .vo2Max:
-            return HKUnit.literUnit(with: .milli).unitDivided(by: HKUnit.gramUnit(with: .kilo).unitMultiplied(by: .minute()))
-        case .sleepAnalysis, .workout:
-            fatalError("\(type) does not use HKUnit")
+        guard let unit = unitMap[type] else {
+            fatalError("\(type) does not have a preferred HKUnit")
         }
+        return unit
     }
+
+    private static let beatsPerMinute = HKUnit.count().unitDivided(by: .minute())
+    private static let metersPerSecond = HKUnit.meter().unitDivided(by: .second())
+    private static let mgPerDL = HKUnit.gramUnit(with: .milli).unitDivided(by: .literUnit(with: .deci))
+    private static let vo2MaxUnit = HKUnit.literUnit(with: .milli).unitDivided(by: HKUnit.gramUnit(with: .kilo).unitMultiplied(by: .minute()))
+    private static let litersPerMinute = HKUnit.liter().unitDivided(by: .minute())
+
+    // swiftlint:disable closure_body_length
+    private static let unitMap: [HealthDataType: HKUnit] = [
+        // Activity — count
+        .stepCount: .count(),
+        .flightsClimbed: .count(),
+        .pushCount: .count(),
+        .swimmingStrokeCount: .count(),
+        .nikeFuel: .count(),
+        .physicalEffort: .count(),
+        // Activity — distance (meters)
+        .distanceWalkingRunning: .meter(),
+        .distanceCycling: .meter(),
+        .distanceSwimming: .meter(),
+        .distanceWheelchair: .meter(),
+        .distanceDownhillSnowSports: .meter(),
+        .underwaterDepth: .meter(),
+        .sixMinuteWalkTestDistance: .meter(),
+        // Activity — energy
+        .activeEnergyBurned: .kilocalorie(),
+        .basalEnergyBurned: .kilocalorie(),
+        // Activity — time (minutes)
+        .appleExerciseTime: .minute(),
+        .appleStandTime: .minute(),
+        .appleMoveTime: .minute(),
+        // Activity — speed (m/s)
+        .cyclingSpeed: metersPerSecond,
+        .runningSpeed: metersPerSecond,
+        .walkingSpeed: metersPerSecond,
+        .stairAscentSpeed: metersPerSecond,
+        .stairDescentSpeed: metersPerSecond,
+        // Activity — power (watts)
+        .cyclingPower: .watt(),
+        .cyclingFunctionalThresholdPower: .watt(),
+        .runningPower: .watt(),
+        // Activity — cadence (count/min)
+        .cyclingCadence: beatsPerMinute,
+        // Activity — length
+        .runningStrideLength: .meter(),
+        .walkingStepLength: .meter(),
+        .runningVerticalOscillation: .meterUnit(with: .centi),
+        // Activity — time (ms)
+        .runningGroundContactTime: .secondUnit(with: .milli),
+        // Activity — temperature
+        .waterTemperature: .degreeCelsius(),
+        // Heart — beats per minute
+        .heartRate: beatsPerMinute,
+        .restingHeartRate: beatsPerMinute,
+        .walkingHeartRateAverage: beatsPerMinute,
+        .heartRateRecoveryOneMinute: beatsPerMinute,
+        // Heart — milliseconds
+        .heartRateVariabilitySDNN: .secondUnit(with: .milli),
+        // Heart — percent
+        .atrialFibrillationBurden: .percent(),
+        .peripheralPerfusionIndex: .percent(),
+        // Vitals — percent
+        .oxygenSaturation: .percent(),
+        // Vitals — temperature
+        .bodyTemperature: .degreeCelsius(),
+        .basalBodyTemperature: .degreeCelsius(),
+        .appleSleepingWristTemperature: .degreeCelsius(),
+        // Vitals — pressure
+        .bloodPressureSystolic: .millimeterOfMercury(),
+        .bloodPressureDiastolic: .millimeterOfMercury(),
+        // Vitals — rate
+        .respiratoryRate: beatsPerMinute,
+        // Body Measurements — mass
+        .bodyMass: .gramUnit(with: .kilo),
+        .leanBodyMass: .gramUnit(with: .kilo),
+        // Body Measurements — dimensionless
+        .bodyMassIndex: .count(),
+        // Body Measurements — percent
+        .bodyFatPercentage: .percent(),
+        // Body Measurements — length
+        .height: .meterUnit(with: .centi),
+        .waistCircumference: .meterUnit(with: .centi),
+        // Body Measurements — conductance
+        .electrodermalActivity: HKUnit(from: "µS"),
+        // Metabolic
+        .bloodGlucose: mgPerDL,
+        .insulinDelivery: .internationalUnit(),
+        .numberOfAlcoholicBeverages: .count(),
+        .bloodAlcoholContent: .percent(),
+        // Nutrition — energy
+        .dietaryEnergyConsumed: .kilocalorie(),
+        // Nutrition — grams (macros)
+        .dietaryCarbohydrates: .gram(),
+        .dietaryFatTotal: .gram(),
+        .dietaryFatPolyunsaturated: .gram(),
+        .dietaryFatMonounsaturated: .gram(),
+        .dietaryFatSaturated: .gram(),
+        .dietaryCholesterol: .gram(),
+        .dietaryProtein: .gram(),
+        .dietarySugar: .gram(),
+        .dietaryFiber: .gram(),
+        // Nutrition — grams (minerals & vitamins)
+        .dietarySodium: .gram(),
+        .dietaryCalcium: .gram(),
+        .dietaryIron: .gram(),
+        .dietaryPotassium: .gram(),
+        .dietaryVitaminA: .gram(),
+        .dietaryVitaminB6: .gram(),
+        .dietaryVitaminB12: .gram(),
+        .dietaryVitaminC: .gram(),
+        .dietaryVitaminD: .gram(),
+        .dietaryVitaminE: .gram(),
+        .dietaryVitaminK: .gram(),
+        .dietaryBiotin: .gram(),
+        .dietaryThiamin: .gram(),
+        .dietaryRiboflavin: .gram(),
+        .dietaryNiacin: .gram(),
+        .dietaryFolate: .gram(),
+        .dietaryPantothenicAcid: .gram(),
+        .dietaryPhosphorus: .gram(),
+        .dietaryIodine: .gram(),
+        .dietaryMagnesium: .gram(),
+        .dietaryZinc: .gram(),
+        .dietarySelenium: .gram(),
+        .dietaryCopper: .gram(),
+        .dietaryManganese: .gram(),
+        .dietaryChromium: .gram(),
+        .dietaryMolybdenum: .gram(),
+        .dietaryChloride: .gram(),
+        .dietaryCaffeine: .gram(),
+        // Nutrition — volume
+        .dietaryWater: .literUnit(with: .milli),
+        // Respiratory
+        .peakExpiratoryFlowRate: litersPerMinute,
+        .forcedExpiratoryVolume1: .liter(),
+        .forcedVitalCapacity: .liter(),
+        .inhalerUsage: .count(),
+        // Mobility — percent
+        .walkingDoubleSupportPercentage: .percent(),
+        .walkingAsymmetryPercentage: .percent(),
+        .appleWalkingSteadiness: .percent(),
+        // Fitness
+        .vo2Max: vo2MaxUnit,
+        // Audio Exposure
+        .environmentalAudioExposure: .decibelAWeightedSoundPressureLevel(),
+        .headphoneAudioExposure: .decibelAWeightedSoundPressureLevel(),
+        // Other
+        .uvExposure: .count(),
+        .numberOfTimesFallen: .count(),
+        .timeInDaylight: .minute(),
+    ]
+    // swiftlint:enable closure_body_length
 
     // MARK: - Metadata Encoding
 
