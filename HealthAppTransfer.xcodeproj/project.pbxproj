@@ -7,10 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04A72E1B70CFBA5F18EAC34C /* HealthSampleMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9328E156C8A5E7D6D2107F4A /* HealthSampleMapper.swift */; };
+		1F9E28DA99CD517FCCBAD06E /* HTTPTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340472304572C3D648CB82C /* HTTPTypes.swift */; };
+		2634AD5B5D22E3FA9DC383DA /* NetworkServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A36AB0A2F2A7F01553A238C /* NetworkServer.swift */; };
+		292DF86557824914635D9590 /* Loggers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAEAFC6BF9A4FEB3C38FA576 /* Loggers.swift */; };
+		2950C5B0352A7EA2F4879722 /* HealthDataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5295B51D631EF5615B9DCD1 /* HealthDataType.swift */; };
 		2BEEEB728BD1ED212AD74CFC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80F5AB4D8C9B83B5AB0A923C /* ContentView.swift */; };
+		30F8C6D07A0A39AFE7A7E9EA /* HealthSampleDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81AAAFEB155073B741F5154A /* HealthSampleDTO.swift */; };
+		4511B1209E4FDA8B8D74A4B5 /* CertificateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC80134C3F4EB4118D2C50B7 /* CertificateService.swift */; };
+		4715462B365C66C1D1A4E018 /* HealthStoreProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD374B66258E0E33688FC5 /* HealthStoreProtocol.swift */; };
 		78E6EE1658D4711A3C74F6AB /* HealthAppTransferUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 328AA7DD1700F237450E67C2 /* HealthAppTransferUITests.swift */; };
+		A16788D273F41DEE0582CA6E /* CocoaMQTT in Frameworks */ = {isa = PBXBuildFile; productRef = 2838417A7046A6B7ABBF8D25 /* CocoaMQTT */; };
+		ABEED29A83143A70D1FF9B88 /* DEREncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F55D4DB12754300C5C64511 /* DEREncoder.swift */; };
 		B96175ACF2DCBD3989589FCF /* HealthAppTransferApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFD58BC63E8144AEAC5729E /* HealthAppTransferApp.swift */; };
+		BA1A9259E93EE14CA20932EA /* QRCodeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0DDD337EA4C30C85AF4AA0 /* QRCodeRenderer.swift */; };
+		BCA22386784666400F5A3837 /* PairingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4C2DEF448F467FC7F6A2CC /* PairingService.swift */; };
+		BFAF1278818AD3E536896576 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AC8FF92B03D28185C7C4D0 /* KeychainStore.swift */; };
 		D5B4E9F4EBCE8E7087D08F88 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1124D4CF2682AEFFA792CCF5 /* Assets.xcassets */; };
+		DD3F356063E698140F55D5DD /* AuditService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1726D692E6A2E055C6403C /* AuditService.swift */; };
+		E9320F60582F7A68342FB12B /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891C70C028A379D2F6BDF33A /* HealthKitService.swift */; };
 		FB60C1391F26A287E709DB4C /* HealthAppTransferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68107979CCFE58D39FA30904 /* HealthAppTransferTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -32,17 +47,42 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		03AC8FF92B03D28185C7C4D0 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
 		1124D4CF2682AEFFA792CCF5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1A36AB0A2F2A7F01553A238C /* NetworkServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServer.swift; sourceTree = "<group>"; };
 		1B9532B960CF722E4C72A297 /* HealthAppTransferUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = HealthAppTransferUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2222BEA9E8DDC812A0193E4B /* HealthAppTransfer.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = HealthAppTransfer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		328AA7DD1700F237450E67C2 /* HealthAppTransferUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthAppTransferUITests.swift; sourceTree = "<group>"; };
+		55BD374B66258E0E33688FC5 /* HealthStoreProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthStoreProtocol.swift; sourceTree = "<group>"; };
+		5A1726D692E6A2E055C6403C /* AuditService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuditService.swift; sourceTree = "<group>"; };
 		68107979CCFE58D39FA30904 /* HealthAppTransferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthAppTransferTests.swift; sourceTree = "<group>"; };
 		7ADF0C45CAF19E8B207BBBAD /* HealthAppTransferTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = HealthAppTransferTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B4C2DEF448F467FC7F6A2CC /* PairingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingService.swift; sourceTree = "<group>"; };
+		7F55D4DB12754300C5C64511 /* DEREncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DEREncoder.swift; sourceTree = "<group>"; };
 		80F5AB4D8C9B83B5AB0A923C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		81AAAFEB155073B741F5154A /* HealthSampleDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSampleDTO.swift; sourceTree = "<group>"; };
+		891C70C028A379D2F6BDF33A /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
+		9328E156C8A5E7D6D2107F4A /* HealthSampleMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSampleMapper.swift; sourceTree = "<group>"; };
+		9340472304572C3D648CB82C /* HTTPTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPTypes.swift; sourceTree = "<group>"; };
 		AAFD58BC63E8144AEAC5729E /* HealthAppTransferApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthAppTransferApp.swift; sourceTree = "<group>"; };
 		AF8241AB71354E86D292FE5A /* HealthAppTransfer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HealthAppTransfer.entitlements; sourceTree = "<group>"; };
+		B5295B51D631EF5615B9DCD1 /* HealthDataType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthDataType.swift; sourceTree = "<group>"; };
+		EAEAFC6BF9A4FEB3C38FA576 /* Loggers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loggers.swift; sourceTree = "<group>"; };
+		ED0DDD337EA4C30C85AF4AA0 /* QRCodeRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeRenderer.swift; sourceTree = "<group>"; };
 		FA2A7DFF5584D7A6F307A97B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		FC80134C3F4EB4118D2C50B7 /* CertificateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F8F65142EE4AC7DBA5C6B4C5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A16788D273F41DEE0582CA6E /* CocoaMQTT in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		082B39EB7BA0F220A713577D /* Resources */ = {
@@ -67,9 +107,22 @@
 			path = HealthAppTransfer;
 			sourceTree = "<group>";
 		};
+		5E21189B03B8CA9D53BF1E80 /* Security */ = {
+			isa = PBXGroup;
+			children = (
+				FC80134C3F4EB4118D2C50B7 /* CertificateService.swift */,
+				03AC8FF92B03D28185C7C4D0 /* KeychainStore.swift */,
+				7B4C2DEF448F467FC7F6A2CC /* PairingService.swift */,
+			);
+			path = Security;
+			sourceTree = "<group>";
+		};
 		61F58E197B2B4448454191A2 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				7F55D4DB12754300C5C64511 /* DEREncoder.swift */,
+				EAEAFC6BF9A4FEB3C38FA576 /* Loggers.swift */,
+				ED0DDD337EA4C30C85AF4AA0 /* QRCodeRenderer.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -84,9 +137,23 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		68E5722BADB00BDAC3274686 /* HealthKit */ = {
+			isa = PBXGroup;
+			children = (
+				891C70C028A379D2F6BDF33A /* HealthKitService.swift */,
+				9328E156C8A5E7D6D2107F4A /* HealthSampleMapper.swift */,
+				55BD374B66258E0E33688FC5 /* HealthStoreProtocol.swift */,
+			);
+			path = HealthKit;
+			sourceTree = "<group>";
+		};
 		7490B0A81A9E253306D050FE /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				9AD0CABA375522EE04022722 /* Audit */,
+				68E5722BADB00BDAC3274686 /* HealthKit */,
+				F0F2BF02674E07B043910A6E /* Network */,
+				5E21189B03B8CA9D53BF1E80 /* Security */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -111,6 +178,14 @@
 			);
 			sourceTree = "<group>";
 		};
+		9AD0CABA375522EE04022722 /* Audit */ = {
+			isa = PBXGroup;
+			children = (
+				5A1726D692E6A2E055C6403C /* AuditService.swift */,
+			);
+			path = Audit;
+			sourceTree = "<group>";
+		};
 		AFC7BAB559C72EC763809FC0 /* HealthAppTransferUITests */ = {
 			isa = PBXGroup;
 			children = (
@@ -122,6 +197,8 @@
 		B2E58AEEFCB9E0AEE59282CF /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				B5295B51D631EF5615B9DCD1 /* HealthDataType.swift */,
+				81AAAFEB155073B741F5154A /* HealthSampleDTO.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -149,6 +226,15 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		F0F2BF02674E07B043910A6E /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				9340472304572C3D648CB82C /* HTTPTypes.swift */,
+				1A36AB0A2F2A7F01553A238C /* NetworkServer.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -158,6 +244,7 @@
 			buildPhases = (
 				AED203B12B9F9201956AD2DE /* Sources */,
 				31159EA96E3E66CB5EA8F7D2 /* Resources */,
+				F8F65142EE4AC7DBA5C6B4C5 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -165,6 +252,7 @@
 			);
 			name = HealthAppTransfer;
 			packageProductDependencies = (
+				2838417A7046A6B7ABBF8D25 /* CocoaMQTT */,
 			);
 			productName = HealthAppTransfer;
 			productReference = 2222BEA9E8DDC812A0193E4B /* HealthAppTransfer.app */;
@@ -230,6 +318,9 @@
 			);
 			mainGroup = 8DBFBAE9F3AC71F1A5CAA63C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4E3273FC4CB40088153DB876 /* XCRemoteSwiftPackageReference "CocoaMQTT" */,
+			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
@@ -265,8 +356,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD3F356063E698140F55D5DD /* AuditService.swift in Sources */,
+				4511B1209E4FDA8B8D74A4B5 /* CertificateService.swift in Sources */,
 				2BEEEB728BD1ED212AD74CFC /* ContentView.swift in Sources */,
+				ABEED29A83143A70D1FF9B88 /* DEREncoder.swift in Sources */,
+				1F9E28DA99CD517FCCBAD06E /* HTTPTypes.swift in Sources */,
 				B96175ACF2DCBD3989589FCF /* HealthAppTransferApp.swift in Sources */,
+				2950C5B0352A7EA2F4879722 /* HealthDataType.swift in Sources */,
+				E9320F60582F7A68342FB12B /* HealthKitService.swift in Sources */,
+				30F8C6D07A0A39AFE7A7E9EA /* HealthSampleDTO.swift in Sources */,
+				04A72E1B70CFBA5F18EAC34C /* HealthSampleMapper.swift in Sources */,
+				4715462B365C66C1D1A4E018 /* HealthStoreProtocol.swift in Sources */,
+				BFAF1278818AD3E536896576 /* KeychainStore.swift in Sources */,
+				292DF86557824914635D9590 /* Loggers.swift in Sources */,
+				2634AD5B5D22E3FA9DC383DA /* NetworkServer.swift in Sources */,
+				BCA22386784666400F5A3837 /* PairingService.swift in Sources */,
+				BA1A9259E93EE14CA20932EA /* QRCodeRenderer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -595,6 +700,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4E3273FC4CB40088153DB876 /* XCRemoteSwiftPackageReference "CocoaMQTT" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/emqx/CocoaMQTT.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.6;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2838417A7046A6B7ABBF8D25 /* CocoaMQTT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E3273FC4CB40088153DB876 /* XCRemoteSwiftPackageReference "CocoaMQTT" */;
+			productName = CocoaMQTT;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 668F8CB445948631DD3037A8 /* Project object */;
 }

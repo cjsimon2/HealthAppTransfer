@@ -8,7 +8,7 @@
 
 ### Code Patterns
 <!-- Successful coding patterns discovered -->
-_None documented yet. Use `/learn` to add patterns._
+- Multi-platform (iOS+macOS) files using `UIDevice` need `#if canImport(UIKit)` guard — macOS target will fail without it.
 
 ### Testing Patterns
 <!-- What works for testing in this project -->
@@ -16,7 +16,8 @@ _None documented yet._
 
 ### Architecture Patterns
 <!-- Structural decisions that work well -->
-_None documented yet._
+- All core services are Swift actors (HealthKitService, NetworkServer, CertificateService, PairingService, KeychainStore, AuditService) for thread safety.
+- Available simulators are iPhone 17 series (17, 17 Pro, 17 Pro Max, Air) — no iPhone 16. Use `iPhone 17 Pro` for xcodebuild commands.
 
 ## Mistakes to Avoid
 
@@ -29,6 +30,8 @@ _None documented yet. Use `/learn` to record failures._
 ### Common Pitfalls
 <!-- Gotchas specific to this project -->
 - xcodegen overwrites `.entitlements` files to empty `<dict/>` during `generate` — always restore entitlements content after running xcodegen.
+- This machine has no iPhone 16 simulator — use `iPhone 17` (or check available destinations) for xcodebuild commands.
+- CocoaMQTT pulls two transitive deps: Starscream (WebSocket) and MqttCocoaAsyncSocket (TCP) — these are expected, not extra third-party additions.
 
 ### Anti-Patterns Found
 <!-- Patterns that cause problems here -->
