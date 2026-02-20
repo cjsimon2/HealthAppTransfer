@@ -9,6 +9,7 @@
 ### Code Patterns
 <!-- Successful coding patterns discovered -->
 - Multi-platform (iOS+macOS) files using `UIDevice` need `#if canImport(UIKit)` guard — macOS target will fail without it.
+- macOS-only `#if os(macOS)` views using SwiftData need their own `@Environment(\.modelContext)` — can't rely on the iOS block having it. PairingView's macOS pairButton was missing `modelContext` arg to `completePairing()`.
 
 ### Testing Patterns
 <!-- What works for testing in this project -->

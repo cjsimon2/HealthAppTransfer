@@ -26,5 +26,9 @@
 	<array>
 		<string>processing</string>
 	</array>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_healthsync._tcp</string>
+	</array>
 </dict>
 </plist>

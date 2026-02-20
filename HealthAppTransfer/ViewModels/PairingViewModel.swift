@@ -63,6 +63,9 @@ class PairingViewModel: ObservableObject {
             isServerRunning = true
             isPreparing = false
 
+            // Advertise via Bonjour so Mac clients can discover this iPhone
+            await networkServer.startBonjourAdvertisement()
+
             await generateQRCode(port: port)
         } catch {
             self.error = "Failed to start server: \(error.localizedDescription)"
@@ -174,11 +177,15 @@ class PairingViewModel: ObservableObject {
             modelContext.insert(device)
             try modelContext.save()
 
-            // Store the actual bearer token in Keychain
+            // Store the actual bearer token and TLS fingerprint in Keychain
             let keychain = KeychainStore()
             try await keychain.save(
                 key: "serverToken_\(device.deviceID)",
                 data: Data(pairResponse.token.utf8)
+            )
+            try await keychain.save(
+                key: "fingerprint_\(device.deviceID)",
+                data: Data(payload.fingerprint.utf8)
             )
 
             pairingSuccess = true

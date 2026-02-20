@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 // MARK: - Pairing View
@@ -178,6 +179,7 @@ private struct iOSPairingView: View {
 #if os(macOS)
 private struct macOSPairingView: View {
     @ObservedObject var viewModel: PairingViewModel
+    @Environment(\.modelContext) private var modelContext
     @State private var clipboardInput: String = ""
     @State private var showCamera = false
 
@@ -280,7 +282,7 @@ private struct macOSPairingView: View {
 
     private var pairButton: some View {
         Button {
-            Task { await viewModel.completePairing() }
+            Task { await viewModel.completePairing(modelContext: modelContext) }
         } label: {
             if viewModel.isPairing {
                 ProgressView()

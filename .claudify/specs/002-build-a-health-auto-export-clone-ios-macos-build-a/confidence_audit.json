@@ -92,6 +92,29 @@
       },
       "output_preview": "Added one architecture insight: the SwiftData persistence factory pattern and where models/migrations are registered. Nothing else was novel beyond what's already documented.",
       "action_taken": "proceed"
+    },
+    {
+      "timestamp": "2026-02-20T12:50:00.536939+00:00",
+      "agent_name": "Coder",
+      "spec_id": "002",
+      "subtask_id": "1.5",
+      "score": {
+        "value": 0.807,
+        "reasoning": "High confidence: Output appears complete and certain.",
+        "factors": {
+          "completeness": 0.3,
+          "uncertainty": 1.0,
+          "tool_success": 1.0,
+          "length_appropriateness": 0.88,
+          "error_free": 1.0
+        },
+        "needs_human_review": false,
+        "escalation_reasons": [
+          "incomplete_output"
+        ]
+      },
+      "output_preview": "Added a project-specific insight: macOS `#if os()` view blocks need their own `@Environment` declarations \u2014 the pre-existing PairingView bug was caused by exactly this pattern.",
+      "action_taken": "proceed"
     }
   ]
 }

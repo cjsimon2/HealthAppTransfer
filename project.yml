@@ -53,6 +53,8 @@ targets:
         NSLocalNetworkUsageDescription: "This app uses the local network to discover and transfer health data to nearby devices."
         UIBackgroundModes:
           - processing
+        NSBonjourServices:
+          - "_healthsync._tcp"
 
   HealthAppTransferTests:
     type: bundle.unit-test

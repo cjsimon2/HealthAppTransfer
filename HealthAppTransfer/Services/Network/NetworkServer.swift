@@ -98,8 +98,54 @@ actor NetworkServer {
         Loggers.network.info("Network server starting on port \(self.port)")
     }
 
+    /// Advertise this server via Bonjour so Mac clients can discover it.
+    /// Sets the service on the existing NWListener — call after the server is running.
+    func startBonjourAdvertisement() {
+        guard listener != nil else {
+            Loggers.network.warning("Cannot advertise Bonjour — no active listener")
+            return
+        }
+
+        let name = bonjourServiceName()
+        listener?.service = NWListener.Service(
+            name: name,
+            type: "_healthsync._tcp"
+        )
+
+        listener?.serviceRegistrationUpdateHandler = { change in
+            switch change {
+            case .add(let endpoint):
+                Loggers.network.info("Bonjour: advertising as \(endpoint)")
+            case .remove(let endpoint):
+                Loggers.network.info("Bonjour: removed \(endpoint)")
+            @unknown default:
+                break
+            }
+        }
+
+        Loggers.network.info("Bonjour: advertising \(name) as _healthsync._tcp")
+    }
+
+    /// Stop Bonjour advertisement.
+    func stopBonjourAdvertisement() {
+        listener?.service = nil
+        listener?.serviceRegistrationUpdateHandler = nil
+    }
+
+    private nonisolated func bonjourServiceName() -> String {
+        #if os(iOS)
+        "iPhone"
+        #elseif os(macOS)
+        Host.current().localizedName ?? "Mac"
+        #else
+        "HealthSync"
+        #endif
+    }
+
     /// Stop the server and close all connections.
     func stop() {
+        stopBonjourAdvertisement()
+
         listener?.cancel()
         listener = nil
 

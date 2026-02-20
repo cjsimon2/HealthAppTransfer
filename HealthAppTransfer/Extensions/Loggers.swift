@@ -9,4 +9,5 @@ enum Loggers {
     static let pairing = Logger(subsystem: Bundle.main.bundleIdentifier ?? "HealthAppTransfer", category: "Pairing")
     static let audit = Logger(subsystem: Bundle.main.bundleIdentifier ?? "HealthAppTransfer", category: "Audit")
     static let persistence = Logger(subsystem: Bundle.main.bundleIdentifier ?? "HealthAppTransfer", category: "Persistence")
+    static let bonjour = Logger(subsystem: Bundle.main.bundleIdentifier ?? "HealthAppTransfer", category: "Bonjour")
 }

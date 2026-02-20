@@ -1,7 +1,23 @@
 import SwiftUI
 
+// MARK: - Content View
+
+/// Root view that creates services and delegates to MainTabView.
+/// Handles HealthKit authorization on first launch.
 struct ContentView: View {
-    @StateObject private var viewModel: PairingViewModel
+
+    // MARK: - State
+
+    @StateObject private var pairingViewModel: PairingViewModel
+    @StateObject private var lanSyncViewModel: LANSyncViewModel
+    @AppStorage("hasRequestedHealthKitAuth") private var hasRequestedHealthKitAuth = false
+    @State private var showHealthKitAlert = false
+
+    // MARK: - Services
+
+    private let healthKitService: HealthKitService
+
+    // MARK: - Init
 
     init() {
         let keychain = KeychainStore()
@@ -17,36 +33,55 @@ struct ContentView: View {
             certificateService: certificateService
         )
 
-        _viewModel = StateObject(wrappedValue: PairingViewModel(
+        self.healthKitService = healthKitService
+
+        _pairingViewModel = StateObject(wrappedValue: PairingViewModel(
             pairingService: pairingService,
             certificateService: certificateService,
             networkServer: networkServer
         ))
+
+        _lanSyncViewModel = StateObject(wrappedValue: LANSyncViewModel(keychain: keychain))
     }
 
-    var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    NavigationLink {
-                        PairingView(viewModel: viewModel)
-                    } label: {
-                        Label("Pair Device", systemImage: "qrcode")
-                    }
+    // MARK: - Body
 
-                    NavigationLink {
-                        PairedDevicesView(viewModel: viewModel)
-                    } label: {
-                        Label("Paired Devices", systemImage: "link")
-                    }
-                } header: {
-                    Text("Transfer")
-                }
-            }
-            .navigationTitle("HealthAppTransfer")
-        }
+    var body: some View {
+        MainTabView(
+            pairingViewModel: pairingViewModel,
+            lanSyncViewModel: lanSyncViewModel,
+            healthKitService: healthKitService
+        )
         .task {
-            await viewModel.pairingService.loadPersistedTokens()
+            await pairingViewModel.pairingService.loadPersistedTokens()
+            await requestHealthKitAuthIfNeeded()
+        }
+        .alert("Health Data Access", isPresented: $showHealthKitAlert) {
+            Button("Allow") {
+                Task { await authorizeHealthKit() }
+            }
+            Button("Not Now", role: .cancel) {
+                hasRequestedHealthKitAuth = true
+            }
+        } message: {
+            Text("HealthAppTransfer needs access to your health data to display and transfer it between devices.")
+        }
+    }
+
+    // MARK: - HealthKit Authorization
+
+    private func requestHealthKitAuthIfNeeded() async {
+        guard !hasRequestedHealthKitAuth, HealthKitService.isAvailable else { return }
+        showHealthKitAlert = true
+    }
+
+    private func authorizeHealthKit() async {
+        do {
+            try await healthKitService.requestAuthorization()
+            hasRequestedHealthKitAuth = true
+        } catch {
+            Loggers.healthKit.error("HealthKit authorization failed: \(error.localizedDescription)")
+            hasRequestedHealthKitAuth = true
         }
     }
 }
