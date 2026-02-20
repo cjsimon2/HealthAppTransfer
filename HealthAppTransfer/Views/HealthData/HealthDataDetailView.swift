@@ -11,6 +11,7 @@ struct HealthDataDetailView: View {
     // MARK: - State
 
     @State private var showingExportShare = false
+    @State private var exportFileURL: URL?
 
     // MARK: - Init
 
@@ -38,6 +39,14 @@ struct HealthDataDetailView: View {
             }
         }
         .task { await viewModel.loadData() }
+        .sheet(isPresented: $showingExportShare) {
+            if let url = exportFileURL {
+                ShareSheetView(fileURL: url) {
+                    ShareFileHelper.cleanupTempFiles()
+                    exportFileURL = nil
+                }
+            }
+        }
     }
 
     // MARK: - Content
@@ -169,20 +178,17 @@ struct HealthDataDetailView: View {
     // MARK: - Export Button
 
     private var exportButton: some View {
-        ShareLink(
-            item: exportData,
-            preview: SharePreview(
-                "\(viewModel.dataType.displayName) Export",
-                image: Image(systemName: "square.and.arrow.up")
-            )
-        )
+        Button {
+            if let url = viewModel.exportToFile() {
+                exportFileURL = url
+                showingExportShare = true
+            }
+        } label: {
+            Label("Share", systemImage: "square.and.arrow.up")
+        }
         .disabled(viewModel.recentDTOs.isEmpty)
         .accessibilityLabel("Export \(viewModel.dataType.displayName) data")
         .accessibilityIdentifier("detail.exportButton")
-    }
-
-    private var exportData: Data {
-        viewModel.exportJSON() ?? Data()
     }
 
     // MARK: - Empty State

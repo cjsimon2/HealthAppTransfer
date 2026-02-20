@@ -109,6 +109,18 @@ class HealthDataDetailViewModel: ObservableObject {
         return try? encoder.encode(recentDTOs)
     }
 
+    /// Exports the current data to a temporary JSON file and returns its URL.
+    func exportToFile() -> URL? {
+        guard let data = exportJSON() else { return nil }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HHmmss"
+        let timestamp = dateFormatter.string(from: Date())
+        let fileName = "health-export_\(dataType.rawValue)_\(timestamp).json"
+
+        return try? ShareFileHelper.createTempFile(data: data, fileName: fileName)
+    }
+
     // MARK: - Helpers
 
     private func formatValue(_ value: Double, unit: String) -> String {

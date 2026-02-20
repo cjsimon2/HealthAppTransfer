@@ -38,12 +38,15 @@
 - `AggregatedSample` chart value extraction: use `sample.sum ?? sample.average ?? sample.latest ?? 0` — cumulative types populate `sum`, discrete types populate `average`. Request both `[.sum, .average]` operations and AggregationEngine silently skips incompatible ones.
 - XcodeGen overwrites `.entitlements` files during `generate` — must use `entitlements.properties` in `project.yml` instead of manually editing the plist file, or changes get wiped on next generate.
 - `CloudKitSyncService.swift` has a pre-existing build error (`atomicZone` extra argument) — unrelated to other work, needs separate fix.
+- App Intents (`AppIntent.perform()`) can't use the app's `ServiceContainer` — the system creates intents independently. Create fresh `HealthKitService`/`BackgroundSyncService` instances inside `perform()` since they're lightweight actor wrappers. Use `PersistenceConfiguration.makeModelContainer()` for SwiftData access.
 - `MQTTAutomation.swift` has two pre-existing build errors: main actor isolation violation (line 77) and missing `HealthDataType.defaultUnit` property (line 254) — needs separate fix.
 - `HKWorkoutRouteQuery` delivers `CLLocation` arrays in batches (not all at once) — accumulate in a local array and only resolve the continuation when the `done` flag is `true`. Resuming the continuation on each batch will crash.
 - CloudKit `CKDatabase.modifyRecords(saving:deleting:savePolicy:atomicZone:)` has a 400-record limit per operation — batch uploads accordingly.
 - `CKServerChangeToken` must be archived via `NSKeyedArchiver` to persist as `Data` in SwiftData — `CKServerChangeToken` conforms to `NSSecureCoding`.
+- macOS `NSSharingServicePicker` must be wrapped in `NSViewRepresentable` with a Coordinator to work in SwiftUI — needs a real `NSButton` as anchor; can't show it from a plain SwiftUI `Button` action without an `NSView` reference.
 - GPXFormatter doesn't conform to `ExportFormatter` protocol — GPX needs `[GPXTrack]` (location data from HKWorkoutRoute) not `[HealthSampleDTO]`. Keep its `format(tracks:)` signature separate.
 - Swift type-checker chokes on large array literals (16+ elements) built inline — break into sequential `.append()` calls to avoid "unable to type-check this expression in reasonable time".
+- Automation secrets (tokens, passwords) that shouldn't live in SwiftData: store in Keychain keyed by `persistentModelID.hashValue.description`. Must call `modelContext.insert()` + `save()` before reading `persistentModelID` on new objects — it's unset until persisted.
 
 ## Mistakes to Avoid
 

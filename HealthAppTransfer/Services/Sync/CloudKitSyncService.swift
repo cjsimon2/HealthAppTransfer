@@ -163,6 +163,7 @@ actor CloudKitSyncService {
 
     /// Downloads new records from CloudKit since the last change token.
     /// Returns downloaded DTOs for local processing.
+    /// Also persists downloaded samples as SyncedHealthSample in SwiftData.
     func downloadSamples() async throws -> [HealthSampleDTO] {
         try await checkAccountStatus()
         try await ensureZoneExists()
@@ -186,6 +187,17 @@ actor CloudKitSyncService {
         }
 
         let (samples, newToken) = try await fetchChanges(since: changeToken)
+
+        // Persist downloaded samples to SwiftData (primary store on macOS)
+        for dto in samples {
+            let id = dto.id
+            let sampleDescriptor = FetchDescriptor<SyncedHealthSample>(
+                predicate: #Predicate { $0.sampleID == id }
+            )
+            if (try? context.fetchCount(sampleDescriptor)) ?? 0 == 0 {
+                context.insert(SyncedHealthSample(from: dto, syncSource: "cloudkit"))
+            }
+        }
 
         // Persist the new change token
         if let newToken {

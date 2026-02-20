@@ -230,6 +230,29 @@
       },
       "output_preview": "Added the pre-existing build blocker note to LEARNINGS.md \u2014 useful for future sessions that attempt builds.",
       "action_taken": "proceed"
+    },
+    {
+      "timestamp": "2026-02-20T15:11:08.148245+00:00",
+      "agent_name": "Coder",
+      "spec_id": "004",
+      "subtask_id": "5.4",
+      "score": {
+        "value": 0.741,
+        "reasoning": "Acceptable confidence: Output missing expected sections (score: 0.30); Output length inappropriate for task (score: 0.44)",
+        "factors": {
+          "completeness": 0.3,
+          "uncertainty": 1.0,
+          "tool_success": 1.0,
+          "length_appropriateness": 0.44,
+          "error_free": 1.0
+        },
+        "needs_human_review": false,
+        "escalation_reasons": [
+          "incomplete_output"
+        ]
+      },
+      "output_preview": "Added one project-specific insight about the `NSSharingServicePicker` + SwiftUI pattern.",
+      "action_taken": "proceed"
     }
   ]
 }

@@ -104,6 +104,9 @@ struct MainTabView: View {
                 SettingsView(pairingViewModel: pairingViewModel, lanSyncViewModel: lanSyncViewModel, securitySettingsViewModel: securitySettingsViewModel)
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .macNavigateToExport)) { _ in
+            selectedTab = .export
+        }
     }
     #endif
 }

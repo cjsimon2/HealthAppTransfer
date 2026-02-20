@@ -8,6 +8,7 @@ struct DashboardView: View {
     // MARK: - Environment
 
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.modelContext) private var modelContext
     @Query private var preferences: [UserPreferences]
 
     // MARK: - Observed Objects
@@ -59,7 +60,7 @@ struct DashboardView: View {
                 onSave: saveMetricTypes
             )
         }
-        .task { await viewModel.loadMetrics(configuredTypes: configuredTypes) }
+        .task { await viewModel.loadMetrics(configuredTypes: configuredTypes, modelContext: modelContext) }
     }
 
     // MARK: - Configured Types
@@ -76,7 +77,7 @@ struct DashboardView: View {
             prefs.dashboardMetricTypes = types.map(\.rawValue)
             prefs.updatedAt = Date()
         }
-        Task { await viewModel.loadMetrics(configuredTypes: types) }
+        Task { await viewModel.loadMetrics(configuredTypes: types, modelContext: modelContext) }
     }
 
     // MARK: - Subviews
@@ -91,11 +92,19 @@ struct DashboardView: View {
             Text("No Health Data")
                 .font(.title3.bold())
 
+            #if os(macOS)
+            Text("Sync health data from your iPhone via CloudKit or LAN to see your overview.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+            #else
             Text("Authorize HealthKit access to see your health data overview.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
+            #endif
         }
     }
 

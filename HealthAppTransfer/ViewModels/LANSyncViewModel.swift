@@ -147,8 +147,8 @@ class LANSyncViewModel: ObservableObject {
 
     // MARK: - Data Sync
 
-    /// Pull health data from the connected iPhone.
-    func syncData() async {
+    /// Pull health data from the connected iPhone and store in SwiftData.
+    func syncData(modelContext: ModelContext) async {
         guard let token = connectedToken else {
             error = "Not connected"
             return
@@ -158,8 +158,12 @@ class LANSyncViewModel: ObservableObject {
         error = nil
 
         do {
-            let result = try await syncClient.pullAllData(token: token)
+            let (result, samples) = try await syncClient.pullAllData(token: token)
             lastSyncResult = result
+
+            // Persist pulled samples to SwiftData
+            SyncedHealthSample.storeBatch(samples, syncSource: "lan", modelContext: modelContext)
+
             isSyncing = false
         } catch {
             self.error = "Sync failed: \(error.localizedDescription)"

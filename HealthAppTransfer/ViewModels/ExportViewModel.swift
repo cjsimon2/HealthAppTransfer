@@ -52,7 +52,18 @@ class ExportViewModel: ObservableObject {
 
     // MARK: - Load Available Types
 
-    func loadAvailableTypes() async {
+    func loadAvailableTypes(modelContext: ModelContext? = nil) async {
+        #if os(macOS)
+        if let modelContext {
+            loadAvailableTypesFromStore(modelContext: modelContext)
+            return
+        }
+        #endif
+
+        await loadAvailableTypesFromHealthKit()
+    }
+
+    private func loadAvailableTypesFromHealthKit() async {
         isLoadingTypes = true
         defer { isLoadingTypes = false }
 
@@ -66,6 +77,31 @@ class ExportViewModel: ObservableObject {
             return (category: group.category, types: typesWithData)
         }
     }
+
+    #if os(macOS)
+    private func loadAvailableTypesFromStore(modelContext: ModelContext) {
+        isLoadingTypes = true
+        defer { isLoadingTypes = false }
+
+        // Find types that have synced data
+        var typesWithData: Set<HealthDataType> = []
+        for type in HealthDataType.allCases {
+            let typeRaw = type.rawValue
+            let descriptor = FetchDescriptor<SyncedHealthSample>(
+                predicate: #Predicate { $0.typeRawValue == typeRaw }
+            )
+            if (try? modelContext.fetchCount(descriptor)) ?? 0 > 0 {
+                typesWithData.insert(type)
+            }
+        }
+
+        availableTypes = HealthDataType.groupedByCategory.compactMap { group in
+            let matched = group.types.filter { typesWithData.contains($0) }
+            guard !matched.isEmpty else { return nil }
+            return (category: group.category, types: matched)
+        }
+    }
+    #endif
 
     // MARK: - Type Selection
 
@@ -99,20 +135,14 @@ class ExportViewModel: ObservableObject {
         error = nil
         exportResult = nil
 
+        let sortedTypes = Array(selectedTypes).sorted(by: { $0.rawValue < $1.rawValue })
+
         do {
-            let result = try await exportService.export(
-                types: Array(selectedTypes).sorted(by: { $0.rawValue < $1.rawValue }),
-                format: selectedFormat,
-                startDate: startDate,
-                endDate: endDate,
-                aggregationEnabled: aggregationEnabled,
-                aggregationInterval: aggregationInterval,
-                progressHandler: { [weak self] progress in
-                    Task { @MainActor in
-                        self?.progress = progress
-                    }
-                }
-            )
+            #if os(macOS)
+            let result = try await exportFromStore(types: sortedTypes, modelContext: modelContext)
+            #else
+            let result = try await exportFromHealthKit(types: sortedTypes)
+            #endif
 
             exportResult = result
 
@@ -149,4 +179,62 @@ class ExportViewModel: ObservableObject {
         isExporting = false
         progress = nil
     }
+
+    // MARK: - HealthKit Export Path (iOS)
+
+    private func exportFromHealthKit(types: [HealthDataType]) async throws -> ExportResult {
+        try await exportService.export(
+            types: types,
+            format: selectedFormat,
+            startDate: startDate,
+            endDate: endDate,
+            aggregationEnabled: aggregationEnabled,
+            aggregationInterval: aggregationInterval,
+            progressHandler: { [weak self] progress in
+                Task { @MainActor in
+                    self?.progress = progress
+                }
+            }
+        )
+    }
+
+    // MARK: - SwiftData Export Path (macOS)
+
+    #if os(macOS)
+    private func exportFromStore(types: [HealthDataType], modelContext: ModelContext) async throws -> ExportResult {
+        var allSamples: [HealthSampleDTO] = []
+        let start = startDate
+        let end = endDate
+
+        for (index, type) in types.enumerated() {
+            progress = ExportProgress(
+                completedTypes: index,
+                totalTypes: types.count,
+                currentTypeName: type.displayName
+            )
+
+            let typeRaw = type.rawValue
+            let descriptor = FetchDescriptor<SyncedHealthSample>(
+                predicate: #Predicate { sample in
+                    sample.typeRawValue == typeRaw &&
+                    sample.startDate >= start &&
+                    sample.startDate <= end
+                },
+                sortBy: [SortDescriptor(\.startDate)]
+            )
+
+            if let samples = try? modelContext.fetch(descriptor) {
+                allSamples.append(contentsOf: samples.map { $0.toDTO() })
+            }
+        }
+
+        progress = ExportProgress(completedTypes: types.count, totalTypes: types.count, currentTypeName: nil)
+
+        return try await exportService.exportFromSamples(
+            samples: allSamples,
+            format: selectedFormat,
+            types: types
+        )
+    }
+    #endif
 }

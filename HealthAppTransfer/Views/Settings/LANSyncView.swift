@@ -162,7 +162,7 @@ struct LANSyncView: View {
         VStack(spacing: 16) {
             if case .connected = viewModel.connectionStatus {
                 Button {
-                    Task { await viewModel.syncData() }
+                    Task { await viewModel.syncData(modelContext: modelContext) }
                 } label: {
                     if viewModel.isSyncing {
                         HStack(spacing: 8) {

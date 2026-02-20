@@ -21,6 +21,7 @@ struct AutomationsView: View {
     @State private var showingMQTTForm = false
     @State private var showingCloudStorageForm = false
     @State private var showingCalendarForm = false
+    @State private var showingHomeAssistantForm = false
 
     // MARK: - Body
 
@@ -59,6 +60,12 @@ struct AutomationsView: View {
                     } label: {
                         Label("Calendar", systemImage: "calendar")
                     }
+
+                    Button {
+                        showingHomeAssistantForm = true
+                    } label: {
+                        Label("Home Assistant", systemImage: "house")
+                    }
                 } label: {
                     Image(systemName: "plus")
                 }
@@ -84,6 +91,11 @@ struct AutomationsView: View {
         .sheet(isPresented: $showingCalendarForm) {
             NavigationStack {
                 CalendarFormView()
+            }
+        }
+        .sheet(isPresented: $showingHomeAssistantForm) {
+            NavigationStack {
+                HomeAssistantFormView()
             }
         }
     }
@@ -130,6 +142,12 @@ struct AutomationsView: View {
                 } label: {
                     Label("Calendar", systemImage: "calendar")
                 }
+
+                Button {
+                    showingHomeAssistantForm = true
+                } label: {
+                    Label("Home Assistant", systemImage: "house")
+                }
             } label: {
                 Label("Add Automation", systemImage: "plus.circle.fill")
             }
@@ -162,6 +180,8 @@ struct AutomationsView: View {
             CloudStorageFormView(configuration: automation)
         case "calendar":
             CalendarFormView(configuration: automation)
+        case "home_assistant":
+            HomeAssistantFormView(configuration: automation)
         default:
             RESTAutomationFormView(configuration: automation)
         }
@@ -216,6 +236,7 @@ struct AutomationsView: View {
         case "mqtt": return "antenna.radiowaves.left.and.right"
         case "cloud_storage": return "icloud"
         case "calendar": return "calendar"
+        case "home_assistant": return "house"
         default: return "bolt.fill"
         }
     }

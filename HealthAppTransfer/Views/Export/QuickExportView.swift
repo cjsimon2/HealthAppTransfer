@@ -40,13 +40,15 @@ struct QuickExportView: View {
             exportSection
         }
         .navigationTitle("Export")
-        .task { await viewModel.loadAvailableTypes() }
+        .task { await viewModel.loadAvailableTypes(modelContext: modelContext) }
         .sheet(isPresented: $showTypePicker) {
             typePickerSheet
         }
         .sheet(isPresented: $showShareSheet) {
             if let result = viewModel.exportResult {
-                ShareSheetView(fileURL: result.fileURL)
+                ShareSheetView(fileURL: result.fileURL) {
+                    ShareFileHelper.cleanupTempFiles()
+                }
             }
         }
         .alert("Export Error", isPresented: .init(
@@ -219,7 +221,9 @@ struct QuickExportView: View {
                 onDeselectAll: { viewModel.deselectAll() }
             )
             .navigationTitle("Select Types")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { showTypePicker = false }
@@ -310,80 +314,6 @@ private struct TypePickerView: View {
         }
     }
 }
-
-// MARK: - Share Sheet View
-
-struct ShareSheetView: View {
-    let fileURL: URL
-
-    var body: some View {
-        #if os(iOS)
-        ShareSheetRepresentable(fileURL: fileURL)
-            .ignoresSafeArea()
-        #else
-        macOSSavePanel
-        #endif
-    }
-
-    #if os(macOS)
-    private var macOSSavePanel: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 48))
-                .foregroundStyle(.green)
-
-            Text("Export Complete")
-                .font(.title2.weight(.semibold))
-
-            Text(fileURL.lastPathComponent)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-
-            Button("Save to Disk...") {
-                showNSSavePanel()
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-        }
-        .padding(32)
-    }
-
-    private func showNSSavePanel() {
-        let panel = NSSavePanel()
-        panel.nameFieldStringValue = fileURL.lastPathComponent
-        panel.allowedContentTypes = [.data]
-        panel.canCreateDirectories = true
-
-        if panel.runModal() == .OK, let saveURL = panel.url {
-            try? FileManager.default.copyItem(at: fileURL, to: saveURL)
-        }
-    }
-    #endif
-}
-
-// MARK: - iOS Share Sheet
-
-#if os(iOS)
-import UIKit
-
-struct ShareSheetRepresentable: UIViewControllerRepresentable {
-    let fileURL: URL
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(
-            activityItems: [fileURL],
-            applicationActivities: nil
-        )
-    }
-
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
-#endif
-
-#if os(macOS)
-import AppKit
-import UniformTypeIdentifiers
-#endif
 
 // MARK: - ExportResult Equatable
 

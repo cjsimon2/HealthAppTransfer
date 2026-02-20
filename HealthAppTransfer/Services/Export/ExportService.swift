@@ -186,6 +186,48 @@ actor ExportService {
         )
     }
 
+    // MARK: - Export from Pre-fetched Samples (macOS)
+
+    /// Export pre-fetched samples (bypasses HealthKit). Used on macOS where data comes from SwiftData.
+    func exportFromSamples(
+        samples: [HealthSampleDTO],
+        format: ExportFormat,
+        types: [HealthDataType]
+    ) async throws -> ExportResult {
+        guard !samples.isEmpty else {
+            throw ExportError.noDataFound
+        }
+
+        if format == .gpx && !types.contains(.workout) {
+            throw ExportError.gpxRequiresWorkouts
+        }
+
+        Loggers.export.info("Starting \(format.rawValue) export from \(samples.count) pre-fetched samples")
+
+        let options = ExportOptions(
+            prettyPrint: true,
+            deviceName: deviceName(),
+            deviceModel: deviceModel(),
+            systemVersion: systemVersion(),
+            appVersion: appVersion()
+        )
+
+        let formatter = makeFormatter(for: format)
+        let data = try formatter.format(samples: samples, options: options)
+        let fileURL = try writeToTempFile(data: data, format: format, types: types)
+        let fileSize = Int64(data.count)
+
+        Loggers.export.info("Export complete: \(samples.count) samples, \(fileSize) bytes")
+
+        return ExportResult(
+            fileURL: fileURL,
+            format: format,
+            sampleCount: samples.count,
+            fileSizeBytes: fileSize,
+            exportedTypes: types
+        )
+    }
+
     // MARK: - Formatter Factory
 
     private func makeFormatter(for format: ExportFormat) -> any ExportFormatter {

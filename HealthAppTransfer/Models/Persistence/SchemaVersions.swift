@@ -17,6 +17,7 @@ enum SchemaV1: VersionedSchema {
             ExportRecord.self,
             AutomationConfiguration.self,
             UserPreferences.self,
+            SyncedHealthSample.self,
         ]
     }
 }

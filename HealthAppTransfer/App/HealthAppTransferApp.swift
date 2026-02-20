@@ -14,6 +14,10 @@ struct HealthAppTransferApp: App {
     private let services: ServiceContainer
     private let backgroundSync: BackgroundSyncService
 
+    #if os(macOS)
+    @State private var selectedExportTab = false
+    #endif
+
     // MARK: - Init
 
     init() {
@@ -44,14 +48,93 @@ struct HealthAppTransferApp: App {
                 .task { await startBackgroundSync() }
         }
         .modelContainer(modelContainer)
+        #if os(macOS)
+        .commands {
+            macOSCommands
+        }
+        #endif
     }
+
+    // MARK: - macOS Commands
+
+    #if os(macOS)
+    @CommandsBuilder
+    private var macOSCommands: some Commands {
+        CommandGroup(replacing: .newItem) {
+            // Remove default "New" since it doesn't apply
+        }
+
+        CommandMenu("Sync") {
+            Button("Sync via CloudKit Now") {
+                Task { await performCloudKitSync() }
+            }
+            .keyboardShortcut("r", modifiers: [.command, .shift])
+        }
+
+        CommandMenu("Export") {
+            Button("Export Health Data...") {
+                NotificationCenter.default.post(name: .macNavigateToExport, object: nil)
+            }
+            .keyboardShortcut("e", modifiers: [.command])
+
+            Divider()
+
+            Button("Quick Export as JSON") {
+                NotificationCenter.default.post(
+                    name: .macQuickExport,
+                    object: ExportFormat.jsonV2
+                )
+            }
+            .keyboardShortcut("j", modifiers: [.command, .shift])
+
+            Button("Quick Export as CSV") {
+                NotificationCenter.default.post(
+                    name: .macQuickExport,
+                    object: ExportFormat.csv
+                )
+            }
+            .keyboardShortcut("c", modifiers: [.command, .shift])
+        }
+    }
+    #endif
 
     // MARK: - Background Sync
 
     private func startBackgroundSync() async {
+        #if os(iOS)
         await backgroundSync.setupObserverQueries()
-        #if canImport(UIKit)
         await backgroundSync.scheduleAppRefresh()
+        #else
+        // On macOS, pull data from CloudKit on launch
+        await performCloudKitSync()
         #endif
     }
+
+    // MARK: - CloudKit Sync
+
+    private func performCloudKitSync() async {
+        let cloudKitSync = CloudKitSyncService(
+            healthKitService: services.healthKitService,
+            modelContainer: modelContainer
+        )
+
+        do {
+            let samples = try await cloudKitSync.downloadSamples()
+            Loggers.cloudKit.info("macOS CloudKit sync: downloaded \(samples.count) samples")
+        } catch {
+            Loggers.cloudKit.error("macOS CloudKit sync failed: \(error.localizedDescription)")
+        }
+    }
 }
+
+// MARK: - macOS Notification Names
+
+#if os(macOS)
+extension Notification.Name {
+    /// Navigate to the Export tab in MainTabView.
+    static let macNavigateToExport = Notification.Name("macNavigateToExport")
+
+    /// Trigger a quick export with the format in the notification's object.
+    static let macQuickExport = Notification.Name("macQuickExport")
+}
+#endif

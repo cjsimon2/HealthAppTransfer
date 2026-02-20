@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 import SwiftUI
 
 // MARK: - Health Data ViewModel
@@ -55,7 +56,20 @@ class HealthDataViewModel: ObservableObject {
 
     // MARK: - Data Loading
 
-    func loadDataTypes() async {
+    func loadDataTypes(modelContext: ModelContext? = nil) async {
+        #if os(macOS)
+        if let modelContext {
+            loadDataTypesFromStore(modelContext: modelContext)
+            return
+        }
+        #endif
+
+        await loadDataTypesFromHealthKit()
+    }
+
+    // MARK: - HealthKit Path (iOS)
+
+    private func loadDataTypesFromHealthKit() async {
         isLoading = true
         defer { isLoading = false }
 
@@ -69,4 +83,34 @@ class HealthDataViewModel: ObservableObject {
             return CategoryGroup(category: group.category, types: typeInfos)
         }
     }
+
+    // MARK: - SwiftData Path (macOS)
+
+    #if os(macOS)
+    private func loadDataTypesFromStore(modelContext: ModelContext) {
+        isLoading = true
+        defer { isLoading = false }
+
+        // Count samples per type from SwiftData
+        var typeCounts: [String: Int] = [:]
+
+        for type in HealthDataType.allCases {
+            let typeRaw = type.rawValue
+            let descriptor = FetchDescriptor<SyncedHealthSample>(
+                predicate: #Predicate { $0.typeRawValue == typeRaw }
+            )
+            let count = (try? modelContext.fetchCount(descriptor)) ?? 0
+            if count > 0 {
+                typeCounts[typeRaw] = count
+            }
+        }
+
+        allGroups = HealthDataType.groupedByCategory.map { group in
+            let typeInfos = group.types.map { type in
+                TypeInfo(type: type, count: typeCounts[type.rawValue] ?? 0)
+            }
+            return CategoryGroup(category: group.category, types: typeInfos)
+        }
+    }
+    #endif
 }

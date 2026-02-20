@@ -126,10 +126,12 @@ actor LANSyncClient {
     }
 
     /// Pull all available health data from the server.
-    func pullAllData(token: String) async throws -> SyncResult {
+    /// Returns both the sync result summary and the actual samples for persistence.
+    func pullAllData(token: String) async throws -> (SyncResult, [HealthSampleDTO]) {
         let start = Date()
         let types = try await fetchHealthTypes(token: token)
         var totalSamples = 0
+        var allSamples: [HealthSampleDTO] = []
 
         for typeInfo in types where typeInfo.sampleCount > 0 {
             guard let dataType = HealthDataType(rawValue: typeInfo.identifier) else { continue }
@@ -139,6 +141,7 @@ actor LANSyncClient {
             while hasMore {
                 let batch = try await fetchHealthData(type: dataType, offset: offset, token: token)
                 totalSamples += batch.samples.count
+                allSamples.append(contentsOf: batch.samples)
                 hasMore = batch.hasMore
                 offset += batch.limit
             }
@@ -147,11 +150,12 @@ actor LANSyncClient {
         let duration = Date().timeIntervalSince(start)
         Loggers.network.info("LANSync: pulled \(totalSamples) samples across \(types.count) types in \(String(format: "%.1f", duration))s")
 
-        return SyncResult(
+        let result = SyncResult(
             typesAvailable: types.count,
             samplesFetched: totalSamples,
             duration: duration
         )
+        return (result, allSamples)
     }
 
     // MARK: - Private HTTP

@@ -80,6 +80,29 @@ targets:
         NSCalendarsFullAccessUsageDescription: "This app creates calendar events for your workouts when the Calendar automation is enabled."
         NSBonjourServices:
           - "_healthsync._tcp"
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: com.topografix.gpx
+            UTTypeDescription: GPS Exchange Format
+            UTTypeConformsTo:
+              - public.xml
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - gpx
+              public.mime-type:
+                - application/gpx+xml
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: JSON
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - public.json
+          - CFBundleTypeName: CSV
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - public.comma-separated-values-text
+          - CFBundleTypeName: GPX
+            LSHandlerRank: Owner
+            LSItemContentTypes:
+              - com.topografix.gpx
 
   HealthAppTransferWidget:
     type: app-extension

@@ -10,9 +10,11 @@ actor AutomationExecutor {
     // MARK: - Dependencies
 
     private let healthKitService: HealthKitService
+    private let keychain: KeychainStore
 
-    init(healthKitService: HealthKitService) {
+    init(healthKitService: HealthKitService, keychain: KeychainStore = KeychainStore()) {
         self.healthKitService = healthKitService
+        self.keychain = keychain
     }
 
     // MARK: - Execute
@@ -30,6 +32,8 @@ actor AutomationExecutor {
             await executeCloudStorage(configuration: configuration, in: modelContext)
         case "calendar":
             await executeCalendar(configuration: configuration, in: modelContext)
+        case "home_assistant":
+            await executeHomeAssistant(configuration: configuration, in: modelContext)
         default:
             Loggers.automation.warning("AutomationExecutor: unsupported type '\(configuration.automationType)'")
         }
@@ -91,6 +95,33 @@ actor AutomationExecutor {
 
         do {
             try await calendarAutomation.execute(params: params)
+            markSuccess(configuration: configuration)
+        } catch {
+            markFailure(configuration: configuration, error: error)
+        }
+
+        try? modelContext.save()
+    }
+
+    /// Execute a single Home Assistant automation.
+    @MainActor
+    func executeHomeAssistant(configuration: AutomationConfiguration, in modelContext: ModelContext) async {
+        let keychainKey = HomeAssistantAutomation.keychainKeyPrefix + configuration.persistentModelID.hashValue.description
+
+        // Load token from Keychain
+        guard let tokenData = try? await keychain.load(key: keychainKey),
+              let accessToken = String(data: tokenData, encoding: .utf8),
+              !accessToken.isEmpty else {
+            markFailure(configuration: configuration, error: HomeAssistantError.missingToken)
+            try? modelContext.save()
+            return
+        }
+
+        let params = HomeAssistantParameters(configuration: configuration, accessToken: accessToken)
+        let haAutomation = HomeAssistantAutomation(healthKitService: healthKitService)
+
+        do {
+            try await haAutomation.execute(params: params)
             markSuccess(configuration: configuration)
         } catch {
             markFailure(configuration: configuration, error: error)

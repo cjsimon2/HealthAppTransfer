@@ -1,8 +1,13 @@
 import SwiftUI
+import SwiftData
 
 // MARK: - Health Data View
 
 struct HealthDataView: View {
+
+    // MARK: - Environment
+
+    @Environment(\.modelContext) private var modelContext
 
     // MARK: - Observed Objects
 
@@ -32,7 +37,7 @@ struct HealthDataView: View {
             }
         }
         .navigationTitle("Health Data")
-        .task { await viewModel.loadDataTypes() }
+        .task { await viewModel.loadDataTypes(modelContext: modelContext) }
     }
 
     // MARK: - Subviews
@@ -47,11 +52,19 @@ struct HealthDataView: View {
             Text("No Health Data")
                 .font(.title3.bold())
 
+            #if os(macOS)
+            Text("Sync health data from your iPhone to browse available types.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+            #else
             Text("Authorize HealthKit access to browse your health data types.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
+            #endif
         }
     }
 
