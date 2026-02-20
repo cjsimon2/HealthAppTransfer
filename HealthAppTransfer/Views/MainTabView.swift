@@ -69,7 +69,7 @@ struct MainTabView: View {
             .accessibilityIdentifier("tab.automations")
 
             NavigationStack {
-                SettingsView(pairingViewModel: pairingViewModel, lanSyncViewModel: lanSyncViewModel, securitySettingsViewModel: securitySettingsViewModel)
+                SettingsView(pairingViewModel: pairingViewModel, lanSyncViewModel: lanSyncViewModel, securitySettingsViewModel: securitySettingsViewModel, healthKitService: healthKitService)
             }
             .tabItem {
                 Label("Settings", systemImage: "gear")
@@ -101,7 +101,7 @@ struct MainTabView: View {
             case .automations:
                 AutomationsView()
             case .settings:
-                SettingsView(pairingViewModel: pairingViewModel, lanSyncViewModel: lanSyncViewModel, securitySettingsViewModel: securitySettingsViewModel)
+                SettingsView(pairingViewModel: pairingViewModel, lanSyncViewModel: lanSyncViewModel, securitySettingsViewModel: securitySettingsViewModel, healthKitService: healthKitService)
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .macNavigateToExport)) { _ in

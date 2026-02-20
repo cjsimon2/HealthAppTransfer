@@ -249,6 +249,7 @@ struct RESTAutomationFormView: View {
         }
 
         try? modelContext.save()
+        NotificationCenter.default.post(name: .automationsDidChange, object: nil)
         dismiss()
     }
 }

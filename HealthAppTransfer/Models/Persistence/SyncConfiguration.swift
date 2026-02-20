@@ -50,6 +50,9 @@ final class SyncConfiguration {
     /// Persisted CKServerChangeToken data for delta sync.
     var cloudKitChangeTokenData: Data?
 
+    /// JSON-encoded array of recent sync history entries (last 20).
+    var syncHistoryData: Data?
+
     // MARK: - Init
 
     init(

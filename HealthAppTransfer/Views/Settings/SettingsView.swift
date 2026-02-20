@@ -4,16 +4,28 @@ import SwiftUI
 
 struct SettingsView: View {
 
-    // MARK: - Observed Objects
+    // MARK: - Dependencies
 
     @ObservedObject var pairingViewModel: PairingViewModel
     @ObservedObject var lanSyncViewModel: LANSyncViewModel
     @ObservedObject var securitySettingsViewModel: SecuritySettingsViewModel
+    let healthKitService: HealthKitService
 
     // MARK: - Body
 
     var body: some View {
         List {
+            Section {
+                NavigationLink {
+                    SyncSettingsView(healthKitService: healthKitService)
+                } label: {
+                    Label("Sync Settings", systemImage: "arrow.triangle.2.circlepath")
+                }
+                .accessibilityIdentifier("settings.syncSettings")
+            } header: {
+                Text("Sync")
+            }
+
             Section {
                 NavigationLink {
                     PairingView(viewModel: pairingViewModel)

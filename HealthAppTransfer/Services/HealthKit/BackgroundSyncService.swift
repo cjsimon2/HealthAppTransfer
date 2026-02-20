@@ -26,6 +26,7 @@ actor BackgroundSyncService {
     private let store: HKHealthStore
     private let modelContainer: ModelContainer
     private let cloudKitSync: CloudKitSyncService
+    private var automationScheduler: AutomationScheduler?
     private var observerQueries: [HKObserverQuery] = []
     #if canImport(ActivityKit)
     private var currentActivity: Activity<SyncActivityAttributes>?
@@ -41,6 +42,13 @@ actor BackgroundSyncService {
             healthKitService: healthKitService,
             modelContainer: modelContainer
         )
+    }
+
+    // MARK: - Automation Scheduler
+
+    /// Set the automation scheduler so automations fire during background sync.
+    func setAutomationScheduler(_ scheduler: AutomationScheduler) {
+        self.automationScheduler = scheduler
     }
 
     // MARK: - BGTask Registration
@@ -255,6 +263,9 @@ actor BackgroundSyncService {
 
             // Trigger CloudKit sync after local sync (non-blocking on errors)
             await cloudKitSync.performSync()
+
+            // Fire active automations after sync
+            await automationScheduler?.executeAll()
 
             return true
 

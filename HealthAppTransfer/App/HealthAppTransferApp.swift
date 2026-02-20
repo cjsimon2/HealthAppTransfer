@@ -13,6 +13,7 @@ struct HealthAppTransferApp: App {
     private let modelContainer: ModelContainer
     private let services: ServiceContainer
     private let backgroundSync: BackgroundSyncService
+    private let automationScheduler: AutomationScheduler
 
     #if os(macOS)
     @State private var selectedExportTab = false
@@ -30,6 +31,11 @@ struct HealthAppTransferApp: App {
             self.backgroundSync = BackgroundSyncService(
                 healthKitService: services.healthKitService,
                 modelContainer: container
+            )
+            self.automationScheduler = AutomationScheduler(
+                healthKitService: services.healthKitService,
+                modelContainer: container,
+                keychain: services.keychain
             )
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
@@ -101,6 +107,10 @@ struct HealthAppTransferApp: App {
     // MARK: - Background Sync
 
     private func startBackgroundSync() async {
+        // Wire automation scheduler into background sync
+        await backgroundSync.setAutomationScheduler(automationScheduler)
+        await automationScheduler.start()
+
         #if os(iOS)
         await backgroundSync.setupObserverQueries()
         await backgroundSync.scheduleAppRefresh()

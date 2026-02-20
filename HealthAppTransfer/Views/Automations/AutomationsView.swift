@@ -208,9 +208,25 @@ struct AutomationsView: View {
                             .foregroundStyle(.red)
                     }
                 }
+
+                if let lastRun = automation.lastTriggeredAt {
+                    Text("Last run: \(lastRun, format: .relative(presentation: .named))")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
             }
 
             Spacer()
+
+            if automation.triggerIntervalSeconds > 0 {
+                Label(intervalLabel(automation.triggerIntervalSeconds), systemImage: "timer")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            } else {
+                Label("On change", systemImage: "bolt")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
@@ -225,7 +241,16 @@ struct AutomationsView: View {
         if automation.consecutiveFailures > 0 {
             label += ", \(automation.consecutiveFailures) consecutive failures"
         }
+        if automation.lastTriggeredAt != nil {
+            label += ", last run recently"
+        }
         return label
+    }
+
+    private func intervalLabel(_ seconds: Int) -> String {
+        if seconds < 60 { return "\(seconds)s" }
+        if seconds < 3600 { return "\(seconds / 60)m" }
+        return "\(seconds / 3600)h"
     }
 
     // MARK: - Helpers
@@ -257,5 +282,13 @@ struct AutomationsView: View {
             modelContext.delete(automations[index])
         }
         try? modelContext.save()
+        NotificationCenter.default.post(name: .automationsDidChange, object: nil)
     }
+}
+
+// MARK: - Notification Name
+
+extension Notification.Name {
+    /// Posted when automations are added, removed, or toggled.
+    static let automationsDidChange = Notification.Name("automationsDidChange")
 }
