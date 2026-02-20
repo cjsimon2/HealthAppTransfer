@@ -1,10 +1,10 @@
 import SwiftData
 import SwiftUI
 
-// MARK: - REST Automation Form View
+// MARK: - Cloud Storage Form View
 
-/// Form for creating or editing a REST API automation configuration.
-struct RESTAutomationFormView: View {
+/// Form for creating or editing an iCloud Drive export automation.
+struct CloudStorageFormView: View {
 
     // MARK: - Environment
 
@@ -14,12 +14,11 @@ struct RESTAutomationFormView: View {
     // MARK: - State
 
     @State private var name: String
-    @State private var endpoint: String
     @State private var exportFormat: String
     @State private var incrementalOnly: Bool
-    @State private var headers: [HeaderEntry]
     @State private var enabledTypes: Set<String>
     @State private var showingTypePicker = false
+    @State private var iCloudAvailable: Bool = true
 
     /// Existing configuration to edit, or nil when creating new.
     private let existing: AutomationConfiguration?
@@ -29,28 +28,21 @@ struct RESTAutomationFormView: View {
     init(configuration: AutomationConfiguration? = nil) {
         self.existing = configuration
         _name = State(initialValue: configuration?.name ?? "")
-        _endpoint = State(initialValue: configuration?.endpoint ?? "")
         _exportFormat = State(initialValue: configuration?.exportFormat ?? "json_v2")
         _incrementalOnly = State(initialValue: configuration?.incrementalOnly ?? true)
         _enabledTypes = State(initialValue: Set(configuration?.enabledTypeRawValues ?? []))
-
-        // Parse existing headers into editable entries
-        let existingHeaders = configuration?.httpHeaders ?? [:]
-        let entries = existingHeaders.map { HeaderEntry(key: $0.key, value: $0.value) }
-            .sorted { $0.key < $1.key }
-        _headers = State(initialValue: entries.isEmpty ? [HeaderEntry()] : entries)
     }
 
     // MARK: - Body
 
     var body: some View {
         Form {
-            basicSection
-            headersSection
-            payloadSection
+            generalSection
+            formatSection
             dataTypesSection
+            iCloudStatusSection
         }
-        .navigationTitle(existing == nil ? "New REST Automation" : "Edit Automation")
+        .navigationTitle(existing == nil ? "New iCloud Export" : "Edit iCloud Export")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -58,7 +50,6 @@ struct RESTAutomationFormView: View {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") { save() }
                     .disabled(!isValid)
-                    .accessibilityIdentifier("restForm.saveButton")
             }
             if existing == nil {
                 ToolbarItem(placement: .cancellationAction) {
@@ -69,74 +60,32 @@ struct RESTAutomationFormView: View {
         .sheet(isPresented: $showingTypePicker) {
             typePickerSheet
         }
+        .onAppear {
+            iCloudAvailable = FileManager.default.ubiquityIdentityToken != nil
+        }
     }
 
     // MARK: - Sections
 
-    private var basicSection: some View {
+    private var generalSection: some View {
         Section("General") {
             TextField("Name", text: $name)
-                .accessibilityIdentifier("restForm.nameField")
 
-            TextField("Endpoint URL", text: $endpoint)
-                .textContentType(.URL)
-                .autocorrectionDisabled()
-                #if os(iOS)
-                .keyboardType(.URL)
-                .textInputAutocapitalization(.never)
-                #endif
-                .accessibilityIdentifier("restForm.endpointField")
-
-            Toggle("Send only new data", isOn: $incrementalOnly)
-                .accessibilityLabel("Send only new data since last export")
-                .accessibilityIdentifier("restForm.incrementalToggle")
+            Toggle("Export only new data", isOn: $incrementalOnly)
         }
     }
 
-    private var headersSection: some View {
+    private var formatSection: some View {
         Section {
-            ForEach($headers) { $entry in
-                HStack(spacing: 8) {
-                    TextField("Header", text: $entry.key)
-                        .autocorrectionDisabled()
-                        #if os(iOS)
-                        .textInputAutocapitalization(.never)
-                        #endif
-
-                    TextField("Value", text: $entry.value)
-                        .autocorrectionDisabled()
-                        #if os(iOS)
-                        .textInputAutocapitalization(.never)
-                        #endif
-                }
-            }
-            .onDelete { indices in
-                headers.remove(atOffsets: indices)
-                if headers.isEmpty { headers.append(HeaderEntry()) }
-            }
-
-            Button {
-                headers.append(HeaderEntry())
-            } label: {
-                Label("Add Header", systemImage: "plus")
-            }
-            .accessibilityIdentifier("restForm.addHeaderButton")
-        } header: {
-            Text("HTTP Headers")
-        } footer: {
-            Text("e.g. Authorization: Bearer token123")
-        }
-    }
-
-    private var payloadSection: some View {
-        Section("Payload Format") {
             Picker("Format", selection: $exportFormat) {
                 Text("JSON v2 (grouped)").tag("json_v2")
                 Text("JSON v1 (flat)").tag("json_v1")
                 Text("CSV").tag("csv")
             }
-            .accessibilityLabel("Payload format")
-            .accessibilityIdentifier("restForm.formatPicker")
+        } header: {
+            Text("Export Format")
+        } footer: {
+            Text("Files are saved to iCloud Drive under HealthExports/YYYY-MM-DD/")
         }
     }
 
@@ -152,8 +101,26 @@ struct RESTAutomationFormView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .accessibilityLabel("Select health data types, \(enabledTypes.count) selected")
-            .accessibilityIdentifier("restForm.typePickerButton")
+        }
+    }
+
+    private var iCloudStatusSection: some View {
+        Section {
+            HStack(spacing: 12) {
+                Image(systemName: iCloudAvailable ? "checkmark.icloud" : "xmark.icloud")
+                    .foregroundStyle(iCloudAvailable ? .green : .red)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(iCloudAvailable ? "iCloud Drive Available" : "iCloud Drive Unavailable")
+                        .font(.body.weight(.medium))
+
+                    if !iCloudAvailable {
+                        Text("Sign in to iCloud in Settings to enable cloud exports.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
         }
     }
 
@@ -178,7 +145,6 @@ struct RESTAutomationFormView: View {
                                     }
                                 }
                             }
-                            .accessibilityLabel("\(type.displayName), \(enabledTypes.contains(type.rawValue) ? "selected" : "not selected")")
                         }
                     }
                 }
@@ -199,8 +165,6 @@ struct RESTAutomationFormView: View {
 
     private var isValid: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty
-            && !endpoint.trimmingCharacters(in: .whitespaces).isEmpty
-            && URL(string: endpoint) != nil
             && !enabledTypes.isEmpty
     }
 
@@ -216,48 +180,25 @@ struct RESTAutomationFormView: View {
 
     private func save() {
         let trimmedName = name.trimmingCharacters(in: .whitespaces)
-        let trimmedEndpoint = endpoint.trimmingCharacters(in: .whitespaces)
-
-        // Build headers dict, filtering empty entries
-        let headerDict = headers.reduce(into: [String: String]()) { result, entry in
-            let key = entry.key.trimmingCharacters(in: .whitespaces)
-            let value = entry.value.trimmingCharacters(in: .whitespaces)
-            if !key.isEmpty && !value.isEmpty {
-                result[key] = value
-            }
-        }
 
         if let config = existing {
             config.name = trimmedName
-            config.endpoint = trimmedEndpoint
             config.exportFormat = exportFormat
             config.incrementalOnly = incrementalOnly
             config.enabledTypeRawValues = Array(enabledTypes)
-            config.httpHeaders = headerDict
             config.updatedAt = Date()
         } else {
             let config = AutomationConfiguration(
                 name: trimmedName,
-                automationType: "rest_api",
-                endpoint: trimmedEndpoint,
+                automationType: "cloud_storage",
                 exportFormat: exportFormat
             )
             config.incrementalOnly = incrementalOnly
             config.enabledTypeRawValues = Array(enabledTypes)
-            config.httpHeaders = headerDict
             modelContext.insert(config)
         }
 
         try? modelContext.save()
         dismiss()
     }
-}
-
-// MARK: - Header Entry
-
-/// Editable key-value pair for HTTP headers.
-private struct HeaderEntry: Identifiable {
-    let id = UUID()
-    var key: String = ""
-    var value: String = ""
 }

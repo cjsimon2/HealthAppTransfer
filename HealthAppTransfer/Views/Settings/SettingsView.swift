@@ -20,12 +20,14 @@ struct SettingsView: View {
                 } label: {
                     Label("Pair Device", systemImage: "qrcode")
                 }
+                .accessibilityIdentifier("settings.pairDevice")
 
                 NavigationLink {
                     PairedDevicesView(viewModel: pairingViewModel)
                 } label: {
                     Label("Paired Devices", systemImage: "link")
                 }
+                .accessibilityIdentifier("settings.pairedDevices")
             } header: {
                 Text("Transfer")
             }
@@ -44,6 +46,8 @@ struct SettingsView: View {
                         Image(systemName: "wifi")
                     }
                 }
+                .accessibilityLabel("LAN Sync, \(connectionStatusLabel)")
+                .accessibilityIdentifier("settings.lanSync")
             } header: {
                 Text("Network")
             }
@@ -54,6 +58,7 @@ struct SettingsView: View {
                 } label: {
                     Label("Security", systemImage: "lock.shield")
                 }
+                .accessibilityIdentifier("settings.security")
             } header: {
                 Text("Security")
             }
@@ -61,6 +66,7 @@ struct SettingsView: View {
             Section {
                 Label("Version 1.0.0", systemImage: "info.circle")
                     .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("settings.version")
             } header: {
                 Text("About")
             }
@@ -77,16 +83,29 @@ struct SettingsView: View {
             Image(systemName: "circle.fill")
                 .font(.caption2)
                 .foregroundStyle(.green)
+                .accessibilityHidden(true)
         case .searching, .connecting:
             Image(systemName: "circle.fill")
                 .font(.caption2)
                 .foregroundStyle(.orange)
+                .accessibilityHidden(true)
         case .failed:
             Image(systemName: "circle.fill")
                 .font(.caption2)
                 .foregroundStyle(.red)
+                .accessibilityHidden(true)
         case .disconnected:
             EmptyView()
+        }
+    }
+
+    private var connectionStatusLabel: String {
+        switch lanSyncViewModel.connectionStatus {
+        case .connected: "connected"
+        case .searching: "searching"
+        case .connecting: "connecting"
+        case .failed: "connection failed"
+        case .disconnected: "disconnected"
         }
     }
 }

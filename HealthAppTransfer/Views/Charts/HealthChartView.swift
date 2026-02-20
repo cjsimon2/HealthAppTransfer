@@ -54,6 +54,7 @@ struct HealthChartView: View {
         }
         .pickerStyle(.segmented)
         .accessibilityLabel("Chart date range")
+        .accessibilityIdentifier("chart.dateRangePicker")
     }
 
     // MARK: - Custom Date Range
@@ -87,6 +88,7 @@ struct HealthChartView: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Custom date range")
+        .accessibilityIdentifier("chart.customDateRange")
     }
 
     // MARK: - Chart Type Selector
@@ -99,6 +101,7 @@ struct HealthChartView: View {
         }
         .pickerStyle(.segmented)
         .accessibilityLabel("Chart display type")
+        .accessibilityIdentifier("chart.typePicker")
     }
 
     // MARK: - Chart Area

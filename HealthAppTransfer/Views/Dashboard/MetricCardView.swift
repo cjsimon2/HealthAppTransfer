@@ -26,6 +26,8 @@ struct MetricCardView: View {
         .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 12))
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityDescription)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityIdentifier("metricCard.\(dataType.rawValue)")
     }
 
     // MARK: - Subviews

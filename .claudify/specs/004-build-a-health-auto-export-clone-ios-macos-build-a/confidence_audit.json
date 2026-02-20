@@ -207,6 +207,29 @@
       },
       "output_preview": "Added one project-specific insight: the SwiftData `@Model` \u2192 Sendable snapshot pattern used when crossing actor boundaries, referencing the concrete example in `RESTAutomation.swift`.",
       "action_taken": "proceed"
+    },
+    {
+      "timestamp": "2026-02-20T15:06:19.192855+00:00",
+      "agent_name": "Coder",
+      "spec_id": "004",
+      "subtask_id": "7.2",
+      "score": {
+        "value": 0.755,
+        "reasoning": "Acceptable confidence: Output missing expected sections (score: 0.30)",
+        "factors": {
+          "completeness": 0.3,
+          "uncertainty": 1.0,
+          "tool_success": 1.0,
+          "length_appropriateness": 0.535,
+          "error_free": 1.0
+        },
+        "needs_human_review": false,
+        "escalation_reasons": [
+          "incomplete_output"
+        ]
+      },
+      "output_preview": "Added the pre-existing build blocker note to LEARNINGS.md \u2014 useful for future sessions that attempt builds.",
+      "action_taken": "proceed"
     }
   ]
 }

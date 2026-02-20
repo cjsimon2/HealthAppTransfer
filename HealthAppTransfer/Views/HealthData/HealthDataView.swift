@@ -80,6 +80,7 @@ struct HealthDataView: View {
             }
         }
         .searchable(text: $viewModel.searchText, prompt: "Search health types")
+        .accessibilityIdentifier("healthData.list")
     }
 
     private func typeRow(_ typeInfo: HealthDataViewModel.TypeInfo) -> some View {
@@ -108,8 +109,9 @@ struct HealthDataView: View {
                     .accessibilityLabel("Has data")
             }
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(typeInfo.displayName), \(typeInfo.count > 0 ? "\(typeInfo.count) samples" : "no data")")
+        .accessibilityIdentifier("healthData.row.\(typeInfo.type.rawValue)")
     }
 }

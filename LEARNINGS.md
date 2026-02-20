@@ -38,6 +38,7 @@
 - `AggregatedSample` chart value extraction: use `sample.sum ?? sample.average ?? sample.latest ?? 0` — cumulative types populate `sum`, discrete types populate `average`. Request both `[.sum, .average]` operations and AggregationEngine silently skips incompatible ones.
 - XcodeGen overwrites `.entitlements` files during `generate` — must use `entitlements.properties` in `project.yml` instead of manually editing the plist file, or changes get wiped on next generate.
 - `CloudKitSyncService.swift` has a pre-existing build error (`atomicZone` extra argument) — unrelated to other work, needs separate fix.
+- `MQTTAutomation.swift` has two pre-existing build errors: main actor isolation violation (line 77) and missing `HealthDataType.defaultUnit` property (line 254) — needs separate fix.
 - `HKWorkoutRouteQuery` delivers `CLLocation` arrays in batches (not all at once) — accumulate in a local array and only resolve the continuation when the `done` flag is `true`. Resuming the continuation on each batch will crash.
 - CloudKit `CKDatabase.modifyRecords(saving:deleting:savePolicy:atomicZone:)` has a 400-record limit per operation — batch uploads accordingly.
 - `CKServerChangeToken` must be archived via `NSKeyedArchiver` to persist as `Data` in SwiftData — `CKServerChangeToken` conforms to `NSSecureCoding`.
@@ -57,6 +58,7 @@ _None documented yet. Use `/learn` to record failures._
 - xcodegen overwrites `.entitlements` files to empty `<dict/>` during `generate` — always restore entitlements content after running xcodegen.
 - This machine has no iPhone 16 simulator — use `iPhone 17` (or check available destinations) for xcodebuild commands.
 - CocoaMQTT pulls two transitive deps: Starscream (WebSocket) and MqttCocoaAsyncSocket (TCP) — these are expected, not extra third-party additions.
+- Pre-existing build errors in `CloudKitSyncService.swift` (extra `atomicZone` arg) and `MQTTAutomation.swift` (actor isolation + missing `defaultUnit`) — these block full builds but are unrelated to view-layer work.
 
 ### Anti-Patterns Found
 <!-- Patterns that cause problems here -->

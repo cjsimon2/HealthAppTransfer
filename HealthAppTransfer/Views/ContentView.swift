@@ -100,6 +100,7 @@ struct ContentView: View {
                 Image(systemName: "lock.shield.fill")
                     .font(.system(size: 64))
                     .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
 
                 Text("HealthAppTransfer is Locked")
                     .font(.title2.weight(.semibold))
@@ -117,9 +118,11 @@ struct ContentView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                .accessibilityIdentifier("lockScreen.unlockButton")
             }
         }
         .transition(.opacity)
+        .accessibilityIdentifier("lockScreen")
     }
 
     private var lockedBackground: Color {

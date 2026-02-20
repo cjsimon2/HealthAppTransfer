@@ -62,6 +62,12 @@ targets:
       properties:
         com.apple.security.application-groups:
           - group.com.caseysimon.HealthAppTransfer
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.com.caseysimon.HealthAppTransfer
+        com.apple.developer.icloud-services:
+          - CloudDocuments
+        com.apple.developer.ubiquity-container-identifiers:
+          - iCloud.com.caseysimon.HealthAppTransfer
     info:
       path: HealthAppTransfer/App/Info.plist
       properties:
@@ -71,6 +77,7 @@ targets:
         NSSupportsLiveActivities: true
         UIBackgroundModes:
           - processing
+        NSCalendarsFullAccessUsageDescription: "This app creates calendar events for your workouts when the Calendar automation is enabled."
         NSBonjourServices:
           - "_healthsync._tcp"
 

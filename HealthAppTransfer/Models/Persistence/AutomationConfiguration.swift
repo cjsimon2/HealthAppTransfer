@@ -54,6 +54,23 @@ final class AutomationConfiguration {
     /// HTTP headers as JSON-encoded dictionary (e.g. Authorization, API keys).
     var httpHeadersJSON: String?
 
+    // MARK: - MQTT Properties
+
+    /// MQTT QoS level: 0, 1, or 2.
+    var mqttQoS: Int = 0
+
+    /// Whether to use TLS for MQTT connection.
+    var mqttUseTLS: Bool = false
+
+    /// MQTT broker username (optional).
+    var mqttUsername: String?
+
+    /// MQTT broker password (optional).
+    var mqttPassword: String?
+
+    /// Whether to publish Home Assistant MQTT discovery messages.
+    var mqttHomeAssistantDiscovery: Bool = false
+
     // MARK: - Init
 
     init(

@@ -111,6 +111,7 @@ struct HealthDataDetailView: View {
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title): \(value)")
+        .accessibilityIdentifier("detail.stat.\(title.lowercased())")
     }
 
     // MARK: - Recent Samples
@@ -152,6 +153,17 @@ struct HealthDataDetailView: View {
         }
         .padding(.vertical, 6)
         .accessibilityElement(children: .combine)
+        .accessibilityLabel(sampleRowLabel(dto))
+    }
+
+    private func sampleRowLabel(_ dto: HealthSampleDTO) -> String {
+        let date = dto.startDate.formatted(.dateTime.month(.abbreviated).day().hour().minute())
+        if let value = dto.value, let unit = dto.unit {
+            return "\(formatDTOValue(value, unit: unit)), \(date), from \(dto.sourceName)"
+        } else if let categoryValue = dto.categoryValue {
+            return "Value \(categoryValue), \(date), from \(dto.sourceName)"
+        }
+        return "\(date), from \(dto.sourceName)"
     }
 
     // MARK: - Export Button
@@ -166,6 +178,7 @@ struct HealthDataDetailView: View {
         )
         .disabled(viewModel.recentDTOs.isEmpty)
         .accessibilityLabel("Export \(viewModel.dataType.displayName) data")
+        .accessibilityIdentifier("detail.exportButton")
     }
 
     private var exportData: Data {

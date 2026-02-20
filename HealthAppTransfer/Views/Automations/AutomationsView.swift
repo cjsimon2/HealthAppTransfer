@@ -16,7 +16,11 @@ struct AutomationsView: View {
 
     // MARK: - State
 
-    @State private var showingAddSheet = false
+    @State private var showingTypePicker = false
+    @State private var showingRESTForm = false
+    @State private var showingMQTTForm = false
+    @State private var showingCloudStorageForm = false
+    @State private var showingCalendarForm = false
 
     // MARK: - Body
 
@@ -31,16 +35,55 @@ struct AutomationsView: View {
         .navigationTitle("Automations")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showingAddSheet = true
+                Menu {
+                    Button {
+                        showingRESTForm = true
+                    } label: {
+                        Label("REST API", systemImage: "network")
+                    }
+
+                    Button {
+                        showingMQTTForm = true
+                    } label: {
+                        Label("MQTT", systemImage: "antenna.radiowaves.left.and.right")
+                    }
+
+                    Button {
+                        showingCloudStorageForm = true
+                    } label: {
+                        Label("iCloud Drive", systemImage: "icloud")
+                    }
+
+                    Button {
+                        showingCalendarForm = true
+                    } label: {
+                        Label("Calendar", systemImage: "calendar")
+                    }
                 } label: {
                     Image(systemName: "plus")
                 }
+                .accessibilityLabel("Add automation")
+                .accessibilityIdentifier("automations.addMenu")
             }
         }
-        .sheet(isPresented: $showingAddSheet) {
+        .sheet(isPresented: $showingRESTForm) {
             NavigationStack {
                 RESTAutomationFormView()
+            }
+        }
+        .sheet(isPresented: $showingMQTTForm) {
+            NavigationStack {
+                MQTTAutomationFormView()
+            }
+        }
+        .sheet(isPresented: $showingCloudStorageForm) {
+            NavigationStack {
+                CloudStorageFormView()
+            }
+        }
+        .sheet(isPresented: $showingCalendarForm) {
+            NavigationStack {
+                CalendarFormView()
             }
         }
     }
@@ -52,6 +95,7 @@ struct AutomationsView: View {
             Image(systemName: "bolt.horizontal")
                 .font(.system(size: 48))
                 .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
 
             Text("No Automations")
                 .font(.title3.bold())
@@ -62,21 +106,45 @@ struct AutomationsView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
 
-            Button {
-                showingAddSheet = true
+            Menu {
+                Button {
+                    showingRESTForm = true
+                } label: {
+                    Label("REST API", systemImage: "network")
+                }
+
+                Button {
+                    showingMQTTForm = true
+                } label: {
+                    Label("MQTT", systemImage: "antenna.radiowaves.left.and.right")
+                }
+
+                Button {
+                    showingCloudStorageForm = true
+                } label: {
+                    Label("iCloud Drive", systemImage: "icloud")
+                }
+
+                Button {
+                    showingCalendarForm = true
+                } label: {
+                    Label("Calendar", systemImage: "calendar")
+                }
             } label: {
                 Label("Add Automation", systemImage: "plus.circle.fill")
             }
             .buttonStyle(.borderedProminent)
             .padding(.top, 8)
+            .accessibilityIdentifier("automations.emptyState.addMenu")
         }
+        .accessibilityIdentifier("automations.emptyState")
     }
 
     private var automationList: some View {
         List {
             ForEach(automations) { automation in
                 NavigationLink {
-                    RESTAutomationFormView(configuration: automation)
+                    automationDetailView(for: automation)
                 } label: {
                     automationRow(automation)
                 }
@@ -85,9 +153,23 @@ struct AutomationsView: View {
         }
     }
 
+    @ViewBuilder
+    private func automationDetailView(for automation: AutomationConfiguration) -> some View {
+        switch automation.automationType {
+        case "mqtt":
+            MQTTAutomationFormView(configuration: automation)
+        case "cloud_storage":
+            CloudStorageFormView(configuration: automation)
+        case "calendar":
+            CalendarFormView(configuration: automation)
+        default:
+            RESTAutomationFormView(configuration: automation)
+        }
+    }
+
     private func automationRow(_ automation: AutomationConfiguration) -> some View {
         HStack(spacing: 12) {
-            Image(systemName: automation.isEnabled ? "bolt.fill" : "bolt.slash")
+            Image(systemName: automationIcon(automation))
                 .foregroundStyle(automation.isEnabled ? .green : .secondary)
                 .frame(width: 24)
 
@@ -111,15 +193,40 @@ struct AutomationsView: View {
             Spacer()
         }
         .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(automationRowLabel(automation))
+        .accessibilityIdentifier("automations.row.\(automation.name)")
+    }
+
+    private func automationRowLabel(_ automation: AutomationConfiguration) -> String {
+        let status = automation.isEnabled ? "enabled" : "disabled"
+        let type = automationTypeLabel(automation.automationType)
+        var label = "\(automation.name), \(type), \(status)"
+        if automation.consecutiveFailures > 0 {
+            label += ", \(automation.consecutiveFailures) consecutive failures"
+        }
+        return label
     }
 
     // MARK: - Helpers
+
+    private func automationIcon(_ automation: AutomationConfiguration) -> String {
+        guard automation.isEnabled else { return "bolt.slash" }
+        switch automation.automationType {
+        case "mqtt": return "antenna.radiowaves.left.and.right"
+        case "cloud_storage": return "icloud"
+        case "calendar": return "calendar"
+        default: return "bolt.fill"
+        }
+    }
 
     private func automationTypeLabel(_ type: String) -> String {
         switch type {
         case "rest_api": return "REST API"
         case "mqtt": return "MQTT"
         case "home_assistant": return "Home Assistant"
+        case "cloud_storage": return "iCloud Drive"
+        case "calendar": return "Calendar"
         default: return type
         }
     }

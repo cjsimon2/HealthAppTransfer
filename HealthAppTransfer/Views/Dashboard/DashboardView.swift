@@ -50,6 +50,7 @@ struct DashboardView: View {
                     Image(systemName: "gear")
                 }
                 .accessibilityLabel("Configure dashboard metrics")
+                .accessibilityIdentifier("dashboard.configureButton")
             }
         }
         .sheet(isPresented: $showingMetricPicker) {
@@ -116,6 +117,8 @@ struct DashboardView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityHint("Double tap to view details")
+                    .accessibilityIdentifier("dashboard.card.\(card.dataType.rawValue)")
                 }
             }
             .padding(.horizontal, 16)

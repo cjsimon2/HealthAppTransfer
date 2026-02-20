@@ -39,6 +39,7 @@ struct MainTabView: View {
                 Label("Dashboard", systemImage: "heart.text.square")
             }
             .tag(AppTab.dashboard)
+            .accessibilityIdentifier("tab.dashboard")
 
             NavigationStack {
                 HealthDataView(healthKitService: healthKitService)
@@ -47,6 +48,16 @@ struct MainTabView: View {
                 Label("Health Data", systemImage: "list.bullet.clipboard")
             }
             .tag(AppTab.healthData)
+            .accessibilityIdentifier("tab.healthData")
+
+            NavigationStack {
+                QuickExportView(healthKitService: healthKitService)
+            }
+            .tabItem {
+                Label("Export", systemImage: "square.and.arrow.up")
+            }
+            .tag(AppTab.export)
+            .accessibilityIdentifier("tab.export")
 
             NavigationStack {
                 AutomationsView()
@@ -55,6 +66,7 @@ struct MainTabView: View {
                 Label("Automations", systemImage: "bolt.horizontal")
             }
             .tag(AppTab.automations)
+            .accessibilityIdentifier("tab.automations")
 
             NavigationStack {
                 SettingsView(pairingViewModel: pairingViewModel, lanSyncViewModel: lanSyncViewModel, securitySettingsViewModel: securitySettingsViewModel)
@@ -63,6 +75,7 @@ struct MainTabView: View {
                 Label("Settings", systemImage: "gear")
             }
             .tag(AppTab.settings)
+            .accessibilityIdentifier("tab.settings")
         }
     }
     #endif
@@ -83,6 +96,8 @@ struct MainTabView: View {
                 DashboardView(healthKitService: healthKitService)
             case .healthData:
                 HealthDataView(healthKitService: healthKitService)
+            case .export:
+                QuickExportView(healthKitService: healthKitService)
             case .automations:
                 AutomationsView()
             case .settings:
@@ -98,6 +113,7 @@ struct MainTabView: View {
 enum AppTab: String, CaseIterable, Identifiable {
     case dashboard
     case healthData
+    case export
     case automations
     case settings
 
@@ -107,6 +123,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         switch self {
         case .dashboard: String(localized: "tab.dashboard", defaultValue: "Dashboard")
         case .healthData: String(localized: "tab.healthData", defaultValue: "Health Data")
+        case .export: String(localized: "tab.export", defaultValue: "Export")
         case .automations: String(localized: "tab.automations", defaultValue: "Automations")
         case .settings: String(localized: "tab.settings", defaultValue: "Settings")
         }
@@ -116,6 +133,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         switch self {
         case .dashboard: "heart.text.square"
         case .healthData: "list.bullet.clipboard"
+        case .export: "square.and.arrow.up"
         case .automations: "bolt.horizontal"
         case .settings: "gear"
         }
