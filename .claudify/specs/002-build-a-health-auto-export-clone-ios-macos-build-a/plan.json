@@ -21,7 +21,7 @@
             "HealthAppTransfer/App/HealthAppTransfer.entitlements",
             "HealthAppTransfer/App/Info.plist"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -39,7 +39,7 @@
           "estimated_files": [
             "HealthAppTransfer.xcodeproj/project.pbxproj"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -73,7 +73,7 @@
             "HealthAppTransfer/Extensions/QRCodeRenderer.swift",
             "HealthAppTransfer/Extensions/Loggers.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -96,7 +96,7 @@
             "HealthAppTransfer/Models/Persistence/SchemaVersions.swift",
             "HealthAppTransfer/App/HealthAppTransferApp.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -122,7 +122,7 @@
             "HealthAppTransfer/ViewModels/DashboardViewModel.swift",
             "HealthAppTransfer/ViewModels/HealthDataViewModel.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         }
       ]
@@ -148,7 +148,7 @@
             "HealthAppTransfer/Models/HealthDataType.swift",
             "HealthAppTransfer/Models/HealthDataTypeCategory.swift"
           ],
-          "status": "pending",
+          "status": "failed",
           "notes": null
         },
         {
@@ -627,7 +627,7 @@
             "HealthAppTransfer/Services/Security/PairingService.swift",
             "HealthAppTransfer/Services/Security/CertificateService.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -650,7 +650,7 @@
             "HealthAppTransfer/Views/Settings/SecuritySettingsView.swift",
             "HealthAppTransfer/ViewModels/SecuritySettingsViewModel.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         }
       ]
@@ -844,7 +844,7 @@
             "HealthAppTransfer/Services/Network/LANSyncClient.swift",
             "HealthAppTransfer/Views/Settings/LANSyncView.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -1043,5 +1043,5 @@
     "The foundation project targets iOS 26 / Xcode 26 with Liquid Glass. We should target iOS 17+ for broader compatibility and skip Liquid Glass initially \u2014 it can be added with @available checks later.",
     "Phase ordering prioritizes getting data out first (export), then automating it (background sync), then enriching the experience (charts, widgets, macOS). This matches user value delivery order."
   ],
-  "version": 1
+  "version": 2
 }

@@ -4,7 +4,7 @@
   "task": "Build a Health Auto Export Clone (iOS + macOS). Build an iOS + macOS app replicating Health Auto Export (healthyapps.dev). Reads all Apple HealthKit data and makes it exportable, syncable, and automatable with zero server dependency. Use ai-health-sync-ios (github.com/mneves75/ai-health-sync-ios, Apache 2.0) as the foundation. Extend it; don't rebuild from scratch. Stack: Swift 6, SwiftUI multiplatform, SwiftData, actor-based concurrency. Network.framework for TLS server, URLSession for outbound HTTP, CocoaMQTT for MQTT. CryptoKit + Keychain for security. Swift Charts, MapKit, WidgetKit, ActivityKit, CloudKit. What to Build: 1. Extend HealthKit coverage to 150+ types. 2. Export formats: JSON v1+v2, CSV, GPX. Aggregation engine. 3. Automations: REST API, MQTT, Home Assistant, Cloud storage, Calendar, Local network. 4. Background sync: BGTaskScheduler + HKObserverQuery. 5. Mac companion via CloudKit + LAN sync. 6. Widgets + Live Activities. 7. Quick Export with share sheet + Shortcuts. 8. Visualization with Swift Charts + MapKit. Security: mTLS, QR pairing, Keychain, FaceID/TouchID. Phases: extend types, aggregation+automation, integrations, charts+widgets, CloudKit+macOS, onboarding+localization. Privacy non-negotiable. Offline-first. VoiceOver + Dynamic Type.",
   "status": "building",
   "created": "2026-02-20T12:05:30.225625+00:00",
-  "updated": "2026-02-20T12:17:36.842895+00:00",
+  "updated": "2026-02-20T12:58:53.083860+00:00",
   "branch": null,
   "worktree": null,
   "plan": {
@@ -30,7 +30,7 @@
               "HealthAppTransfer/App/HealthAppTransfer.entitlements",
               "HealthAppTransfer/App/Info.plist"
             ],
-            "status": "pending",
+            "status": "completed",
             "notes": null
           },
           {
@@ -48,7 +48,7 @@
             "estimated_files": [
               "HealthAppTransfer.xcodeproj/project.pbxproj"
             ],
-            "status": "pending",
+            "status": "completed",
             "notes": null
           },
           {
@@ -82,7 +82,7 @@
               "HealthAppTransfer/Extensions/QRCodeRenderer.swift",
               "HealthAppTransfer/Extensions/Loggers.swift"
             ],
-            "status": "pending",
+            "status": "completed",
             "notes": null
           },
           {
@@ -105,7 +105,7 @@
               "HealthAppTransfer/Models/Persistence/SchemaVersions.swift",
               "HealthAppTransfer/App/HealthAppTransferApp.swift"
             ],
-            "status": "pending",
+            "status": "completed",
             "notes": null
           },
           {
@@ -131,7 +131,7 @@
               "HealthAppTransfer/ViewModels/DashboardViewModel.swift",
               "HealthAppTransfer/ViewModels/HealthDataViewModel.swift"
             ],
-            "status": "pending",
+            "status": "completed",
             "notes": null
           }
         ]
@@ -157,7 +157,7 @@
               "HealthAppTransfer/Models/HealthDataType.swift",
               "HealthAppTransfer/Models/HealthDataTypeCategory.swift"
             ],
-            "status": "pending",
+            "status": "failed",
             "notes": null
           },
           {
@@ -636,7 +636,7 @@
               "HealthAppTransfer/Services/Security/PairingService.swift",
               "HealthAppTransfer/Services/Security/CertificateService.swift"
             ],
-            "status": "pending",
+            "status": "completed",
             "notes": null
           },
           {
@@ -659,7 +659,7 @@
               "HealthAppTransfer/Views/Settings/SecuritySettingsView.swift",
               "HealthAppTransfer/ViewModels/SecuritySettingsViewModel.swift"
             ],
-            "status": "pending",
+            "status": "completed",
             "notes": null
           }
         ]
@@ -853,7 +853,7 @@
               "HealthAppTransfer/Services/Network/LANSyncClient.swift",
               "HealthAppTransfer/Views/Settings/LANSyncView.swift"
             ],
-            "status": "pending",
+            "status": "completed",
             "notes": null
           },
           {
@@ -1052,7 +1052,7 @@
       "The foundation project targets iOS 26 / Xcode 26 with Liquid Glass. We should target iOS 17+ for broader compatibility and skip Liquid Glass initially \u2014 it can be added with @available checks later.",
       "Phase ordering prioritizes getting data out first (export), then automating it (background sync), then enriching the experience (charts, widgets, macOS). This matches user value delivery order."
     ],
-    "version": 1
+    "version": 2
   },
   "qa_status": null,
   "history": [
@@ -1143,6 +1143,13 @@
         "from": "planned",
         "to": "building"
       }
+    },
+    {
+      "event": "plan_set",
+      "time": "2026-02-20T12:58:53.083854Z",
+      "details": {
+        "phases": 11
+      }
     }
   ],
   "phase": "build",
@@ -1176,7 +1183,21 @@
   ],
   "agent_turns": 0,
   "estimated_tokens": 0,
-  "parallel_metrics": null,
+  "parallel_metrics": {
+    "recorded_at": "2026-02-20T12:58:53.082075Z",
+    "total_tasks": 9,
+    "successful_tasks": 8,
+    "failed_tasks": 1,
+    "parallel_efficiency": 1.5911805463918631,
+    "success_rate": 0.8888888888888888,
+    "total_execution_time": 3940.141044855118,
+    "total_wall_time": 2476.237567,
+    "pool_acquisitions": 0,
+    "pool_contention_rate": 0.0,
+    "lock_acquisitions": 0,
+    "lock_contention_rate": 0.0,
+    "batch_count": 1
+  },
   "trace_id": null,
   "project_analysis": {
     "languages": [
