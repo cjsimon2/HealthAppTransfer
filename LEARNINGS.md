@@ -11,6 +11,7 @@
 - Multi-platform (iOS+macOS) files using `UIDevice` need `#if canImport(UIKit)` guard — macOS target will fail without it.
 - macOS-only `#if os(macOS)` views using SwiftData need their own `@Environment(\.modelContext)` — can't rely on the iOS block having it. PairingView's macOS pairButton was missing `modelContext` arg to `completePairing()`.
 - `Color(.systemBackground)` doesn't compile on macOS — `NSColor` has no `.systemBackground`. Use `#if canImport(UIKit)` with `Color(.windowBackgroundColor)` fallback for macOS.
+- Dashboard metric cards must filter to `isQuantityType` before loading — `AggregationEngine.aggregate()` throws `unsupportedType` for category/correlation/characteristic/workout types, and Charts needs numeric data.
 
 ### Testing Patterns
 <!-- What works for testing in this project -->
@@ -26,6 +27,7 @@
 - HealthDataType uses static dictionaries (not giant switches) for identifier/displayName/unit lookups — keeps the 182-case enum maintainable. `kind` is derived from which identifier dictionary contains the type.
 - HKCharacteristicType has no HKSampleType — guard with `isSampleBased` before calling `sampleType`, `dataExists(for:)`, or sample queries. Use `objectType` (HKObjectType) for authorization which covers all type kinds.
 - All core services are Swift actors (HealthKitService, NetworkServer, CertificateService, PairingService, KeychainStore, AuditService) for thread safety.
+- SwiftData `@Model` classes aren't `Sendable` — when passing config to another actor, snapshot into a `Sendable` struct on the main actor first (see `RESTPushParameters` in `RESTAutomation.swift`).
 - To parallelize work inside an actor with TaskGroup, capture `Sendable` dependencies as locals (`let store = self.store`) before the group — child tasks don't inherit actor isolation, so direct property access would re-serialize through the actor.
 - Available simulators are iPhone 17 series (17, 17 Pro, 17 Pro Max, Air) — no iPhone 16. Use `iPhone 17 Pro` for xcodebuild commands.
 - SwiftData persistence uses `PersistenceConfiguration.makeModelContainer()` factory in `SchemaVersions.swift` — all model types registered in `SchemaV1` with `HealthAppMigrationPlan` for future migrations.
@@ -36,8 +38,11 @@
 - `AggregatedSample` chart value extraction: use `sample.sum ?? sample.average ?? sample.latest ?? 0` — cumulative types populate `sum`, discrete types populate `average`. Request both `[.sum, .average]` operations and AggregationEngine silently skips incompatible ones.
 - XcodeGen overwrites `.entitlements` files during `generate` — must use `entitlements.properties` in `project.yml` instead of manually editing the plist file, or changes get wiped on next generate.
 - `CloudKitSyncService.swift` has a pre-existing build error (`atomicZone` extra argument) — unrelated to other work, needs separate fix.
+- `HKWorkoutRouteQuery` delivers `CLLocation` arrays in batches (not all at once) — accumulate in a local array and only resolve the continuation when the `done` flag is `true`. Resuming the continuation on each batch will crash.
 - CloudKit `CKDatabase.modifyRecords(saving:deleting:savePolicy:atomicZone:)` has a 400-record limit per operation — batch uploads accordingly.
 - `CKServerChangeToken` must be archived via `NSKeyedArchiver` to persist as `Data` in SwiftData — `CKServerChangeToken` conforms to `NSSecureCoding`.
+- GPXFormatter doesn't conform to `ExportFormatter` protocol — GPX needs `[GPXTrack]` (location data from HKWorkoutRoute) not `[HealthSampleDTO]`. Keep its `format(tracks:)` signature separate.
+- Swift type-checker chokes on large array literals (16+ elements) built inline — break into sequential `.append()` calls to avoid "unable to type-check this expression in reasonable time".
 
 ## Mistakes to Avoid
 

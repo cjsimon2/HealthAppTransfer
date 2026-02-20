@@ -1,16 +1,31 @@
 import SwiftUI
+import SwiftData
 
 // MARK: - Dashboard View
 
 struct DashboardView: View {
 
+    // MARK: - Environment
+
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    @Query private var preferences: [UserPreferences]
+
     // MARK: - Observed Objects
 
     @StateObject private var viewModel: DashboardViewModel
 
+    // MARK: - State
+
+    @State private var showingMetricPicker = false
+
+    // MARK: - Dependencies
+
+    private let healthKitService: HealthKitService
+
     // MARK: - Init
 
     init(healthKitService: HealthKitService) {
+        self.healthKitService = healthKitService
         _viewModel = StateObject(wrappedValue: DashboardViewModel(healthKitService: healthKitService))
     }
 
@@ -18,16 +33,49 @@ struct DashboardView: View {
 
     var body: some View {
         Group {
-            if viewModel.isLoading {
-                ProgressView("Loading health overview...")
-            } else if viewModel.categories.isEmpty {
+            if viewModel.isLoading && viewModel.cards.isEmpty {
+                ProgressView("Loading dashboard...")
+            } else if viewModel.cards.isEmpty {
                 emptyState
             } else {
-                categoryOverview
+                metricGrid
             }
         }
         .navigationTitle("Dashboard")
-        .task { await viewModel.loadOverview() }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    showingMetricPicker = true
+                } label: {
+                    Image(systemName: "gear")
+                }
+                .accessibilityLabel("Configure dashboard metrics")
+            }
+        }
+        .sheet(isPresented: $showingMetricPicker) {
+            MetricPickerSheet(
+                selectedTypes: configuredTypes,
+                onSave: saveMetricTypes
+            )
+        }
+        .task { await viewModel.loadMetrics(configuredTypes: configuredTypes) }
+    }
+
+    // MARK: - Configured Types
+
+    private var configuredTypes: [HealthDataType] {
+        guard let prefs = preferences.first, !prefs.dashboardMetricTypes.isEmpty else {
+            return []
+        }
+        return prefs.dashboardMetricTypes.compactMap { HealthDataType(rawValue: $0) }
+    }
+
+    private func saveMetricTypes(_ types: [HealthDataType]) {
+        if let prefs = preferences.first {
+            prefs.dashboardMetricTypes = types.map(\.rawValue)
+            prefs.updatedAt = Date()
+        }
+        Task { await viewModel.loadMetrics(configuredTypes: types) }
     }
 
     // MARK: - Subviews
@@ -50,56 +98,127 @@ struct DashboardView: View {
         }
     }
 
-    private var categoryOverview: some View {
+    private var metricGrid: some View {
         ScrollView {
-            VStack(spacing: 8) {
-                summaryHeader
-
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 12)], spacing: 12) {
-                    ForEach(viewModel.categories) { summary in
-                        categoryCard(summary)
+            LazyVGrid(columns: gridColumns, spacing: 12) {
+                ForEach(viewModel.cards) { card in
+                    NavigationLink {
+                        HealthDataDetailView(
+                            dataType: card.dataType,
+                            healthKitService: healthKitService
+                        )
+                    } label: {
+                        MetricCardView(
+                            dataType: card.dataType,
+                            latestValue: card.latestValue,
+                            samples: card.samples,
+                            trendDirection: card.trend
+                        )
                     }
+                    .buttonStyle(.plain)
                 }
-                .padding(.horizontal, 16)
             }
+            .padding(.horizontal, 16)
             .padding(.bottom, 100)
         }
     }
 
-    private var summaryHeader: some View {
-        VStack(spacing: 4) {
-            Text("\(viewModel.totalAvailable)")
-                .font(.system(size: 36, weight: .bold, design: .rounded))
+    private var gridColumns: [GridItem] {
+        let minWidth: CGFloat = sizeClass == .regular ? 180 : 150
+        return [GridItem(.adaptive(minimum: minWidth), spacing: 12)]
+    }
+}
 
-            Text("data types with data")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-        .padding(.vertical, 16)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(viewModel.totalAvailable) data types with data")
+// MARK: - Metric Picker Sheet
+
+/// Sheet for choosing which metrics appear on the dashboard.
+private struct MetricPickerSheet: View {
+
+    // MARK: - State
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var selected: Set<HealthDataType>
+
+    // MARK: - Properties
+
+    let onSave: ([HealthDataType]) -> Void
+
+    // MARK: - Init
+
+    init(selectedTypes: [HealthDataType], onSave: @escaping ([HealthDataType]) -> Void) {
+        let types = selectedTypes.isEmpty ? DashboardViewModel.defaultMetricTypes : selectedTypes
+        _selected = State(initialValue: Set(types))
+        self.onSave = onSave
     }
 
-    private func categoryCard(_ summary: DashboardViewModel.CategorySummary) -> some View {
-        VStack(spacing: 8) {
-            Image(systemName: summary.category.iconName)
-                .font(.title2)
-                .foregroundStyle(.tint)
-                .accessibilityHidden(true)
+    // MARK: - Quantity Types
 
-            Text(summary.category.displayName)
-                .font(.caption.weight(.medium))
-                .lineLimit(1)
-
-            Text("\(summary.availableCount)/\(summary.totalTypes)")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+    private var quantityGroups: [(category: HealthDataCategory, types: [HealthDataType])] {
+        HealthDataType.groupedByCategory.compactMap { group in
+            let quantityTypes = group.types.filter(\.isQuantityType)
+            guard !quantityTypes.isEmpty else { return nil }
+            return (category: group.category, types: quantityTypes)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        .padding(.horizontal, 8)
-        .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 12))
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(summary.category.displayName): \(summary.availableCount) of \(summary.totalTypes) types have data")
+    }
+
+    // MARK: - Body
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(quantityGroups, id: \.category) { group in
+                    Section(group.category.displayName) {
+                        ForEach(group.types, id: \.self) { type in
+                            Button {
+                                toggleType(type)
+                            } label: {
+                                HStack {
+                                    Image(systemName: group.category.iconName)
+                                        .foregroundStyle(group.category.chartColor)
+                                        .frame(width: 24)
+
+                                    Text(type.displayName)
+                                        .foregroundStyle(.primary)
+
+                                    Spacer()
+
+                                    if selected.contains(type) {
+                                        Image(systemName: "checkmark")
+                                            .foregroundStyle(.blue)
+                                    }
+                                }
+                            }
+                            .accessibilityLabel("\(type.displayName), \(selected.contains(type) ? "selected" : "not selected")")
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Dashboard Metrics")
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        // Preserve order: match allCases order for consistency
+                        let ordered = HealthDataType.allCases.filter { selected.contains($0) }
+                        onSave(ordered)
+                        dismiss()
+                    }
+                    .disabled(selected.isEmpty)
+                }
+            }
+        }
+    }
+
+    private func toggleType(_ type: HealthDataType) {
+        if selected.contains(type) {
+            selected.remove(type)
+        } else {
+            selected.insert(type)
+        }
     }
 }

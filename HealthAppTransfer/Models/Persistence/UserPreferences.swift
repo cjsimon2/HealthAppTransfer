@@ -27,6 +27,9 @@ final class UserPreferences {
     /// Preferred date range for dashboard charts: "week", "month", "year", "all".
     var dashboardDateRange: String = "week"
 
+    /// Raw values of HealthDataType cases shown on the dashboard. Empty = default set.
+    var dashboardMetricTypes: [String] = []
+
     /// When preferences were last modified.
     var updatedAt: Date = Date()
 

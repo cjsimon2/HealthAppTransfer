@@ -51,6 +51,9 @@ final class AutomationConfiguration {
     /// When this automation was last modified.
     var updatedAt: Date = Date()
 
+    /// HTTP headers as JSON-encoded dictionary (e.g. Authorization, API keys).
+    var httpHeadersJSON: String?
+
     // MARK: - Init
 
     init(
@@ -65,5 +68,27 @@ final class AutomationConfiguration {
         self.exportFormat = exportFormat
         self.createdAt = Date()
         self.updatedAt = Date()
+    }
+
+    // MARK: - HTTP Headers
+
+    /// Decoded HTTP headers dictionary. Returns empty dict if none set.
+    var httpHeaders: [String: String] {
+        get {
+            guard let json = httpHeadersJSON,
+                  let data = json.data(using: .utf8),
+                  let dict = try? JSONDecoder().decode([String: String].self, from: data)
+            else { return [:] }
+            return dict
+        }
+        set {
+            guard !newValue.isEmpty,
+                  let data = try? JSONEncoder().encode(newValue)
+            else {
+                httpHeadersJSON = nil
+                return
+            }
+            httpHeadersJSON = String(data: data, encoding: .utf8)
+        }
     }
 }

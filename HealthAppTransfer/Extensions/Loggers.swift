@@ -12,4 +12,5 @@ enum Loggers {
     static let bonjour = Logger(subsystem: Bundle.main.bundleIdentifier ?? "HealthAppTransfer", category: "Bonjour")
     static let sync = Logger(subsystem: Bundle.main.bundleIdentifier ?? "HealthAppTransfer", category: "Sync")
     static let cloudKit = Logger(subsystem: Bundle.main.bundleIdentifier ?? "HealthAppTransfer", category: "CloudKit")
+    static let automation = Logger(subsystem: Bundle.main.bundleIdentifier ?? "HealthAppTransfer", category: "Automation")
 }
