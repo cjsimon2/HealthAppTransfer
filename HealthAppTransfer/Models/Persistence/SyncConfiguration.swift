@@ -36,6 +36,20 @@ final class SyncConfiguration {
     /// Last modification timestamp.
     var updatedAt: Date = Date()
 
+    // MARK: - CloudKit Sync
+
+    /// Whether CloudKit sync is enabled (supplements LAN sync).
+    var isCloudKitEnabled: Bool = false
+
+    /// Timestamp of the last successful CloudKit sync.
+    var lastCloudKitSyncDate: Date?
+
+    /// Number of samples uploaded in the last CloudKit sync.
+    var lastCloudKitSampleCount: Int = 0
+
+    /// Persisted CKServerChangeToken data for delta sync.
+    var cloudKitChangeTokenData: Data?
+
     // MARK: - Init
 
     init(

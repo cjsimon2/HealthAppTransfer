@@ -56,6 +56,7 @@ targets:
           SWIFT_OPTIMIZATION_LEVEL: "-O"
     dependencies:
       - package: CocoaMQTT
+      - target: HealthAppTransferWidget
     entitlements:
       path: HealthAppTransfer/App/HealthAppTransfer.entitlements
     info:
@@ -64,10 +65,29 @@ targets:
         NSHealthShareUsageDescription: "This app needs access to your health data to transfer it between devices."
         NSFaceIDUsageDescription: "This app uses Face ID to protect access to your health data and sensitive settings."
         NSLocalNetworkUsageDescription: "This app uses the local network to discover and transfer health data to nearby devices."
+        NSSupportsLiveActivities: true
         UIBackgroundModes:
           - processing
         NSBonjourServices:
           - "_healthsync._tcp"
+
+  HealthAppTransferWidget:
+    type: app-extension
+    supportedDestinations: [iOS]
+    sources:
+      - path: HealthAppTransferWidget
+        excludes:
+          - "Info.plist"
+      - path: HealthAppTransfer/Models/SyncActivityAttributes.swift
+    settings:
+      base:
+        INFOPLIST_FILE: HealthAppTransferWidget/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.caseysimon.HealthAppTransfer.Widget
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 1.0.0
+        SWIFT_EMIT_LOC_STRINGS: "YES"
+    info:
+      path: HealthAppTransferWidget/Info.plist
 
   HealthAppTransferTests:
     type: bundle.unit-test

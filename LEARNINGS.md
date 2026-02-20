@@ -32,6 +32,11 @@
 - `enableBackgroundDelivery(for:frequency:)` is iOS-only (not macOS) — needs `#if os(iOS)` guard, separate from `#if canImport(UIKit)` used for BGTask code. `HKObserverQuery` works on macOS but only fires while app is running.
 - BGTaskScheduler.shared.register() must be called before app finishes launching — in SwiftUI, call it in the App struct's `init()` after creating the service.
 - `HealthDataType.groupedByCategory` is the canonical way to get types grouped by `HealthDataCategory` in display order — use it in views/VMs instead of manually filtering `allCases`.
+- XcodeGen `generate` now works again — previously broken in v2.44.1. Run `xcodegen generate` after adding new files; the `sources: - path: HealthAppTransfer` glob picks them up automatically.
+- `AggregatedSample` chart value extraction: use `sample.sum ?? sample.average ?? sample.latest ?? 0` — cumulative types populate `sum`, discrete types populate `average`. Request both `[.sum, .average]` operations and AggregationEngine silently skips incompatible ones.
+- `CloudKitSyncService.swift` has a pre-existing build error (`atomicZone` extra argument) — unrelated to other work, needs separate fix.
+- CloudKit `CKDatabase.modifyRecords(saving:deleting:savePolicy:atomicZone:)` has a 400-record limit per operation — batch uploads accordingly.
+- `CKServerChangeToken` must be archived via `NSKeyedArchiver` to persist as `Data` in SwiftData — `CKServerChangeToken` conforms to `NSSecureCoding`.
 
 ## Mistakes to Avoid
 

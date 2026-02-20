@@ -1,3 +1,6 @@
+#if canImport(ActivityKit)
+import ActivityKit
+#endif
 #if canImport(UIKit)
 import BackgroundTasks
 #endif
@@ -22,7 +25,11 @@ actor BackgroundSyncService {
     private let healthKitService: HealthKitService
     private let store: HKHealthStore
     private let modelContainer: ModelContainer
+    private let cloudKitSync: CloudKitSyncService
     private var observerQueries: [HKObserverQuery] = []
+    #if canImport(ActivityKit)
+    private var currentActivity: Activity<SyncActivityAttributes>?
+    #endif
 
     // MARK: - Init
 
@@ -30,6 +37,10 @@ actor BackgroundSyncService {
         self.healthKitService = healthKitService
         self.store = HKHealthStore()
         self.modelContainer = modelContainer
+        self.cloudKitSync = CloudKitSyncService(
+            healthKitService: healthKitService,
+            modelContainer: modelContainer
+        )
     }
 
     // MARK: - BGTask Registration
@@ -196,19 +207,35 @@ actor BackgroundSyncService {
                 return true
             }
 
+            let sampleBasedTypes = enabledTypes.filter { $0.isSampleBased }
             let sinceDate = config.incrementalOnly ? config.lastSyncDate : config.syncStartDate
             var totalSamples = 0
+            var typesSynced = 0
 
-            for type in enabledTypes where type.isSampleBased {
+            #if canImport(ActivityKit)
+            startLiveActivity(totalTypes: sampleBasedTypes.count)
+            #endif
+
+            for type in sampleBasedTypes {
                 let samples = try await healthKitService.fetchSampleDTOs(
                     for: type,
                     from: sinceDate
                 )
                 totalSamples += samples.count
+                typesSynced += 1
 
                 if !samples.isEmpty {
                     Loggers.sync.debug("Fetched \(samples.count) samples for \(type.rawValue)")
                 }
+
+                #if canImport(ActivityKit)
+                await updateLiveActivity(
+                    typesSynced: typesSynced,
+                    totalSamples: totalSamples,
+                    currentTypeName: type.displayName,
+                    totalTypes: sampleBasedTypes.count
+                )
+                #endif
             }
 
             config.lastSyncDate = Date()
@@ -217,13 +244,117 @@ actor BackgroundSyncService {
             try context.save()
 
             Loggers.sync.info("Background sync completed: \(totalSamples) samples")
+
+            #if canImport(ActivityKit)
+            await endLiveActivity(
+                totalSamples: totalSamples,
+                totalTypes: sampleBasedTypes.count,
+                success: true
+            )
+            #endif
+
+            // Trigger CloudKit sync after local sync (non-blocking on errors)
+            await cloudKitSync.performSync()
+
             return true
 
         } catch {
             Loggers.sync.error("Background sync failed: \(error.localizedDescription)")
+
+            #if canImport(ActivityKit)
+            await endLiveActivity(totalSamples: 0, totalTypes: 0, success: false)
+            #endif
+
             return false
         }
     }
+
+    // MARK: - Live Activity
+
+    #if canImport(ActivityKit)
+    /// Start a Live Activity to show sync progress on Dynamic Island and Lock Screen.
+    private func startLiveActivity(totalTypes: Int) {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else {
+            Loggers.sync.debug("Live Activities not enabled, skipping")
+            return
+        }
+
+        // End any stale activity from a previous sync
+        if let existing = currentActivity {
+            Task {
+                await existing.end(nil, dismissalPolicy: .immediate)
+            }
+            currentActivity = nil
+        }
+
+        let attributes = SyncActivityAttributes(
+            totalTypes: totalTypes,
+            startedAt: Date()
+        )
+        let initialState = SyncActivityAttributes.ContentState(
+            typesSynced: 0,
+            totalSamples: 0,
+            currentTypeName: "Starting...",
+            progress: 0,
+            status: .syncing
+        )
+
+        do {
+            currentActivity = try Activity.request(
+                attributes: attributes,
+                content: .init(state: initialState, staleDate: nil),
+                pushType: nil
+            )
+            Loggers.sync.info("Started sync live activity")
+        } catch {
+            Loggers.sync.error("Failed to start live activity: \(error.localizedDescription)")
+        }
+    }
+
+    /// Update the Live Activity with current sync progress.
+    private func updateLiveActivity(
+        typesSynced: Int,
+        totalSamples: Int,
+        currentTypeName: String,
+        totalTypes: Int
+    ) async {
+        guard let activity = currentActivity else { return }
+
+        let state = SyncActivityAttributes.ContentState(
+            typesSynced: typesSynced,
+            totalSamples: totalSamples,
+            currentTypeName: currentTypeName,
+            progress: totalTypes > 0 ? Double(typesSynced) / Double(totalTypes) : 0,
+            status: .syncing
+        )
+        await activity.update(.init(state: state, staleDate: nil))
+    }
+
+    /// End the Live Activity with final status.
+    private func endLiveActivity(totalSamples: Int, totalTypes: Int, success: Bool) async {
+        guard let activity = currentActivity else { return }
+
+        let finalState = SyncActivityAttributes.ContentState(
+            typesSynced: success ? totalTypes : 0,
+            totalSamples: totalSamples,
+            currentTypeName: success ? "Complete" : "Failed",
+            progress: success ? 1.0 : 0,
+            status: success ? .completed : .failed
+        )
+
+        // Keep completed activity visible for 30 seconds, dismiss failures immediately
+        let dismissalPolicy: ActivityUIDismissalPolicy = success
+            ? .after(.now + 30)
+            : .after(.now + 10)
+
+        await activity.end(
+            .init(state: finalState, staleDate: nil),
+            dismissalPolicy: dismissalPolicy
+        )
+        currentActivity = nil
+        Loggers.sync.info("Ended sync live activity (success: \(success))")
+    }
+    #endif
 
     // MARK: - Helpers
 

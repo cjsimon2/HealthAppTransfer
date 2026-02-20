@@ -20,6 +20,7 @@ struct ContentView: View {
     @AppStorage("hasRequestedHealthKitAuth") private var hasRequestedHealthKitAuth = false
     @State private var showHealthKitAlert = false
     @State private var showLockedScreen = false
+    @State private var hasCompletedOnboarding = false
 
     // MARK: - Services
 
@@ -37,6 +38,21 @@ struct ContentView: View {
     // MARK: - Body
 
     var body: some View {
+        Group {
+            if hasCompletedOnboarding {
+                mainContent
+            } else {
+                OnboardingView(healthKitService: services.healthKitService) {
+                    withAnimation { hasCompletedOnboarding = true }
+                }
+            }
+        }
+        .onAppear { loadOnboardingState() }
+    }
+
+    // MARK: - Main Content
+
+    private var mainContent: some View {
         ZStack {
             MainTabView(
                 pairingViewModel: pairingViewModel,
@@ -147,6 +163,13 @@ struct ContentView: View {
     private func loadBiometricPreference() -> Bool {
         let descriptor = FetchDescriptor<UserPreferences>()
         return (try? modelContext.fetch(descriptor).first?.requireBiometricAuth) ?? false
+    }
+
+    // MARK: - Onboarding
+
+    private func loadOnboardingState() {
+        let descriptor = FetchDescriptor<UserPreferences>()
+        hasCompletedOnboarding = (try? modelContext.fetch(descriptor).first?.hasCompletedOnboarding) ?? false
     }
 
     // MARK: - HealthKit Authorization
