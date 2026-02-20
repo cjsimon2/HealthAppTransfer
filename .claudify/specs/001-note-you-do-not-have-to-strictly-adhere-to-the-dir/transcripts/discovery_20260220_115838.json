@@ -1,0 +1,12 @@
+{
+  "agent_name": "Discovery",
+  "spec_id": "001",
+  "started": "2026-02-20T11:58:38.324708+00:00",
+  "entries": [
+    {"timestamp": "2026-02-20T11:58:38.382480+00:00", "type": "error", "content": "Process failed: Error: Claude Code cannot be launched inside another Claude Code session.\nNested sessions share runtime resources and will crash all active sessions.\nTo bypass this check, unset the CLAUDECODE environment variable.\n", "agent_name": "Discovery"}
+  ],
+  "completed": "2026-02-20T11:58:38.383325+00:00",
+  "success": true,
+  "duration_seconds": 0.058725,
+  "entry_count": 1
+}

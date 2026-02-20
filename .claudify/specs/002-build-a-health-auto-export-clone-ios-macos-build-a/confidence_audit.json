@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "entries": [
+    {
+      "timestamp": "2026-02-20T12:17:36.431346+00:00",
+      "agent_name": "Planner",
+      "spec_id": "002",
+      "subtask_id": null,
+      "score": {
+        "value": 0.825,
+        "reasoning": "High confidence: Output appears complete and certain.",
+        "factors": {
+          "completeness": 0.3,
+          "uncertainty": 1.0,
+          "tool_success": 1.0,
+          "length_appropriateness": 1.0,
+          "error_free": 1.0
+        },
+        "needs_human_review": false,
+        "escalation_reasons": [
+          "incomplete_output"
+        ]
+      },
+      "output_preview": "The key insights from this session:\n\n1. **ai-health-sync-ios uses `@Observable` + actors**, not MVVM+Combine \u2014 hybrid approach needed to reconcile with CLAUDE.md conventions\n2. **Foundation has zero t",
+      "action_taken": "proceed"
+    },
+    {
+      "timestamp": "2026-02-20T12:19:55.898617+00:00",
+      "agent_name": "Coder",
+      "spec_id": "002",
+      "subtask_id": "1.1",
+      "score": {
+        "value": 0.72,
+        "reasoning": "Acceptable confidence: Output missing expected sections (score: 0.30); Output length inappropriate for task (score: 0.30)",
+        "factors": {
+          "completeness": 0.3,
+          "uncertainty": 1.0,
+          "tool_success": 1.0,
+          "length_appropriateness": 0.3,
+          "error_free": 1.0
+        },
+        "needs_human_review": false,
+        "escalation_reasons": [
+          "incomplete_output"
+        ]
+      },
+      "output_preview": "Recorded the xcodegen entitlements gotcha in LEARNINGS.md.",
+      "action_taken": "proceed"
+    }
+  ]
+}

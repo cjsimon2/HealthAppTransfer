@@ -1,0 +1,3 @@
+2026-02-20 03:58:49 INFO     claudify.background.agent: Background agent bg-1 starting build for spec 001
+2026-02-20 03:58:49 WARNING  claudify.background.agent: Background agent bg-1 build failed: Build ended in FAILED state
+2026-02-20 03:58:49 INFO     claudify.background.agent: Background agent bg-1 finished with status=failed

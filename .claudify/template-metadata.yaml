@@ -1,0 +1,448 @@
+# Template metadata - tracks template files for update propagation
+# Do not edit manually unless you know what you're doing
+version: 1
+template: ios-swiftui
+template_chain:
+- ios-swiftui
+- minimal
+applied_at: '2026-02-20T11:21:29.040183+00:00'
+variables:
+  PROJECT_NAME: HealthAppTransfer
+  project_name: healthapptransfer
+  PROJECT-NAME: healthapptransfer
+files:
+  STATE.md:
+    source: minimal
+    original_hash: sha256:e76edb317a8c112ebd7c1c50a3cdd569599d2bc5afd8e77a493409895ae529e2
+    status: unmodified
+    ignored: false
+  LEARNINGS.md:
+    source: minimal
+    original_hash: sha256:15014c6837bd654f0f1fac1c1270753f7b6495a9c539880ad15a8b05ccc521ef
+    status: unmodified
+    ignored: false
+  CLAUDE.md:
+    source: ios-swiftui
+    original_hash: sha256:a7b65772af5c6c93824777513285c1da60e6766f0530113e55695091b62adbca
+    status: unmodified
+    ignored: false
+  .claude/settings.json:
+    source: minimal
+    original_hash: sha256:f5324e4afe89a3a8a6c04ef762c5ee1006abe6de85eb167157271ed1b24049bd
+    status: unmodified
+    ignored: false
+  .claude/checklists/pre-commit.md:
+    source: minimal
+    original_hash: sha256:1bed299e68cae26f8af0fd10e832328092693f1b195be2391790ba521c91438d
+    status: unmodified
+    ignored: false
+  .claude/checklists/session-start.md:
+    source: minimal
+    original_hash: sha256:eae6cfb5f3d29fafdbbc373046b9c5e4852e4f998a26307ea02b93f95b3cf4f6
+    status: unmodified
+    ignored: false
+  .claude/checklists/code-review.md:
+    source: minimal
+    original_hash: sha256:44c8b84b83efb5b092e04bee0c0d2b1036c61599c5b33d8ba8477d349460139a
+    status: unmodified
+    ignored: false
+  .claude/hooks/safety-check.py:
+    source: minimal
+    original_hash: sha256:44fb972ff3b4a62d167a7a242a85118d76427afc993d3fc84fbbd18cd90f639c
+    status: unmodified
+    ignored: false
+  .claude/hooks/task-completed.py:
+    source: minimal
+    original_hash: sha256:62e4e765a9172a1c3b7f1530b83ef3c6f02d6d972fa12ea5f3486ad371110ed0
+    status: unmodified
+    ignored: false
+  .claude/hooks/permission-request.py:
+    source: minimal
+    original_hash: sha256:6d6cd1bcc209fd11cd2255857deeca9888164d7458d17e784b70e14b1b8ec0da
+    status: unmodified
+    ignored: false
+  .claude/hooks/state-tracker.py:
+    source: minimal
+    original_hash: sha256:c16f71a4f05e0582fbfd06b2ecc438fbef707d35073f8577cc344fcbe6750129
+    status: unmodified
+    ignored: false
+  .claude/hooks/notification.py:
+    source: minimal
+    original_hash: sha256:e42a8dc5bf469f93ad60a6908982bd9cfd9b35ddc04631315fbab72bf9453ed8
+    status: unmodified
+    ignored: false
+  .claude/hooks/session-logger.py:
+    source: minimal
+    original_hash: sha256:3813fbb1bbce830a6c673b98d5cd9bba6ebe746f887e094efeabe14127e65184
+    status: unmodified
+    ignored: false
+  .claude/hooks/teammate-idle.py:
+    source: minimal
+    original_hash: sha256:5843039afda98c33c03cb4279294869719a952c72f24b2ff4b068a7bb3b404be
+    status: unmodified
+    ignored: false
+  .claude/hooks/auto-learner.py:
+    source: minimal
+    original_hash: sha256:868b58d9b0d43285a090b509bf8c30a5c39c50000870b4d3b9f4bed958c53a95
+    status: unmodified
+    ignored: false
+  .claude/hooks/user-prompt-submit.py:
+    source: minimal
+    original_hash: sha256:4d64f319b6a375b83f9356ffceaaf442bb0e7ade4ae902312721449ec4d532be
+    status: unmodified
+    ignored: false
+  .claude/hooks/project-setup.py:
+    source: minimal
+    original_hash: sha256:a1ff8fc29b65b4626689adfb43fa121edc09383028eb671f8fc1fb0598db553a
+    status: unmodified
+    ignored: false
+  .claude/hooks/context-monitor.py:
+    source: minimal
+    original_hash: sha256:e31a39b9797df72d7ac70fc30e93627da2603d0285e4511263eafbb657056603
+    status: unmodified
+    ignored: false
+  .claude/hooks/tool-failure-tracker.py:
+    source: minimal
+    original_hash: sha256:bcc2d548b3f5b64ad67da463d7cd5000f28176e0c08e250f6285215804c0aa7a
+    status: unmodified
+    ignored: false
+  .claude/hooks/verify-completion.py:
+    source: minimal
+    original_hash: sha256:bcbb96ab76d9a90873dbe320b4741900c90b77e375d4eff88d141fb668c14655
+    status: unmodified
+    ignored: false
+  .claude/hooks/subagent-tracker.py:
+    source: minimal
+    original_hash: sha256:8de288cb47209c43772c73159b00d6399e08b4cd9baf29151dbf9f3db2168de8
+    status: unmodified
+    ignored: false
+  .claude/rules/code-quality.md:
+    source: minimal
+    original_hash: sha256:51ce66c1121be6a24f304a5d157ef0010da9577ac819e157a76f480bb827303a
+    status: unmodified
+    ignored: false
+  .claude/rules/git-workflow.md:
+    source: minimal
+    original_hash: sha256:db83468853d00ea063995db92beceab2c3451bbdba2dd2386033ff5242093eb3
+    status: unmodified
+    ignored: false
+  .claude/rules/testing.md:
+    source: minimal
+    original_hash: sha256:0a00674ab69ae8ac58d89dad2982ce9400f8ffc44954516ec0b09a54bac2a48b
+    status: unmodified
+    ignored: false
+  .claude/commands/document.md:
+    source: minimal
+    original_hash: sha256:c8a559bc2a0414324a014b1f613d2450affdac06755df954d312b7586c731b72
+    status: unmodified
+    ignored: false
+  .claude/commands/learn.md:
+    source: minimal
+    original_hash: sha256:7fa7fde3db0aac36c6de2d30176ae113cb16cc0a613fbfda9fbc1d42159f9815
+    status: unmodified
+    ignored: false
+  .claude/commands/test-generate.md:
+    source: minimal
+    original_hash: sha256:692c627318e7e69736e53dfa4109f30d7ac706a6c552ab2ce435adbbe67ee87c
+    status: unmodified
+    ignored: false
+  .claude/commands/check-updates.md:
+    source: minimal
+    original_hash: sha256:2954c3a9d817d202878d7e78a2fda8117c15b2d09fe42e677a009592151ef872
+    status: unmodified
+    ignored: false
+  .claude/commands/refactor.md:
+    source: minimal
+    original_hash: sha256:fb8d1e571aaf0f2d5c3033446187cd6ff74387feaa14faa4b8e08c06bd3cf8a1
+    status: unmodified
+    ignored: false
+  .claude/commands/optimize.md:
+    source: minimal
+    original_hash: sha256:885445b3140b4aa8e0af505475d6d4f2bf37682c6d37e734ca30f855e2dfa8ff
+    status: unmodified
+    ignored: false
+  .claude/commands/find-todos.md:
+    source: minimal
+    original_hash: sha256:789ddf53ca6e91af32361352e3f0799080bac8b7a4baa58e0ce07c2b6bd64547
+    status: unmodified
+    ignored: false
+  .claude/commands/git.md:
+    source: minimal
+    original_hash: sha256:a37d2821003255ab63df00efefcbdff0c12bfcfdfffe06e495baef3e98a7f80a
+    status: unmodified
+    ignored: false
+  .claude/commands/session-summary.md:
+    source: minimal
+    original_hash: sha256:997e5cd385f87d0d1e8c2fb3d3f65325051c66d3739a8ce2352f68d77f961278
+    status: unmodified
+    ignored: false
+  .claude/commands/checkyourwork.md:
+    source: minimal
+    original_hash: sha256:688f5ed8499764e81ec16f3bc44678fc3c9693676310364ba9f471075e8b0ac9
+    status: unmodified
+    ignored: false
+  .claude/commands/review.md:
+    source: minimal
+    original_hash: sha256:27bb2296d63d3084b0fc63ef7996a20481c6f4442bfc3a959b3c3a3a960cb2af
+    status: unmodified
+    ignored: false
+  .claude/commands/dead-code.md:
+    source: minimal
+    original_hash: sha256:614b49fe7e8695e90dd4e013ae0b0b0a3c25c540878b14b694cf6787d38b7247
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/02-security-reviewer.md:
+    source: minimal
+    original_hash: sha256:8d068685e68f0178425f6c4bd83b074084a5970f2553d5983a7c43aca14f4227
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/03-architecture-reviewer.md:
+    source: minimal
+    original_hash: sha256:a9b631ca8cd6ba5cd46039365c17b248a1af7c11d44ec3b4f55c8b226ab27531
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/01-code-reviewer.md:
+    source: minimal
+    original_hash: sha256:aa33484fffbf111f2a3d415ff9b59545be0a9a941bd1d0f6f3daf30f080da0f3
+    status: unmodified
+    ignored: false
+  .claude/skills/exploration/parallel-exploration.md:
+    source: minimal
+    original_hash: sha256:422eb9bb5abc53db36be3edd25f933e6c0a027d09cd3adb8aecfc709950b0a18
+    status: unmodified
+    ignored: false
+  .claude/skills/review/isolated-review.md:
+    source: minimal
+    original_hash: sha256:c849e2f7eaccf7c7c5ce84ba8de85b936e7ec92e08c9200750861a5fa7bd176b
+    status: unmodified
+    ignored: false
+  .claude/skills/review/pattern-matching.md:
+    source: minimal
+    original_hash: sha256:a0beec98d1e3abbaba0e40bac6323ccaf2967c813e134c70476a483d7ede2c27
+    status: unmodified
+    ignored: false
+  .claude/skills/review/parallel-test-analysis.md:
+    source: minimal
+    original_hash: sha256:b6af8d34701735477f4e78957610b7fd2df45e08e3339e4899bfe72a7c1773f8
+    status: unmodified
+    ignored: false
+  .claude/skills/build/verify-before-complete.md:
+    source: minimal
+    original_hash: sha256:38dda527d3bdb18b3ec3e8d61deab5e91c6c5938f4391ce28cc794a66cf4e9ec
+    status: unmodified
+    ignored: false
+  .claude/skills/build/anti-overengineering-guard.md:
+    source: minimal
+    original_hash: sha256:13ca6231c85e8ff32300d3364af2ce2eadc35222cefa9e849a38d7c09626db9a
+    status: unmodified
+    ignored: false
+  .claude/skills/session/context-recovery.md:
+    source: minimal
+    original_hash: sha256:e62d3c2f92fc35e85eb8e0a0c6afc1d3322bcd1ba73a16b0a9d5bd897fa11c61
+    status: unmodified
+    ignored: false
+  .claude/skills/session/session-teleport.md:
+    source: minimal
+    original_hash: sha256:d9237586d41f6914d2256e718552c953edf7f57a0a6407e9224a6b8af7ce7f75
+    status: unmodified
+    ignored: false
+  .claude/checklists/appstore.md:
+    source: ios-swiftui
+    original_hash: sha256:ada419c18990645fd78c2f93f5def479cfec95cd4972652bf642fb90cfab07ce
+    status: unmodified
+    ignored: false
+  .claude/checklists/accessibility.md:
+    source: ios-swiftui
+    original_hash: sha256:a827d8f4c67c4b5d3482de7048d65a34b5224630be892f339954e9820bb59d82
+    status: unmodified
+    ignored: false
+  .claude/checklists/release.md:
+    source: ios-swiftui
+    original_hash: sha256:97f2ebd91e625043aa6919851a9d67c77334480b51bcc6fca7f65e0c34f1c14b
+    status: unmodified
+    ignored: false
+  .claude/checklists/swiftui-view.md:
+    source: ios-swiftui
+    original_hash: sha256:7e3b6d41a359433644e6564138b456b1960f77a974e357b0e90895a266cbd8bf
+    status: unmodified
+    ignored: false
+  .claude/commands/ipad-check.md:
+    source: ios-swiftui
+    original_hash: sha256:b1de0a88a7d2d75b511adbaf842553381b62be66e3a00fee6feb6e27f677c02d
+    status: unmodified
+    ignored: false
+  .claude/commands/swiftdata-review.md:
+    source: ios-swiftui
+    original_hash: sha256:6dbd5eb72708df84ef102dd775140d0554cde2846f4b9182259c17dff0e7607b
+    status: unmodified
+    ignored: false
+  .claude/commands/widget-review.md:
+    source: ios-swiftui
+    original_hash: sha256:d2fc0c2696f44dea45ae42eaddf450216e6e4d69935851aaaf08ca34be275f7c
+    status: unmodified
+    ignored: false
+  .claude/commands/preview-fix.md:
+    source: ios-swiftui
+    original_hash: sha256:e7666e5538aab0bd50744c91f395bd833d0b898df1ce17c054765941e920f444
+    status: unmodified
+    ignored: false
+  .claude/commands/appstore-audit.md:
+    source: ios-swiftui
+    original_hash: sha256:53068d290b084dfa2ed2968e68327360589e2e9e777b8d41e1e8884829b18afd
+    status: unmodified
+    ignored: false
+  .claude/commands/state-review.md:
+    source: ios-swiftui
+    original_hash: sha256:f5b5c2f168b9cbe7e2ef7021e972d6f8770d74caabe7ca7fa57b25b4807cab79
+    status: unmodified
+    ignored: false
+  .claude/commands/memory-audit.md:
+    source: ios-swiftui
+    original_hash: sha256:6b98e84adfd408f221eb0155f84a173a6b301d3016107860274b6c7fb81b41c6
+    status: unmodified
+    ignored: false
+  .claude/commands/accessibility-add.md:
+    source: ios-swiftui
+    original_hash: sha256:8f796c3461d1e33c6ac5959037b3a0c928d4e92abaa2e2d5c0ef162338ee0bfd
+    status: unmodified
+    ignored: false
+  .claude/commands/deprecated-check.md:
+    source: ios-swiftui
+    original_hash: sha256:8947377cbf85f2bd7b294d8103fdd8a7bac67ac8e45d2308cf5679248670888b
+    status: unmodified
+    ignored: false
+  .claude/commands/view-audit.md:
+    source: ios-swiftui
+    original_hash: sha256:f584cfe3b6e416cfbf5722b9f0403ce7a765826a84c13c26d7503cbeca59f807
+    status: unmodified
+    ignored: false
+  .claude/commands/combine-check.md:
+    source: ios-swiftui
+    original_hash: sha256:4c8176b376a7d05d16896aeaa5e5b21fba44bba34613958cf3a1bf90f3be162c
+    status: unmodified
+    ignored: false
+  .claude/commands/uitest-generate.md:
+    source: ios-swiftui
+    original_hash: sha256:8cfa1486bab6317e09a94136dcfc5a9ef87ddae57128b62a0ede20e1d21de61e
+    status: unmodified
+    ignored: false
+  .claude/commands/cloudkit-check.md:
+    source: ios-swiftui
+    original_hash: sha256:6b7155c25b4f800334c859d8853065ad117da3107f2723f6e72f2daed16c64b7
+    status: unmodified
+    ignored: false
+  .claude/skills/swiftui-patterns.md:
+    source: ios-swiftui
+    original_hash: sha256:a1ff5173d5b86018fb80709de97b180208ed98df2cdd22ae1ac5f476c9ac1a1f
+    status: unmodified
+    ignored: false
+  .claude/skills/swiftui-accessibility.md:
+    source: ios-swiftui
+    original_hash: sha256:e5404e464cd1e14e3aa55b98e7d0a9d9b5a5c15d061ea51738ecff144ada7337
+    status: unmodified
+    ignored: false
+  .claude/skills/watchos-patterns.md:
+    source: ios-swiftui
+    original_hash: sha256:390ba7f9d5d8469ad04973b2ba2f48eb104c348c472cb596635ac1a5fe4ca5e2
+    status: unmodified
+    ignored: false
+  .claude/skills/swiftui-performance.md:
+    source: ios-swiftui
+    original_hash: sha256:af1a4ce6b1ecf4663c40e8dda35e683f1b8d51789735c49db18680e404a67c53
+    status: unmodified
+    ignored: false
+  .claude/skills/swift-safety.md:
+    source: ios-swiftui
+    original_hash: sha256:cb22670f07ac758f908e286a02b489391c402d08500079753dfd553ee27369ac
+    status: unmodified
+    ignored: false
+  .claude/skills/combine-patterns.md:
+    source: ios-swiftui
+    original_hash: sha256:489e2964708506b5fb2d065db8d846adf739b8d8166dba8afc323570dd6f9f96
+    status: unmodified
+    ignored: false
+  .claude/skills/mvvm-patterns.md:
+    source: ios-swiftui
+    original_hash: sha256:7bafad6befbf91e7160e296504b2c5f0edfcdb38094a838375398f79fae8472a
+    status: unmodified
+    ignored: false
+  .claude/skills/widget-patterns.md:
+    source: ios-swiftui
+    original_hash: sha256:7ec1ff8a9cd3d6bda65609f9fb96714910eb1abd220a162d62165fa74f0b7bab
+    status: unmodified
+    ignored: false
+  .claude/skills/swiftdata-patterns.md:
+    source: ios-swiftui
+    original_hash: sha256:473dc3dfefa3ef3f5a49c9d8a689c0e65829d079a60536073a7f841d661f9d9d
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/05-security-engineer.md:
+    source: ios-swiftui
+    original_hash: sha256:c12dddb280ba925fdf92c39181890a8b98168178c3ee754d9ea1016615cd3a0b
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/13-watch-specialist.md:
+    source: ios-swiftui
+    original_hash: sha256:a13d7abf48c1ca3ad5f3bf683b9395546836f720482332f5f3dcbed558fe4fc3
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/14-widget-specialist.md:
+    source: ios-swiftui
+    original_hash: sha256:59c7e40bfe4f26e14083e7b98b2ac89b65f93ac3c794a71bb8dfcd9880f1971a
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/09-data-engineer.md:
+    source: ios-swiftui
+    original_hash: sha256:76788228ad212c7b150ccbeeba0d47e2c70228aaf24eb43bc87f5385ff489413
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/11-technical-writer.md:
+    source: ios-swiftui
+    original_hash: sha256:8db0fa81b2a8393a1c9dc7f56afa9f453c79e45bb159597c5f9db99479b6a8e4
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/12-release-manager.md:
+    source: ios-swiftui
+    original_hash: sha256:2b3ad573814d92719d9bae41e13d5e7de6b00522dcd3e0777b136111b1969f37
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/07-accessibility-specialist.md:
+    source: ios-swiftui
+    original_hash: sha256:1d94533a6db818e9753896f26f890db096714115ba904e67c0cddee2489a21cf
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/06-performance-engineer.md:
+    source: ios-swiftui
+    original_hash: sha256:04489e915af488c6dad1dafc6e0d493e38479b9c3d4eea200d55f400b7f92072
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/04-qa-engineer.md:
+    source: ios-swiftui
+    original_hash: sha256:383e818e8d75746822e983e4d34909c5f81fda42caf786e4790f259aa9935985
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/08-appstore-reviewer.md:
+    source: ios-swiftui
+    original_hash: sha256:ab6119785b4345f57f960dfd9f86364dfdf196316ff704f8057159af4f01058a
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/10-ux-designer.md:
+    source: ios-swiftui
+    original_hash: sha256:53408532c19fa5ca2fed26c4b2870d777855d246adf98d02df3ae2f5a9f345f0
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/03-architect.md:
+    source: ios-swiftui
+    original_hash: sha256:31f8547e6dbbdb8856e8d74e8a3b04f21b2c59307ff778750e10e8be55223375
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/02-swiftui-specialist.md:
+    source: ios-swiftui
+    original_hash: sha256:6262b609cb393396d2d95154290c4586d28b97e685aded7fc8994c945e72f0d8
+    status: unmodified
+    ignored: false
+  .claude/reviews/roles/01-swift-reviewer.md:
+    source: ios-swiftui
+    original_hash: sha256:7efe054ea98675e1b4f5ba6c9b2f5271d08459cd4e8e15d0568ceabf04ecf0b3
+    status: unmodified
+    ignored: false
