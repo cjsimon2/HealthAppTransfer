@@ -38,6 +38,17 @@ actor CertificateService {
         return try await generateAndStoreIdentity()
     }
 
+    /// Compute SHA-256 fingerprint of the stored TLS certificate as a hex string.
+    /// Used in QR codes so the scanning device can verify the server's identity.
+    func tlsFingerprint() async throws -> String {
+        guard let cert = try await keychain.loadCertificate(label: Self.certificateLabel) else {
+            throw CertificateError.identityCreationFailed
+        }
+        let derData = SecCertificateCopyData(cert) as Data
+        let hash = SHA256.hash(data: derData)
+        return hash.map { String(format: "%02x", $0) }.joined()
+    }
+
     /// Remove all stored TLS materials.
     func cleanup() async throws {
         try await keychain.deleteKey(tag: Self.privateKeyTag)

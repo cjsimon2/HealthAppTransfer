@@ -200,11 +200,13 @@ struct ServerStatus: Codable, Sendable {
 /// Pairing request body.
 struct PairRequest: Codable, Sendable {
     let code: String
+    let deviceName: String?
 }
 
 /// Pairing response body.
 struct PairResponse: Codable, Sendable {
     let token: String
+    let deviceID: String?
     let expiresIn: TimeInterval?
 }
 

@@ -3,7 +3,8 @@ import Foundation
 
 // MARK: - Pairing Service
 
-/// Manages time-limited pairing codes and bearer token validation for device pairing.
+/// Manages time-limited pairing codes, bearer token validation, and token-to-device mapping.
+/// Device metadata is stored in SwiftData (PairedDevice model); this actor handles the token side.
 actor PairingService {
 
     // MARK: - Types
@@ -20,13 +21,35 @@ actor PairingService {
 
     private var activeCodes: [String: PairingCode] = [:]
     private var validTokens: Set<String> = []
+    /// Maps PairedDevice.deviceID → bearer token for revocation lookup.
+    private var deviceTokenMap: [String: String] = [:]
     private let codeLength: Int = 6
     private let codeLifetime: TimeInterval = 300 // 5 minutes
 
     private let keychain: KeychainStore
+    private static let tokensKey = "pairingValidTokens"
+    private static let deviceMapKey = "pairingDeviceTokenMap"
 
     init(keychain: KeychainStore = KeychainStore()) {
         self.keychain = keychain
+    }
+
+    // MARK: - Initialization
+
+    /// Load persisted tokens and device mappings from Keychain.
+    /// Call this once at app launch.
+    func loadPersistedTokens() async {
+        do {
+            if let tokens: [String] = try await keychain.load(key: Self.tokensKey, as: [String].self) {
+                validTokens = Set(tokens)
+                Loggers.pairing.info("Loaded \(tokens.count) persisted token(s)")
+            }
+            if let map: [String: String] = try await keychain.load(key: Self.deviceMapKey, as: [String: String].self) {
+                deviceTokenMap = map
+            }
+        } catch {
+            Loggers.pairing.error("Failed to load persisted tokens: \(error.localizedDescription)")
+        }
     }
 
     // MARK: - Code Generation
@@ -77,9 +100,30 @@ actor PairingService {
         validTokens.contains(token)
     }
 
-    /// Revoke a specific bearer token.
+    // MARK: - Device Registration
+
+    /// Associate a bearer token with a SwiftData PairedDevice deviceID.
+    /// Call after creating the PairedDevice in SwiftData.
+    func registerDevice(deviceID: String, token: String) {
+        deviceTokenMap[deviceID] = token
+        persistState()
+        Loggers.pairing.info("Registered device \(deviceID) with bearer token")
+    }
+
+    /// Revoke the token for a specific device.
+    func revokeDeviceToken(deviceID: String) {
+        if let token = deviceTokenMap.removeValue(forKey: deviceID) {
+            validTokens.remove(token)
+        }
+        persistState()
+        Loggers.pairing.info("Revoked token for device \(deviceID)")
+    }
+
+    /// Revoke a specific bearer token directly.
     func revokeToken(_ token: String) {
         validTokens.remove(token)
+        deviceTokenMap = deviceTokenMap.filter { $0.value != token }
+        persistState()
         Loggers.pairing.info("Bearer token revoked")
     }
 
@@ -87,6 +131,8 @@ actor PairingService {
     func revokeAll() {
         activeCodes.removeAll()
         validTokens.removeAll()
+        deviceTokenMap.removeAll()
+        persistState()
         Loggers.pairing.info("All pairing codes and tokens revoked")
     }
 
@@ -128,5 +174,19 @@ actor PairingService {
         let before = activeCodes.count
         activeCodes = activeCodes.filter { !$0.value.isExpired || $0.value.expiresAt > now }
         return before - activeCodes.count
+    }
+
+    private func persistState() {
+        Task { [weak self] in
+            guard let self else { return }
+            let tokens = await Array(self.validTokens)
+            let map = await self.deviceTokenMap
+            do {
+                try await self.keychain.save(key: Self.tokensKey, value: tokens)
+                try await self.keychain.save(key: Self.deviceMapKey, value: map)
+            } catch {
+                Loggers.pairing.error("Failed to persist pairing state: \(error.localizedDescription)")
+            }
+        }
     }
 }

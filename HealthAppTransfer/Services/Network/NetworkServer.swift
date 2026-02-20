@@ -241,9 +241,13 @@ actor NetworkServer {
             return .error(statusCode: 401, message: "Invalid or expired pairing code")
         }
 
+        // Register the device token mapping (device name included in response for caller to store)
+        let deviceID = UUID().uuidString
+        await pairingService.registerDevice(deviceID: deviceID, token: token)
+
         await auditService.log(event: .pairingSucceeded)
 
-        let pairResponse = PairResponse(token: token, expiresIn: nil)
+        let pairResponse = PairResponse(token: token, deviceID: deviceID, expiresIn: nil)
         return .json(APIResponse(success: true, data: pairResponse, error: nil))
     }
 
