@@ -7,6 +7,7 @@ struct HealthAppTransferApp: App {
     // MARK: - State
 
     private let modelContainer: ModelContainer
+    private let services = ServiceContainer()
 
     // MARK: - Init
 
@@ -22,7 +23,7 @@ struct HealthAppTransferApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(services: services)
         }
         .modelContainer(modelContainer)
     }

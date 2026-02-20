@@ -1,1 +1,2 @@
 {"timestamp": "2026-02-20 04:22:01", "tool": "Bash", "command": "xcodebuild build -project HealthAppTransfer.xcodeproj -scheme HealthAppTransfer -destination 'platform=iOS Simulator,name=iPhone 16' -quiet 2>&1"}
+{"timestamp": "2026-02-20 05:55:13", "tool": "Bash", "command": "ls /Users/caseysimon/HealthAppTransfer/HealthAppTransfer.xcodeproj/xcshareddata/xcschemes/ 2>&1"}

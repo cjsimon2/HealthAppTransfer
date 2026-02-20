@@ -3,7 +3,7 @@ import SwiftData
 
 // MARK: - Content View
 
-/// Root view that creates services and delegates to MainTabView.
+/// Root view that delegates to MainTabView.
 /// Handles HealthKit authorization on first launch and biometric lock gate.
 struct ContentView: View {
 
@@ -23,41 +23,15 @@ struct ContentView: View {
 
     // MARK: - Services
 
-    private let healthKitService: HealthKitService
-    private let biometricService: BiometricService
+    private let services: ServiceContainer
 
     // MARK: - Init
 
-    init() {
-        let keychain = KeychainStore()
-        let certificateService = CertificateService(keychain: keychain)
-        let pairingService = PairingService(keychain: keychain)
-        let auditService = AuditService()
-        let healthKitService = HealthKitService()
-        let biometricService = BiometricService()
-
-        let networkServer = NetworkServer(
-            healthKitService: healthKitService,
-            pairingService: pairingService,
-            auditService: auditService,
-            certificateService: certificateService,
-            biometricService: biometricService
-        )
-
-        self.healthKitService = healthKitService
-        self.biometricService = biometricService
-
-        _pairingViewModel = StateObject(wrappedValue: PairingViewModel(
-            pairingService: pairingService,
-            certificateService: certificateService,
-            networkServer: networkServer
-        ))
-
-        _lanSyncViewModel = StateObject(wrappedValue: LANSyncViewModel(keychain: keychain))
-
-        _securitySettingsViewModel = StateObject(wrappedValue: SecuritySettingsViewModel(
-            biometricService: biometricService
-        ))
+    init(services: ServiceContainer = ServiceContainer()) {
+        self.services = services
+        _pairingViewModel = StateObject(wrappedValue: services.makePairingViewModel())
+        _lanSyncViewModel = StateObject(wrappedValue: services.makeLANSyncViewModel())
+        _securitySettingsViewModel = StateObject(wrappedValue: services.makeSecuritySettingsViewModel())
     }
 
     // MARK: - Body
@@ -67,7 +41,7 @@ struct ContentView: View {
             MainTabView(
                 pairingViewModel: pairingViewModel,
                 lanSyncViewModel: lanSyncViewModel,
-                healthKitService: healthKitService,
+                healthKitService: services.healthKitService,
                 securitySettingsViewModel: securitySettingsViewModel
             )
 
@@ -121,7 +95,7 @@ struct ContentView: View {
                 Button {
                     Task { await authenticateToUnlock() }
                 } label: {
-                    Label("Unlock with \(biometricService.biometricName)", systemImage: securitySettingsViewModel.biometricIconName)
+                    Label("Unlock with \(services.biometricService.biometricName)", systemImage: securitySettingsViewModel.biometricIconName)
                         .font(.headline)
                         .frame(maxWidth: 280)
                 }
@@ -148,13 +122,13 @@ struct ContentView: View {
             showLockedScreen = true
             await authenticateToUnlock()
         } else {
-            await biometricService.unlockWithoutAuth()
+            await services.biometricService.unlockWithoutAuth()
         }
     }
 
     private func authenticateToUnlock() async {
         do {
-            try await biometricService.authenticate(reason: "Unlock HealthAppTransfer")
+            try await services.biometricService.authenticate(reason: "Unlock HealthAppTransfer")
             withAnimation { showLockedScreen = false }
         } catch {
             // Stay locked — user can retry via button
@@ -165,7 +139,7 @@ struct ContentView: View {
     private func lockIfEnabled() async {
         let isBiometricEnabled = loadBiometricPreference()
         if isBiometricEnabled {
-            await biometricService.lock()
+            await services.biometricService.lock()
             withAnimation { showLockedScreen = true }
         }
     }
@@ -184,7 +158,7 @@ struct ContentView: View {
 
     private func authorizeHealthKit() async {
         do {
-            try await healthKitService.requestAuthorization()
+            try await services.healthKitService.requestAuthorization()
             hasRequestedHealthKitAuth = true
         } catch {
             Loggers.healthKit.error("HealthKit authorization failed: \(error.localizedDescription)")

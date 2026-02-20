@@ -1,0 +1,4 @@
+module MqttCocoaAsyncSocket {
+umbrella "/Users/caseysimon/Library/Developer/Xcode/DerivedData/HealthAppTransfer-eilgzwvfqaeitgabgkksljcgwiyl/SourcePackages/checkouts/MqttCocoaAsyncSocket/Source/GCD"
+export *
+}

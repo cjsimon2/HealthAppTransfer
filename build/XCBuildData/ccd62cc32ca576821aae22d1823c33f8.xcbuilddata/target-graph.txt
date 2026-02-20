@@ -1,0 +1,11 @@
+Target dependency graph (5 targets)
+Target 'HealthAppTransfer' in project 'HealthAppTransfer'
+➜ Explicit dependency on target 'CocoaMQTT' in project 'CocoaMQTT'
+Target 'CocoaMQTT' in project 'CocoaMQTT'
+➜ Explicit dependency on target 'CocoaMQTT' in project 'CocoaMQTT'
+➜ Explicit dependency on target 'MqttCocoaAsyncSocket' in project 'MqttCocoaAsyncSocket'
+Target 'CocoaMQTT' in project 'CocoaMQTT'
+➜ Explicit dependency on target 'MqttCocoaAsyncSocket' in project 'MqttCocoaAsyncSocket'
+Target 'MqttCocoaAsyncSocket' in project 'MqttCocoaAsyncSocket'
+➜ Explicit dependency on target 'MqttCocoaAsyncSocket' in project 'MqttCocoaAsyncSocket'
+Target 'MqttCocoaAsyncSocket' in project 'MqttCocoaAsyncSocket' (no dependencies)

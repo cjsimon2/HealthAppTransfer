@@ -113,25 +113,12 @@ actor HealthKitService {
         )
     }
 
-    /// Count samples for a specific type.
+    /// Check if data exists for a specific type.
+    /// Returns 0 (no data) or 1 (has data). Uses efficient server-side queries
+    /// (HKStatisticsQuery for quantity types, limit-1 query for others)
+    /// instead of fetching all samples into memory.
     func sampleCount(for type: HealthDataType) async throws -> Int {
-        let sampleType = type.sampleType
-
-        return try await withCheckedThrowingContinuation { continuation in
-            let query = HKSampleQuery(
-                sampleType: sampleType,
-                predicate: nil,
-                limit: HKObjectQueryNoLimit,
-                sortDescriptors: nil
-            ) { _, samples, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: samples?.count ?? 0)
-                }
-            }
-            store.execute(query)
-        }
+        try await store.dataExists(for: type.sampleType) ? 1 : 0
     }
 
     /// Get available types with their sample counts.

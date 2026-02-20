@@ -118,9 +118,9 @@ actor NetworkServer {
         listener?.serviceRegistrationUpdateHandler = { change in
             switch change {
             case .add(let endpoint):
-                Loggers.network.info("Bonjour: advertising as \(endpoint)")
+                Loggers.network.info("Bonjour: advertising as \(String(describing: endpoint))")
             case .remove(let endpoint):
-                Loggers.network.info("Bonjour: removed \(endpoint)")
+                Loggers.network.info("Bonjour: removed \(String(describing: endpoint))")
             @unknown default:
                 break
             }

@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "entries": [
+    {
+      "timestamp": "2026-02-20T13:35:08.046100+00:00",
+      "agent_name": "Discovery",
+      "spec_id": "003",
+      "subtask_id": null,
+      "score": {
+        "value": 0.795,
+        "reasoning": "Acceptable confidence: Output missing expected sections (score: 0.30)",
+        "factors": {
+          "completeness": 0.3,
+          "uncertainty": 1.0,
+          "tool_success": 1.0,
+          "length_appropriateness": 1.0,
+          "error_free": 0.8
+        },
+        "needs_human_review": false,
+        "escalation_reasons": [
+          "incomplete_output"
+        ]
+      },
+      "output_preview": "Can't write to LEARNINGS.md (no write permission granted for this session). Two insights worth recording next time:\n\n- **No shared Xcode schemes** \u2014 `xcshareddata/xcschemes/` is empty, so CI must run ",
+      "action_taken": "proceed"
+    },
+    {
+      "timestamp": "2026-02-20T13:36:41.743798+00:00",
+      "agent_name": "Planner",
+      "spec_id": "003",
+      "subtask_id": null,
+      "score": {
+        "value": 0.781,
+        "reasoning": "Acceptable confidence: Output missing expected sections (score: 0.30)",
+        "factors": {
+          "completeness": 0.3,
+          "uncertainty": 1.0,
+          "tool_success": 1.0,
+          "length_appropriateness": 0.91,
+          "error_free": 0.8
+        },
+        "needs_human_review": false,
+        "escalation_reasons": [
+          "incomplete_output"
+        ]
+      },
+      "output_preview": "Nothing new beyond what's already in LEARNINGS.md \u2014 the xcodegen entitlements gotcha and missing shared schemes were already documented. The plan references those existing learnings.",
+      "action_taken": "proceed"
+    }
+  ]
+}

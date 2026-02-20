@@ -1,0 +1,318 @@
+{
+  "id": "003",
+  "name": "set-up-github-actions-cicd-pipeline-with-linting-t",
+  "task": "Set up GitHub Actions CI/CD pipeline with linting, testing, and build verification.",
+  "status": "discarded",
+  "created": "2026-02-20T13:32:15.890201+00:00",
+  "updated": "2026-02-20T13:40:11.413292+00:00",
+  "branch": null,
+  "worktree": null,
+  "plan": {
+    "phases": [
+      {
+        "name": "Setup",
+        "subtasks": [
+          {
+            "id": "1.1",
+            "title": "Add root .gitignore for iOS/Xcode project",
+            "description": "The repo has no .gitignore at the root level (only claudify/ has one). Add a standard iOS/Xcode .gitignore to prevent committing derived data, build artifacts, and Xcode user state. Keep the generated .xcodeproj checked in since XcodeGen is used to regenerate it, but exclude user-specific xcuserdata.",
+            "acceptance_criteria": [
+              ".gitignore exists at repo root",
+              "Covers: DerivedData/, xcuserdata/, *.xcuserstate, .build/, .DS_Store, *.ipa, dSYMs",
+              "Does NOT ignore .xcodeproj/project.pbxproj or Package.resolved (these should remain tracked)",
+              "Does NOT conflict with claudify/.gitignore"
+            ],
+            "dependencies": [],
+            "estimated_files": [
+              ".gitignore"
+            ],
+            "status": "pending",
+            "notes": null
+          },
+          {
+            "id": "1.2",
+            "title": "Add shared Xcode scheme for CI",
+            "description": "xcshareddata/xcschemes/ is empty \u2014 CI needs a shared scheme to build and test. Create a shared scheme via xcodegen or manually that covers the HealthAppTransfer target with test actions for HealthAppTransferTests. This is critical because xcodebuild requires a scheme to operate. Per LEARNINGS.md, xcodegen overwrites entitlements to empty dict, so the workflow must handle entitlements restoration.",
+            "acceptance_criteria": [
+              "Shared scheme exists at HealthAppTransfer.xcodeproj/xcshareddata/xcschemes/HealthAppTransfer.xcscheme",
+              "Scheme includes build action for HealthAppTransfer target",
+              "Scheme includes test action for HealthAppTransferTests target",
+              "Entitlements file is NOT corrupted after scheme generation"
+            ],
+            "dependencies": [],
+            "estimated_files": [
+              "HealthAppTransfer.xcodeproj/xcshareddata/xcschemes/HealthAppTransfer.xcscheme"
+            ],
+            "status": "pending",
+            "notes": null
+          },
+          {
+            "id": "1.3",
+            "title": "Add SwiftLint configuration",
+            "description": "No linter is configured for the Swift codebase. Add SwiftLint with a .swiftlint.yml that matches the project's existing conventions: 4-space indentation, UpperCamelCase types, lowerCamelCase properties, body length limits consistent with the 50-line body guideline. Keep rules minimal and aligned with what the codebase already does \u2014 no aspirational rules.",
+            "acceptance_criteria": [
+              ".swiftlint.yml exists at repo root",
+              "Excludes DerivedData, .build, and Pods directories",
+              "Enables reasonable default rules (no overly strict custom rules)",
+              "Configured line_length, type_body_length, and file_length to match existing code style",
+              "Disabled rules that would cause excessive noise on existing codebase"
+            ],
+            "dependencies": [],
+            "estimated_files": [
+              ".swiftlint.yml"
+            ],
+            "status": "pending",
+            "notes": null
+          }
+        ]
+      },
+      {
+        "name": "Core",
+        "subtasks": [
+          {
+            "id": "2.1",
+            "title": "Create GitHub Actions CI workflow for iOS",
+            "description": "Create .github/workflows/ios-ci.yml (separate from the existing claudify/ci.yml which is Python-only). The workflow should run on push/PR to main. Jobs: (1) SwiftLint linting, (2) Build verification with xcodebuild, (3) Unit tests with xcodebuild test. Key considerations from discovery: use xcodegen to regenerate project if scheme isn't shared (or rely on the shared scheme from 1.2), handle entitlements restoration after any xcodegen step, use CODE_SIGNING_ALLOWED=NO for CI builds, target iOS simulator (iPhone 17 series per LEARNINGS.md \u2014 but CI uses GitHub-hosted runners which have standard simulators like iPhone 16 Pro, so use a generic destination). Use macos-14 or macos-15 runner for Apple Silicon Xcode support.",
+            "acceptance_criteria": [
+              "Workflow file exists at .github/workflows/ios-ci.yml",
+              "Triggers on push and pull_request to main branch",
+              "Has concurrency group to cancel in-progress runs",
+              "Lint job: installs and runs SwiftLint on HealthAppTransfer/ source directory",
+              "Build job: runs xcodebuild build with CODE_SIGNING_ALLOWED=NO for iOS simulator destination",
+              "Test job: runs xcodebuild test for HealthAppTransferTests scheme on iOS simulator",
+              "SPM dependencies are resolved (cached if possible)",
+              "Uses macos-14 or macos-15 runner with Xcode 15+",
+              "Entitlements are preserved if xcodegen is invoked"
+            ],
+            "dependencies": [
+              "1.1",
+              "1.2",
+              "1.3"
+            ],
+            "estimated_files": [
+              ".github/workflows/ios-ci.yml"
+            ],
+            "status": "pending",
+            "notes": null
+          }
+        ]
+      },
+      {
+        "name": "Polish",
+        "subtasks": [
+          {
+            "id": "3.1",
+            "title": "Add SPM dependency caching to workflow",
+            "description": "Add caching for Swift Package Manager resolved dependencies to speed up CI runs. Cache the SPM cache directory (~/.cache/org.swift.swiftpm or DerivedData SPM artifacts) keyed on Package.resolved hash.",
+            "acceptance_criteria": [
+              "actions/cache step added for SPM dependencies",
+              "Cache key includes hash of Package.resolved",
+              "Restore keys allow partial cache hits",
+              "Build/test jobs use the cached dependencies"
+            ],
+            "dependencies": [
+              "2.1"
+            ],
+            "estimated_files": [
+              ".github/workflows/ios-ci.yml"
+            ],
+            "status": "pending",
+            "notes": null
+          },
+          {
+            "id": "3.2",
+            "title": "Validate workflow locally and fix issues",
+            "description": "Review the complete workflow for correctness. Verify xcodebuild commands use correct scheme name, simulator destination syntax, and build settings. Check that the SwiftLint version is pinned. Ensure the workflow handles the multi-platform target (iOS + macOS) by building for iOS simulator specifically. Address any issues found.",
+            "acceptance_criteria": [
+              "xcodebuild commands use correct -scheme and -destination flags",
+              "Destination uses generic platform syntax: 'platform=iOS Simulator,name=iPhone 16 Pro'",
+              "CODE_SIGNING_ALLOWED=NO is set to avoid signing errors",
+              "SwiftLint version is pinned in the workflow",
+              "Workflow YAML is valid (no syntax errors)"
+            ],
+            "dependencies": [
+              "3.1"
+            ],
+            "estimated_files": [
+              ".github/workflows/ios-ci.yml"
+            ],
+            "status": "pending",
+            "notes": null
+          }
+        ]
+      }
+    ],
+    "risks": [
+      "High: GitHub-hosted macOS runners may not have the exact Xcode/simulator versions expected. Mitigation: use xcodes or xcode-select to pick the right Xcode version, and use generic simulator destinations rather than specific device names.",
+      "Medium: Entitlements corruption from xcodegen \u2014 if the CI workflow runs xcodegen, it will wipe entitlements. Mitigation: either rely on the committed shared scheme (avoiding xcodegen in CI entirely) or add an explicit entitlements restoration step.",
+      "Medium: HealthKit framework requires device capabilities that simulators may not fully support, potentially causing test failures. Mitigation: unit tests should mock HealthKit; UI tests that require HealthKit authorization may need to be excluded from CI.",
+      "Low: CocoaMQTT SPM dependency may have slow resolution times on first CI run. Mitigation: SPM caching in subtask 3.1.",
+      "Low: SwiftLint may flag many existing violations on first run. Mitigation: configure .swiftlint.yml to only warn (not error) on style issues, and use strict mode only for critical rules."
+    ],
+    "notes": [
+      "The existing claudify/.github/workflows/ci.yml is for the Python claudify tool \u2014 the iOS workflow should be a separate file at the repo root's .github/workflows/ path.",
+      "Per LEARNINGS.md: xcodegen overwrites .entitlements to empty dict \u2014 the safest CI approach is to commit the shared scheme and NOT run xcodegen in CI at all.",
+      "Per LEARNINGS.md: available local simulators are iPhone 17 series, but GitHub-hosted runners use standard Apple simulators (typically iPhone 15/16 Pro). Use a generic destination or check available simulators in CI.",
+      "The project targets both iOS 17.0 and macOS 14.0. CI should focus on iOS first since that's the primary platform. macOS build verification can be added later if needed.",
+      "UI tests (HealthAppTransferUITests) should be excluded from CI initially \u2014 they require a running simulator with app launch, which is slow and fragile in CI. Unit tests only for the first iteration."
+    ],
+    "version": 1
+  },
+  "qa_status": null,
+  "history": [
+    {
+      "event": "created",
+      "time": "2026-02-20T13:32:15.890226Z"
+    },
+    {
+      "event": "phase_started",
+      "time": "2026-02-20T13:32:16.065708Z",
+      "details": {
+        "phase": "discover"
+      }
+    },
+    {
+      "event": "status_changed",
+      "time": "2026-02-20T13:32:16.065732Z",
+      "details": {
+        "from": "pending",
+        "to": "discovering"
+      }
+    },
+    {
+      "event": "phase_completed",
+      "time": "2026-02-20T13:35:08.152193Z",
+      "details": {
+        "phase": "discover",
+        "status": "success"
+      }
+    },
+    {
+      "event": "status_changed",
+      "time": "2026-02-20T13:35:08.152253Z",
+      "details": {
+        "from": "discovering",
+        "to": "discovered"
+      }
+    },
+    {
+      "event": "phase_started",
+      "time": "2026-02-20T13:35:08.256954Z",
+      "details": {
+        "phase": "plan"
+      }
+    },
+    {
+      "event": "status_changed",
+      "time": "2026-02-20T13:35:08.256986Z",
+      "details": {
+        "from": "discovered",
+        "to": "planning"
+      }
+    },
+    {
+      "event": "plan_set",
+      "time": "2026-02-20T13:36:41.855940Z",
+      "details": {
+        "phases": 3
+      }
+    },
+    {
+      "event": "phase_completed",
+      "time": "2026-02-20T13:36:41.880563Z",
+      "details": {
+        "phase": "plan",
+        "status": "success"
+      }
+    },
+    {
+      "event": "status_changed",
+      "time": "2026-02-20T13:36:41.880624Z",
+      "details": {
+        "from": "planning",
+        "to": "planned"
+      }
+    },
+    {
+      "event": "discarded",
+      "time": "2026-02-20T13:40:11.413266Z"
+    },
+    {
+      "event": "status_changed",
+      "time": "2026-02-20T13:40:11.413290Z",
+      "details": {
+        "from": "planned",
+        "to": "discarded"
+      }
+    }
+  ],
+  "phase": "plan",
+  "current_subtask": null,
+  "feedback": [],
+  "phase_history": [
+    {
+      "phase": "discover",
+      "started": "2026-02-20T13:32:16.065697Z",
+      "completed": "2026-02-20T13:35:08.152186Z",
+      "status": "success",
+      "feedback": null,
+      "duration_seconds": 172.086489
+    },
+    {
+      "phase": "plan",
+      "started": "2026-02-20T13:35:08.256936Z",
+      "completed": "2026-02-20T13:36:41.880543Z",
+      "status": "success",
+      "feedback": null,
+      "duration_seconds": 93.623607
+    }
+  ],
+  "agent_turns": 0,
+  "estimated_tokens": 0,
+  "parallel_metrics": null,
+  "trace_id": null,
+  "project_analysis": {
+    "languages": [
+      {
+        "name": "python",
+        "file_count": 627,
+        "percentage": 74.4
+      },
+      {
+        "name": "swift",
+        "file_count": 45,
+        "percentage": 5.3
+      },
+      {
+        "name": "javascript",
+        "file_count": 1,
+        "percentage": 0.1
+      }
+    ],
+    "frameworks": [
+      "fastapi",
+      "django",
+      "flask",
+      "click",
+      "typer",
+      "swiftui",
+      "uikit"
+    ],
+    "package_manager": null,
+    "package_managers_found": [],
+    "has_tests": true,
+    "test_framework": "xctest",
+    "has_ci": false,
+    "ci_system": null,
+    "has_claude_dir": true,
+    "has_claude_md": true,
+    "has_existing_commands": true,
+    "structure_tree": "HealthAppTransfer/\n    HealthAppTransfer/\n        App/\n            HealthAppTransfer.entitlements\n            HealthAppTransferApp.swift\n            Info.plist\n        Extensions/\n            DEREncoder.swift\n            Loggers.swift\n            NetworkHelpers.swift\n            QRCodeRenderer.swift\n        Models/\n            Persistence/\n            HealthDataType.swift\n            HealthSampleDTO.swift\n            QRPairingPayload.swift\n        Resources/\n            Assets.xcassets/\n        Services/\n            Audit/\n            HealthKit/\n            Network/\n            Security/\n        ViewModels/\n            DashboardViewModel.swift\n            HealthDataViewModel.swift\n            LANSyncViewModel.swift\n            PairingViewModel.swift\n            SecuritySettingsViewModel.swift\n        Views/\n            Automations/\n            Dashboard/\n            HealthData/\n            Settings/\n            ContentView.swift\n            MainTabView.swift\n    HealthAppTransfer.xcodeproj/\n        project.xcworkspace/\n            xcshareddata/\n            contents.xcworkspacedata\n        xcshareddata/\n        project.pbxproj\n    HealthAppTransferTests/\n        HealthAppTransferTests.swift\n    HealthAppTransferUITests/\n        HealthAppTransferUITests.swift\n    claudify/\n        .github/\n            workflows/\n        benchmarks/",
+    "key_directories": [],
+    "entry_points": [],
+    "dependencies": [],
+    "has_jupyter_notebooks": false,
+    "has_data_directory": false
+  },
+  "build_diff": null
+}

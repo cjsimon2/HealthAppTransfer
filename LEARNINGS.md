@@ -14,7 +14,8 @@
 
 ### Testing Patterns
 <!-- What works for testing in this project -->
-_None documented yet._
+- HealthKit queries (`HKSampleQuery`, `HKStatisticsQuery`) are untestable via `execute(_ query:)` — completion handlers are internal. Add async methods to `HealthStoreProtocol` (like `dataExists(for:)`) and mock at that level instead.
+- xcodegen's default scheme does NOT include the unit test target. Add an explicit `schemes:` section in `project.yml` with `HealthAppTransferTests` in the test plan.
 
 ### Architecture Patterns
 <!-- Structural decisions that work well -->
@@ -54,7 +55,7 @@ _None documented yet._
 
 ### Performance Considerations
 <!-- What affects performance in this codebase -->
-_None documented yet._
+- HealthKit has NO efficient count-only query API. `HKStatisticsQuery` checks data existence server-side (no memory load) but doesn't return sample counts. `sampleCount()` now returns 0/1 existence — exact counts would require loading all `HKSample` objects into memory.
 
 ## External Dependencies
 

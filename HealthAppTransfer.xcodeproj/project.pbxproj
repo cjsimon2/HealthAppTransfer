@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		04A72E1B70CFBA5F18EAC34C /* HealthSampleMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9328E156C8A5E7D6D2107F4A /* HealthSampleMapper.swift */; };
 		089F2D771E18AD066AF04AF2 /* NetworkHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B4F6C4376AFDE1243B5E11 /* NetworkHelpers.swift */; };
+		09440D6050CAAB6ED955B5FA /* BiometricService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE50B571B10F96C14E2C4EA /* BiometricService.swift */; };
 		15B95DB9FDF11360D556860A /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6E146CE4CA56368AA790F2 /* MainTabView.swift */; };
 		1F9E28DA99CD517FCCBAD06E /* HTTPTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340472304572C3D648CB82C /* HTTPTypes.swift */; };
 		2243D295A8115467542ADC50 /* AutomationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9A29CE84B137EB7960E5AB /* AutomationsView.swift */; };
@@ -33,10 +34,14 @@
 		7D59B7D97A3774D6DD3E18BE /* HealthDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21E57D806E5D2BE659693A51 /* HealthDataView.swift */; };
 		806A9082655B8669A60FB75E /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E9CE8B6256532A535D830B /* DashboardView.swift */; };
 		868014D3FBB9AACFCD7D3A83 /* BonjourDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A0C573646BCC5D67E254C1 /* BonjourDiscovery.swift */; };
+		883392E5D1AFDA6DD1BBC418 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350AE6B6C27D9D0A50ACC2CA /* ServiceContainer.swift */; };
 		8A79F4FC32DBA41346CA6875 /* ExportRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE260AF776289180BDD2BAA1 /* ExportRecord.swift */; };
 		A16788D273F41DEE0582CA6E /* CocoaMQTT in Frameworks */ = {isa = PBXBuildFile; productRef = 2838417A7046A6B7ABBF8D25 /* CocoaMQTT */; };
+		A38B35B6B1A6C41C87AEF159 /* SecuritySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DAFB1C1C8DB959DFAF418A /* SecuritySettingsView.swift */; };
 		ABEED29A83143A70D1FF9B88 /* DEREncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F55D4DB12754300C5C64511 /* DEREncoder.swift */; };
 		B5D6ACAB39C322319DAE3110 /* PairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C0C159B5391B0E017DB6A /* PairingView.swift */; };
+		B83ECCC6CEE7D9BA70E5E576 /* SecuritySettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81046D5D7A0404FB84F1186 /* SecuritySettingsViewModel.swift */; };
+		B9541AA92150B9A825308EAF /* HealthKitServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19FCE10D2678040147C3873 /* HealthKitServiceTests.swift */; };
 		B96175ACF2DCBD3989589FCF /* HealthAppTransferApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFD58BC63E8144AEAC5729E /* HealthAppTransferApp.swift */; };
 		BA1A9259E93EE14CA20932EA /* QRCodeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0DDD337EA4C30C85AF4AA0 /* QRCodeRenderer.swift */; };
 		BC9F03C0EFE1B435860B60BE /* LANSyncViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B341A617C26D9B803BB1A4E8 /* LANSyncViewModel.swift */; };
@@ -83,6 +88,7 @@
 		2E1C3C8B1D1D434F058DFC25 /* HealthDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthDataViewModel.swift; sourceTree = "<group>"; };
 		3102AF46E412DF18283D093F /* PairedDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairedDevice.swift; sourceTree = "<group>"; };
 		328AA7DD1700F237450E67C2 /* HealthAppTransferUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthAppTransferUITests.swift; sourceTree = "<group>"; };
+		350AE6B6C27D9D0A50ACC2CA /* ServiceContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
 		3D196DACFE2F34F2F253CD81 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		554AB78CAB9D6C0A9D72735E /* AutomationConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationConfiguration.swift; sourceTree = "<group>"; };
 		55BD374B66258E0E33688FC5 /* HealthStoreProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthStoreProtocol.swift; sourceTree = "<group>"; };
@@ -94,9 +100,11 @@
 		7ADF0C45CAF19E8B207BBBAD /* HealthAppTransferTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = HealthAppTransferTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B4C2DEF448F467FC7F6A2CC /* PairingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingService.swift; sourceTree = "<group>"; };
 		7F55D4DB12754300C5C64511 /* DEREncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DEREncoder.swift; sourceTree = "<group>"; };
+		7FE50B571B10F96C14E2C4EA /* BiometricService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricService.swift; sourceTree = "<group>"; };
 		80F5AB4D8C9B83B5AB0A923C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		81AAAFEB155073B741F5154A /* HealthSampleDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSampleDTO.swift; sourceTree = "<group>"; };
 		891C70C028A379D2F6BDF33A /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
+		90DAFB1C1C8DB959DFAF418A /* SecuritySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecuritySettingsView.swift; sourceTree = "<group>"; };
 		9328E156C8A5E7D6D2107F4A /* HealthSampleMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSampleMapper.swift; sourceTree = "<group>"; };
 		9340472304572C3D648CB82C /* HTTPTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPTypes.swift; sourceTree = "<group>"; };
 		A0E9CE8B6256532A535D830B /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
@@ -108,6 +116,7 @@
 		B655277B0E8F02F69C11E7D9 /* SchemaVersions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaVersions.swift; sourceTree = "<group>"; };
 		B6579069C7506DF29BC63988 /* UserPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPreferences.swift; sourceTree = "<group>"; };
 		B6A0C573646BCC5D67E254C1 /* BonjourDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourDiscovery.swift; sourceTree = "<group>"; };
+		B81046D5D7A0404FB84F1186 /* SecuritySettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecuritySettingsViewModel.swift; sourceTree = "<group>"; };
 		BA61E44A448782098C269188 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		BF9A29CE84B137EB7960E5AB /* AutomationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationsView.swift; sourceTree = "<group>"; };
 		CA6E146CE4CA56368AA790F2 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -115,6 +124,7 @@
 		D36D384A857FEDF94314A6B7 /* SyncConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConfiguration.swift; sourceTree = "<group>"; };
 		D7FC649521E48F5680444F9E /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
 		E0B4F6C4376AFDE1243B5E11 /* NetworkHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkHelpers.swift; sourceTree = "<group>"; };
+		E19FCE10D2678040147C3873 /* HealthKitServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitServiceTests.swift; sourceTree = "<group>"; };
 		EAEAFC6BF9A4FEB3C38FA576 /* Loggers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loggers.swift; sourceTree = "<group>"; };
 		ED0DDD337EA4C30C85AF4AA0 /* QRCodeRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeRenderer.swift; sourceTree = "<group>"; };
 		FA2A7DFF5584D7A6F307A97B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -162,6 +172,7 @@
 				7441E3257950AAB96FF0DD0A /* PairedDevicesView.swift */,
 				5E6C0C159B5391B0E017DB6A /* PairingView.swift */,
 				D7FC649521E48F5680444F9E /* QRScannerView.swift */,
+				90DAFB1C1C8DB959DFAF418A /* SecuritySettingsView.swift */,
 				BA61E44A448782098C269188 /* SettingsView.swift */,
 			);
 			path = Settings;
@@ -170,6 +181,7 @@
 		5E21189B03B8CA9D53BF1E80 /* Security */ = {
 			isa = PBXGroup;
 			children = (
+				7FE50B571B10F96C14E2C4EA /* BiometricService.swift */,
 				FC80134C3F4EB4118D2C50B7 /* CertificateService.swift */,
 				03AC8FF92B03D28185C7C4D0 /* KeychainStore.swift */,
 				7B4C2DEF448F467FC7F6A2CC /* PairingService.swift */,
@@ -211,6 +223,7 @@
 		7490B0A81A9E253306D050FE /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				350AE6B6C27D9D0A50ACC2CA /* ServiceContainer.swift */,
 				9AD0CABA375522EE04022722 /* Audit */,
 				68E5722BADB00BDAC3274686 /* HealthKit */,
 				F0F2BF02674E07B043910A6E /* Network */,
@@ -292,6 +305,7 @@
 			isa = PBXGroup;
 			children = (
 				68107979CCFE58D39FA30904 /* HealthAppTransferTests.swift */,
+				E19FCE10D2678040147C3873 /* HealthKitServiceTests.swift */,
 			);
 			path = HealthAppTransferTests;
 			sourceTree = "<group>";
@@ -319,6 +333,7 @@
 				2E1C3C8B1D1D434F058DFC25 /* HealthDataViewModel.swift */,
 				B341A617C26D9B803BB1A4E8 /* LANSyncViewModel.swift */,
 				0DDCE2D7600A1D4377B73660 /* PairingViewModel.swift */,
+				B81046D5D7A0404FB84F1186 /* SecuritySettingsViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -472,6 +487,7 @@
 				DD3F356063E698140F55D5DD /* AuditService.swift in Sources */,
 				6E30ADAF6EB0C4BB1261BF65 /* AutomationConfiguration.swift in Sources */,
 				2243D295A8115467542ADC50 /* AutomationsView.swift in Sources */,
+				09440D6050CAAB6ED955B5FA /* BiometricService.swift in Sources */,
 				868014D3FBB9AACFCD7D3A83 /* BonjourDiscovery.swift in Sources */,
 				4511B1209E4FDA8B8D74A4B5 /* CertificateService.swift in Sources */,
 				2BEEEB728BD1ED212AD74CFC /* ContentView.swift in Sources */,
@@ -505,6 +521,9 @@
 				6F6BC056A549C2D5B9E3C9DE /* QRPairingPayload.swift in Sources */,
 				4E1BB152A366AB2BD7B6F2E8 /* QRScannerView.swift in Sources */,
 				3C540712B56966C390842A88 /* SchemaVersions.swift in Sources */,
+				A38B35B6B1A6C41C87AEF159 /* SecuritySettingsView.swift in Sources */,
+				B83ECCC6CEE7D9BA70E5E576 /* SecuritySettingsViewModel.swift in Sources */,
+				883392E5D1AFDA6DD1BBC418 /* ServiceContainer.swift in Sources */,
 				2F3F6D88E8F324C3EAA46038 /* SettingsView.swift in Sources */,
 				C1444AFEEDD277042C1297AB /* SyncConfiguration.swift in Sources */,
 				6EAFD99121FDAFC16EA826E1 /* UserPreferences.swift in Sources */,
@@ -516,6 +535,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FB60C1391F26A287E709DB4C /* HealthAppTransferTests.swift in Sources */,
+				B9541AA92150B9A825308EAF /* HealthKitServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

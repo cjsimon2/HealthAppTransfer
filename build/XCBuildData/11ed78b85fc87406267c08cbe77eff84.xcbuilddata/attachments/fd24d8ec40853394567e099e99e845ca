@@ -1,0 +1,29 @@
+{
+  "" : {
+    "diagnostics" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthAppTransferTests-primary.dia",
+    "emit-module-dependencies" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthAppTransferTests-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthAppTransferTests-primary-emit-module.dia",
+    "pch" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthAppTransferTests-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthAppTransferTests-primary.swiftdeps"
+  },
+  "/Users/caseysimon/HealthAppTransfer/HealthAppTransferTests/HealthAppTransferTests.swift" : {
+    "const-values" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthAppTransferTests.swiftconstvalues",
+    "dependencies" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthAppTransferTests.d",
+    "diagnostics" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthAppTransferTests.dia",
+    "index-unit-output-path" : "/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthAppTransferTests.o",
+    "llvm-bc" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthAppTransferTests.bc",
+    "object" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthAppTransferTests.o",
+    "swift-dependencies" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthAppTransferTests.swiftdeps",
+    "swiftmodule" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthAppTransferTests~partial.swiftmodule"
+  },
+  "/Users/caseysimon/HealthAppTransfer/HealthAppTransferTests/HealthKitServiceTests.swift" : {
+    "const-values" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthKitServiceTests.swiftconstvalues",
+    "dependencies" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthKitServiceTests.d",
+    "diagnostics" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthKitServiceTests.dia",
+    "index-unit-output-path" : "/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthKitServiceTests.o",
+    "llvm-bc" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthKitServiceTests.bc",
+    "object" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthKitServiceTests.o",
+    "swift-dependencies" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthKitServiceTests.swiftdeps",
+    "swiftmodule" : "/Users/caseysimon/HealthAppTransfer/build/HealthAppTransfer.build/Debug/HealthAppTransferTests.build/Objects-normal/x86_64/HealthKitServiceTests~partial.swiftmodule"
+  }
+}
