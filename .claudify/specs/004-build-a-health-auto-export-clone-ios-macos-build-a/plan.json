@@ -19,7 +19,7 @@
             "HealthAppTransfer/Services/HealthKit/HealthStoreProtocol.swift",
             "HealthAppTransferTests/HealthKitServiceTests.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -38,7 +38,7 @@
           "estimated_files": [
             "HealthAppTransfer/Services/HealthKit/HealthKitService.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -61,7 +61,7 @@
             "HealthAppTransfer/Services/HealthKit/HealthSampleMapper.swift",
             "HealthAppTransfer/Services/HealthKit/HealthKitService.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -83,7 +83,7 @@
             "HealthAppTransfer/Models/HealthSampleDTO.swift",
             "HealthAppTransferTests/HealthSampleMapperTests.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -106,7 +106,7 @@
             "HealthAppTransfer/ViewModels/DashboardViewModel.swift",
             "HealthAppTransfer/ViewModels/HealthDataViewModel.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         }
       ]
@@ -135,7 +135,7 @@
             "HealthAppTransfer/Services/Export/JSONv2Formatter.swift",
             "HealthAppTransferTests/ExportFormatterTests.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -160,7 +160,7 @@
             "HealthAppTransferTests/CSVFormatterTests.swift",
             "HealthAppTransferTests/GPXFormatterTests.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -184,7 +184,7 @@
             "HealthAppTransfer/Services/HealthKit/HealthStoreProtocol.swift",
             "HealthAppTransferTests/AggregationEngineTests.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -210,7 +210,7 @@
             "HealthAppTransfer/ViewModels/ExportViewModel.swift",
             "HealthAppTransfer/Views/MainTabView.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         }
       ]
@@ -241,7 +241,7 @@
             "HealthAppTransfer/App/Info.plist",
             "HealthAppTransfer/Services/HealthKit/HealthKitService.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -267,7 +267,7 @@
             "HealthAppTransfer/Views/Automations/RESTAutomationFormView.swift",
             "HealthAppTransfer/Views/Automations/AutomationsView.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -290,7 +290,7 @@
             "HealthAppTransfer/Services/Automations/MQTTAutomation.swift",
             "HealthAppTransfer/Views/Automations/MQTTAutomationFormView.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -312,7 +312,7 @@
             "HealthAppTransfer/Services/Automations/HomeAssistantAutomation.swift",
             "HealthAppTransfer/Views/Automations/HomeAssistantFormView.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -336,7 +336,7 @@
             "HealthAppTransfer/Views/Automations/CloudStorageFormView.swift",
             "HealthAppTransfer/Views/Automations/CalendarFormView.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -363,7 +363,7 @@
             "HealthAppTransfer/Services/HealthKit/BackgroundSyncService.swift",
             "HealthAppTransfer/Views/Automations/AutomationsView.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         }
       ]
@@ -392,7 +392,7 @@
             "HealthAppTransfer/Views/Charts/ChartStyleModifier.swift",
             "HealthAppTransfer/ViewModels/ChartViewModel.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -415,7 +415,7 @@
             "HealthAppTransfer/ViewModels/HealthDataDetailViewModel.swift",
             "HealthAppTransfer/Views/HealthData/HealthDataView.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -437,7 +437,7 @@
             "HealthAppTransfer/Views/Charts/WorkoutMapView.swift",
             "HealthAppTransfer/Services/HealthKit/HealthKitService.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -462,7 +462,7 @@
             "HealthAppTransfer/ViewModels/DashboardViewModel.swift",
             "HealthAppTransfer/Models/Persistence/UserPreferences.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         }
       ]
@@ -493,7 +493,7 @@
             "HealthAppTransferWidget/Info.plist",
             "HealthAppTransfer/App/HealthAppTransfer.entitlements"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -516,7 +516,7 @@
             "HealthAppTransfer/Services/HealthKit/BackgroundSyncService.swift",
             "HealthAppTransferWidget/LiveActivityView.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -541,7 +541,7 @@
             "HealthAppTransfer/Intents/GetLatestValueIntent.swift",
             "HealthAppTransfer/Intents/HealthTypeEntityQuery.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -564,7 +564,7 @@
             "HealthAppTransfer/Views/HealthData/HealthDataDetailView.swift",
             "HealthAppTransfer/Extensions/ShareSheet.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         }
       ]
@@ -594,7 +594,7 @@
             "HealthAppTransfer/Services/Sync/CloudKitRecordMapper.swift",
             "HealthAppTransfer/Models/Persistence/SyncConfiguration.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -621,7 +621,7 @@
             "HealthAppTransfer/ViewModels/HealthDataViewModel.swift",
             "HealthAppTransfer/App/HealthAppTransferApp.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -645,7 +645,7 @@
             "HealthAppTransfer/ViewModels/SyncSettingsViewModel.swift",
             "HealthAppTransfer/Views/Settings/SettingsView.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         }
       ]
@@ -678,7 +678,7 @@
             "HealthAppTransfer/Views/Onboarding/QuickSetupStepView.swift",
             "HealthAppTransfer/Views/ContentView.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -707,7 +707,7 @@
             "HealthAppTransfer/Views/Automations/AutomationsView.swift",
             "HealthAppTransfer/Views/Export/QuickExportView.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -731,7 +731,7 @@
             "HealthAppTransfer/Resources/InfoPlist.xcstrings",
             "HealthAppTransfer/Views/**/*.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -754,7 +754,7 @@
             "HealthAppTransfer/Views/ContentView.swift",
             "HealthAppTransfer/Views/MainTabView.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         },
         {
@@ -785,7 +785,7 @@
             "HealthAppTransferTests/CloudKitRecordMapperTests.swift",
             "HealthAppTransferTests/Mocks/MockHealthStore.swift"
           ],
-          "status": "pending",
+          "status": "completed",
           "notes": null
         }
       ]
@@ -813,5 +813,5 @@
     "xcodegen overwrites .entitlements \u2014 always restore after running xcodegen per LEARNINGS.md.",
     "CocoaMQTT has transitive deps (Starscream, MqttCocoaAsyncSocket) \u2014 these are expected per LEARNINGS.md."
   ],
-  "version": 1
+  "version": 2
 }
