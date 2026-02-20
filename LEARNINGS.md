@@ -15,7 +15,11 @@
 ### Testing Patterns
 <!-- What works for testing in this project -->
 - HealthKit queries (`HKSampleQuery`, `HKStatisticsQuery`) are untestable via `execute(_ query:)` — completion handlers are internal. Add async methods to `HealthStoreProtocol` (like `dataExists(for:)`) and mock at that level instead.
+- `HKStatisticsCollection` and `HKStatistics` can't be constructed in tests — for `HKStatisticsCollectionQuery`, return `[AggregatedSample]` from the protocol method so mocks bypass HK types entirely.
+- Cumulative quantity types (stepCount, energy) only support `.cumulativeSum`; discrete types (heartRate, bodyMass) only support `.discreteAverage/.discreteMin/.discreteMax`. Mixing causes HK errors — validate aggregation style before building `HKStatisticsOptions`.
 - xcodegen's default scheme does NOT include the unit test target. Add an explicit `schemes:` section in `project.yml` with `HealthAppTransferTests` in the test plan.
+- `HKCategorySample` for `menstrualFlow` requires `HKMetadataKeyMenstrualCycleStart` metadata at creation — tests crash with `_HKObjectValidationFailureException` without it.
+- `HKCorrelation` requires at least one `HKSample` object — can't create empty correlations in tests; HealthKit throws `_HKObjectValidationFailureException`.
 
 ### Architecture Patterns
 <!-- Structural decisions that work well -->
@@ -25,6 +29,9 @@
 - To parallelize work inside an actor with TaskGroup, capture `Sendable` dependencies as locals (`let store = self.store`) before the group — child tasks don't inherit actor isolation, so direct property access would re-serialize through the actor.
 - Available simulators are iPhone 17 series (17, 17 Pro, 17 Pro Max, Air) — no iPhone 16. Use `iPhone 17 Pro` for xcodebuild commands.
 - SwiftData persistence uses `PersistenceConfiguration.makeModelContainer()` factory in `SchemaVersions.swift` — all model types registered in `SchemaV1` with `HealthAppMigrationPlan` for future migrations.
+- `enableBackgroundDelivery(for:frequency:)` is iOS-only (not macOS) — needs `#if os(iOS)` guard, separate from `#if canImport(UIKit)` used for BGTask code. `HKObserverQuery` works on macOS but only fires while app is running.
+- BGTaskScheduler.shared.register() must be called before app finishes launching — in SwiftUI, call it in the App struct's `init()` after creating the service.
+- `HealthDataType.groupedByCategory` is the canonical way to get types grouped by `HealthDataCategory` in display order — use it in views/VMs instead of manually filtering `allCases`.
 
 ## Mistakes to Avoid
 

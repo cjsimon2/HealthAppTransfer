@@ -54,6 +54,45 @@ enum HealthDataCategory: String, CaseIterable, Codable, Sendable {
         case .characteristics: return "Characteristics"
         }
     }
+
+    var iconName: String {
+        switch self {
+        case .activity: return "flame.fill"
+        case .heart: return "heart.fill"
+        case .vitals: return "waveform.path.ecg"
+        case .bodyMeasurements: return "figure"
+        case .metabolic: return "drop.fill"
+        case .nutrition: return "fork.knife"
+        case .respiratory: return "lungs.fill"
+        case .mobility: return "figure.walk"
+        case .fitness: return "sportscourt.fill"
+        case .audioExposure: return "ear.fill"
+        case .sleep: return "bed.double.fill"
+        case .mindfulness: return "brain.head.profile"
+        case .reproductiveHealth: return "heart.circle.fill"
+        case .symptoms: return "staroflife.fill"
+        case .other: return "ellipsis.circle.fill"
+        case .workout: return "figure.run"
+        case .characteristics: return "person.fill"
+        }
+    }
+}
+
+// MARK: - Grouped Types Helper
+
+extension HealthDataType {
+
+    /// Returns all types grouped by their category, preserving category order.
+    static var groupedByCategory: [(category: HealthDataCategory, types: [HealthDataType])] {
+        var groups: [HealthDataCategory: [HealthDataType]] = [:]
+        for type in allCases {
+            groups[type.category, default: []].append(type)
+        }
+        return HealthDataCategory.allCases.compactMap { category in
+            guard let types = groups[category], !types.isEmpty else { return nil }
+            return (category: category, types: types)
+        }
+    }
 }
 
 // MARK: - Health Data Type

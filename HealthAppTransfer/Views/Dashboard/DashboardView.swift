@@ -20,10 +20,10 @@ struct DashboardView: View {
         Group {
             if viewModel.isLoading {
                 ProgressView("Loading health overview...")
-            } else if viewModel.availableTypes.isEmpty {
+            } else if viewModel.categories.isEmpty {
                 emptyState
             } else {
-                dataOverview
+                categoryOverview
             }
         }
         .navigationTitle("Dashboard")
@@ -37,6 +37,7 @@ struct DashboardView: View {
             Image(systemName: "heart.text.square")
                 .font(.system(size: 48))
                 .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
 
             Text("No Health Data")
                 .font(.title3.bold())
@@ -49,20 +50,56 @@ struct DashboardView: View {
         }
     }
 
-    private var dataOverview: some View {
-        List {
-            Section {
-                ForEach(viewModel.availableTypes, id: \.typeName) { item in
-                    HStack {
-                        Text(item.typeName)
-                        Spacer()
-                        Text("\(item.count) samples")
-                            .foregroundStyle(.secondary)
+    private var categoryOverview: some View {
+        ScrollView {
+            VStack(spacing: 8) {
+                summaryHeader
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 12)], spacing: 12) {
+                    ForEach(viewModel.categories) { summary in
+                        categoryCard(summary)
                     }
                 }
-            } header: {
-                Text("\(viewModel.availableTypes.count) data types available")
+                .padding(.horizontal, 16)
             }
+            .padding(.bottom, 100)
         }
+    }
+
+    private var summaryHeader: some View {
+        VStack(spacing: 4) {
+            Text("\(viewModel.totalAvailable)")
+                .font(.system(size: 36, weight: .bold, design: .rounded))
+
+            Text("data types with data")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .padding(.vertical, 16)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(viewModel.totalAvailable) data types with data")
+    }
+
+    private func categoryCard(_ summary: DashboardViewModel.CategorySummary) -> some View {
+        VStack(spacing: 8) {
+            Image(systemName: summary.category.iconName)
+                .font(.title2)
+                .foregroundStyle(.tint)
+                .accessibilityHidden(true)
+
+            Text(summary.category.displayName)
+                .font(.caption.weight(.medium))
+                .lineLimit(1)
+
+            Text("\(summary.availableCount)/\(summary.totalTypes)")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 8)
+        .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(summary.category.displayName): \(summary.availableCount) of \(summary.totalTypes) types have data")
     }
 }

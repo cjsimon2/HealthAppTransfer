@@ -26,6 +26,12 @@ struct HealthSampleDTO: Codable, Sendable, Identifiable {
     let workoutTotalEnergyBurned: Double?
     let workoutTotalDistance: Double?
 
+    /// Sub-values for correlation types (e.g. ["systolic": 120, "diastolic": 80] for blood pressure).
+    let correlationValues: [String: Double]?
+
+    /// String value for characteristic types (e.g. "male" for biological sex).
+    let characteristicValue: String?
+
     /// Optional metadata dictionary encoded as JSON string.
     let metadataJSON: String?
 }

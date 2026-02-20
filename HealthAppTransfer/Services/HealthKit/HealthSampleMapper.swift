@@ -33,6 +33,8 @@ enum HealthSampleMapper {
                 workoutDuration: nil,
                 workoutTotalEnergyBurned: nil,
                 workoutTotalDistance: nil,
+                correlationValues: nil,
+                characteristicValue: nil,
                 metadataJSON: metadataJSON
             )
 
@@ -51,6 +53,8 @@ enum HealthSampleMapper {
                 workoutDuration: nil,
                 workoutTotalEnergyBurned: nil,
                 workoutTotalDistance: nil,
+                correlationValues: nil,
+                characteristicValue: nil,
                 metadataJSON: metadataJSON
             )
 
@@ -69,8 +73,13 @@ enum HealthSampleMapper {
                 workoutDuration: workout.duration,
                 workoutTotalEnergyBurned: workout.totalEnergyBurned?.doubleValue(for: .kilocalorie()),
                 workoutTotalDistance: workout.totalDistance?.doubleValue(for: .meter()),
+                correlationValues: nil,
+                characteristicValue: nil,
                 metadataJSON: metadataJSON
             )
+
+        case let correlation as HKCorrelation:
+            return mapCorrelation(correlation, type: type, sourceName: sourceName, bundleId: bundleId, metadataJSON: metadataJSON)
 
         default:
             return nil
@@ -80,6 +89,170 @@ enum HealthSampleMapper {
     /// Map an array of HKSamples.
     static func map(_ samples: [HKSample], type: HealthDataType) -> [HealthSampleDTO] {
         samples.compactMap { map($0, type: type) }
+    }
+
+    // MARK: - Correlation Mapping
+
+    private static func mapCorrelation(
+        _ correlation: HKCorrelation,
+        type: HealthDataType,
+        sourceName: String,
+        bundleId: String?,
+        metadataJSON: String?
+    ) -> HealthSampleDTO? {
+        var subValues: [String: Double] = [:]
+
+        switch type {
+        case .bloodPressure:
+            if let systolic = correlation.objects(for: HKQuantityType(.bloodPressureSystolic)).first as? HKQuantitySample {
+                subValues["systolic"] = systolic.quantity.doubleValue(for: .millimeterOfMercury())
+            }
+            if let diastolic = correlation.objects(for: HKQuantityType(.bloodPressureDiastolic)).first as? HKQuantitySample {
+                subValues["diastolic"] = diastolic.quantity.doubleValue(for: .millimeterOfMercury())
+            }
+
+        case .food:
+            for object in correlation.objects {
+                guard let quantitySample = object as? HKQuantitySample else { continue }
+                let typeId = quantitySample.quantityType.identifier
+                if let dataType = HealthDataType.allCases.first(where: {
+                    $0.isQuantityType && HKQuantityType($0.quantityTypeIdentifier).identifier == typeId
+                }) {
+                    let unit = preferredUnit(for: dataType)
+                    subValues[dataType.rawValue] = quantitySample.quantity.doubleValue(for: unit)
+                }
+            }
+
+        default:
+            return nil
+        }
+
+        return HealthSampleDTO(
+            id: correlation.uuid,
+            type: type,
+            startDate: correlation.startDate,
+            endDate: correlation.endDate,
+            sourceName: sourceName,
+            sourceBundleIdentifier: bundleId,
+            value: nil,
+            unit: type == .bloodPressure ? "mmHg" : nil,
+            categoryValue: nil,
+            workoutActivityType: nil,
+            workoutDuration: nil,
+            workoutTotalEnergyBurned: nil,
+            workoutTotalDistance: nil,
+            correlationValues: subValues.isEmpty ? nil : subValues,
+            characteristicValue: nil,
+            metadataJSON: metadataJSON
+        )
+    }
+
+    // MARK: - Characteristic Mapping
+
+    /// Map a characteristic type to a DTO. The caller provides the string value read from the store.
+    static func mapCharacteristic(_ type: HealthDataType, stringValue: String) -> HealthSampleDTO {
+        HealthSampleDTO(
+            id: UUID(),
+            type: type,
+            startDate: Date(),
+            endDate: Date(),
+            sourceName: "HealthKit",
+            sourceBundleIdentifier: nil,
+            value: nil,
+            unit: nil,
+            categoryValue: nil,
+            workoutActivityType: nil,
+            workoutDuration: nil,
+            workoutTotalEnergyBurned: nil,
+            workoutTotalDistance: nil,
+            correlationValues: nil,
+            characteristicValue: stringValue,
+            metadataJSON: nil
+        )
+    }
+
+    /// Read a characteristic value from the HealthKit store as a string.
+    static func readCharacteristic(_ type: HealthDataType, from store: HKHealthStore) -> String? {
+        switch type {
+        case .biologicalSex:
+            guard let sex = try? store.biologicalSex().biologicalSex else { return nil }
+            return biologicalSexString(sex)
+        case .bloodType:
+            guard let blood = try? store.bloodType().bloodType else { return nil }
+            return bloodTypeString(blood)
+        case .dateOfBirth:
+            guard let components = try? store.dateOfBirthComponents(),
+                  let date = Calendar.current.date(from: components) else { return nil }
+            return ISO8601DateFormatter().string(from: date)
+        case .fitzpatrickSkinType:
+            guard let skin = try? store.fitzpatrickSkinType().skinType else { return nil }
+            return fitzpatrickSkinTypeString(skin)
+        case .wheelchairUse:
+            guard let wheelchair = try? store.wheelchairUse().wheelchairUse else { return nil }
+            return wheelchairUseString(wheelchair)
+        case .activityMoveMode:
+            guard let mode = try? store.activityMoveMode().activityMoveMode else { return nil }
+            return activityMoveModeString(mode)
+        default:
+            return nil
+        }
+    }
+
+    // MARK: - Characteristic Value Strings
+
+    private static func biologicalSexString(_ sex: HKBiologicalSex) -> String {
+        switch sex {
+        case .female: return "female"
+        case .male: return "male"
+        case .other: return "other"
+        case .notSet: return "notSet"
+        @unknown default: return "unknown"
+        }
+    }
+
+    private static func bloodTypeString(_ type: HKBloodType) -> String {
+        switch type {
+        case .aPositive: return "A+"
+        case .aNegative: return "A-"
+        case .bPositive: return "B+"
+        case .bNegative: return "B-"
+        case .abPositive: return "AB+"
+        case .abNegative: return "AB-"
+        case .oPositive: return "O+"
+        case .oNegative: return "O-"
+        case .notSet: return "notSet"
+        @unknown default: return "unknown"
+        }
+    }
+
+    private static func fitzpatrickSkinTypeString(_ type: HKFitzpatrickSkinType) -> String {
+        switch type {
+        case .I: return "I"
+        case .II: return "II"
+        case .III: return "III"
+        case .IV: return "IV"
+        case .V: return "V"
+        case .VI: return "VI"
+        case .notSet: return "notSet"
+        @unknown default: return "unknown"
+        }
+    }
+
+    private static func wheelchairUseString(_ use: HKWheelchairUse) -> String {
+        switch use {
+        case .yes: return "yes"
+        case .no: return "no"
+        case .notSet: return "notSet"
+        @unknown default: return "unknown"
+        }
+    }
+
+    private static func activityMoveModeString(_ mode: HKActivityMoveMode) -> String {
+        switch mode {
+        case .activeEnergy: return "activeEnergy"
+        case .appleMoveTime: return "appleMoveTime"
+        @unknown default: return "unknown"
+        }
     }
 
     // MARK: - Unit Mapping

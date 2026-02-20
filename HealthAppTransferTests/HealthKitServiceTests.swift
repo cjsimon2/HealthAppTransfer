@@ -11,6 +11,8 @@ final class MockHealthStore: HealthStoreProtocol, @unchecked Sendable {
     var dataExistsResults: [HKSampleType: Bool] = [:]
     var dataExistsError: Error?
     var authorizationError: Error?
+    var aggregatedStatisticsResults: [AggregatedSample] = []
+    var aggregatedStatisticsError: Error?
 
     // MARK: - HealthStoreProtocol
 
@@ -31,6 +33,20 @@ final class MockHealthStore: HealthStoreProtocol, @unchecked Sendable {
     func dataExists(for sampleType: HKSampleType) async throws -> Bool {
         if let error = dataExistsError { throw error }
         return dataExistsResults[sampleType] ?? false
+    }
+
+    func fetchAggregatedStatistics(
+        for quantityType: HKQuantityType,
+        unit: HKUnit,
+        options: HKStatisticsOptions,
+        anchorDate: Date,
+        intervalComponents: DateComponents,
+        predicate: NSPredicate?,
+        enumerateFrom startDate: Date,
+        to endDate: Date
+    ) async throws -> [AggregatedSample] {
+        if let error = aggregatedStatisticsError { throw error }
+        return aggregatedStatisticsResults
     }
 }
 

@@ -13,6 +13,19 @@ protocol HealthStoreProtocol: Sendable {
     /// Uses efficient server-side queries (HKStatisticsQuery for quantity types,
     /// limit-1 HKSampleQuery for others) to avoid loading samples into memory.
     func dataExists(for sampleType: HKSampleType) async throws -> Bool
+
+    /// Fetch aggregated statistics for a quantity type over time intervals.
+    /// Uses HKStatisticsCollectionQuery for efficient server-side aggregation.
+    func fetchAggregatedStatistics(
+        for quantityType: HKQuantityType,
+        unit: HKUnit,
+        options: HKStatisticsOptions,
+        anchorDate: Date,
+        intervalComponents: DateComponents,
+        predicate: NSPredicate?,
+        enumerateFrom startDate: Date,
+        to endDate: Date
+    ) async throws -> [AggregatedSample]
 }
 
 // MARK: - HKHealthStore Conformance
@@ -72,5 +85,71 @@ extension HKHealthStore: HealthStoreProtocol {
             }
             self.execute(query)
         }
+    }
+
+    // MARK: - Aggregated Statistics
+
+    func fetchAggregatedStatistics(
+        for quantityType: HKQuantityType,
+        unit: HKUnit,
+        options: HKStatisticsOptions,
+        anchorDate: Date,
+        intervalComponents: DateComponents,
+        predicate: NSPredicate?,
+        enumerateFrom startDate: Date,
+        to endDate: Date
+    ) async throws -> [AggregatedSample] {
+        let collection = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<HKStatisticsCollection, Error>) in
+            let query = HKStatisticsCollectionQuery(
+                quantityType: quantityType,
+                quantitySamplePredicate: predicate,
+                options: options,
+                anchorDate: anchorDate,
+                intervalComponents: intervalComponents
+            )
+            query.initialResultsHandler = { _, collection, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else if let collection {
+                    continuation.resume(returning: collection)
+                } else {
+                    continuation.resume(throwing: NSError(
+                        domain: "HealthStoreProtocol",
+                        code: -1,
+                        userInfo: [NSLocalizedDescriptionKey: "No statistics collection returned"]
+                    ))
+                }
+            }
+            self.execute(query)
+        }
+
+        let isCumulative = quantityType.aggregationStyle == .cumulative
+        let unitString = unit.unitString
+        var results: [AggregatedSample] = []
+
+        collection.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
+            let sum = isCumulative ? statistics.sumQuantity()?.doubleValue(for: unit) : nil
+            let avg = !isCumulative ? statistics.averageQuantity()?.doubleValue(for: unit) : nil
+            let minimum = !isCumulative ? statistics.minimumQuantity()?.doubleValue(for: unit) : nil
+            let maximum = !isCumulative ? statistics.maximumQuantity()?.doubleValue(for: unit) : nil
+            let latest = statistics.mostRecentQuantity()?.doubleValue(for: unit)
+            let hasData = (sum != nil || avg != nil)
+
+            guard hasData else { return }
+
+            results.append(AggregatedSample(
+                startDate: statistics.startDate,
+                endDate: statistics.endDate,
+                sum: sum,
+                average: avg,
+                min: minimum,
+                max: maximum,
+                latest: latest,
+                count: 1,
+                unit: unitString
+            ))
+        }
+
+        return results
     }
 }

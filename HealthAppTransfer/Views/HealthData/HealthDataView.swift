@@ -20,7 +20,7 @@ struct HealthDataView: View {
         Group {
             if viewModel.isLoading {
                 ProgressView("Loading health data types...")
-            } else if viewModel.dataTypes.isEmpty {
+            } else if viewModel.isEmpty {
                 emptyState
             } else {
                 dataTypeList
@@ -37,6 +37,7 @@ struct HealthDataView: View {
             Image(systemName: "list.bullet.clipboard")
                 .font(.system(size: 48))
                 .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
 
             Text("No Health Data")
                 .font(.title3.bold())
@@ -51,25 +52,48 @@ struct HealthDataView: View {
 
     private var dataTypeList: some View {
         List {
-            ForEach(viewModel.dataTypes, id: \.typeName) { item in
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(item.typeName)
-                            .font(.body.weight(.medium))
-
-                        Text("\(item.count) samples")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+            ForEach(viewModel.filteredGroups) { group in
+                Section {
+                    ForEach(group.types) { typeInfo in
+                        typeRow(typeInfo)
                     }
+                } header: {
+                    Label(group.category.displayName, systemImage: group.category.iconName)
+                        .accessibilityLabel("\(group.category.displayName) category, \(group.types.count) types")
+                }
+            }
+        }
+        .searchable(text: $viewModel.searchText, prompt: "Search health types")
+    }
 
-                    Spacer()
+    private func typeRow(_ typeInfo: HealthDataViewModel.TypeInfo) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(typeInfo.displayName)
+                    .font(.body.weight(.medium))
 
-                    Image(systemName: "chevron.right")
+                if typeInfo.count > 0 {
+                    Text("\(typeInfo.count) samples")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("No data")
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                 }
-                .padding(.vertical, 4)
+            }
+
+            Spacer()
+
+            if typeInfo.count > 0 {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+                    .font(.caption)
+                    .accessibilityLabel("Has data")
             }
         }
+        .padding(.vertical, 2)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(typeInfo.displayName), \(typeInfo.count > 0 ? "\(typeInfo.count) samples" : "no data")")
     }
 }

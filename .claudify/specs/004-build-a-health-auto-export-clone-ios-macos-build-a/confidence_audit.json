@@ -115,6 +115,29 @@
       },
       "output_preview": "Added two project-specific insights: the dictionary-based enum pattern for HealthDataType, and the characteristic type guard pattern.",
       "action_taken": "proceed"
+    },
+    {
+      "timestamp": "2026-02-20T14:25:06.382847+00:00",
+      "agent_name": "Coder",
+      "spec_id": "004",
+      "subtask_id": "1.4",
+      "score": {
+        "value": 0.72,
+        "reasoning": "Acceptable confidence: Output missing expected sections (score: 0.30); Output length inappropriate for task (score: 0.30)",
+        "factors": {
+          "completeness": 0.3,
+          "uncertainty": 1.0,
+          "tool_success": 1.0,
+          "length_appropriateness": 0.3,
+          "error_free": 1.0
+        },
+        "needs_human_review": false,
+        "escalation_reasons": [
+          "incomplete_output"
+        ]
+      },
+      "output_preview": "Added two HealthKit testing gotchas to LEARNINGS.md.",
+      "action_taken": "proceed"
     }
   ]
 }
