@@ -27,6 +27,7 @@ actor NetworkServer {
     private let pairingService: PairingService
     private let auditService: AuditService
     private let certificateService: CertificateService
+    private let biometricService: BiometricService?
 
     private let port: UInt16
 
@@ -35,13 +36,15 @@ actor NetworkServer {
         healthKitService: HealthKitService,
         pairingService: PairingService,
         auditService: AuditService,
-        certificateService: CertificateService
+        certificateService: CertificateService,
+        biometricService: BiometricService? = nil
     ) {
         self.port = port
         self.healthKitService = healthKitService
         self.pairingService = pairingService
         self.auditService = auditService
         self.certificateService = certificateService
+        self.biometricService = biometricService
     }
 
     // MARK: - Server Lifecycle
@@ -298,6 +301,8 @@ actor NetworkServer {
     }
 
     private func handleHealthTypes(_ request: HTTPRequest) async -> HTTPResponse {
+        if let locked = await checkDeviceLocked() { return locked }
+
         guard let token = request.bearerToken,
               await pairingService.validateToken(token) else {
             return .error(statusCode: 401, message: "Unauthorized")
@@ -317,6 +322,8 @@ actor NetworkServer {
     }
 
     private func handleHealthData(_ request: HTTPRequest) async -> HTTPResponse {
+        if let locked = await checkDeviceLocked() { return locked }
+
         guard let token = request.bearerToken,
               await pairingService.validateToken(token) else {
             return .error(statusCode: 401, message: "Unauthorized")
@@ -350,6 +357,16 @@ actor NetworkServer {
     }
 
     // MARK: - Helpers
+
+    /// Returns HTTP 423 Locked if biometric lock is enabled and the device is locked.
+    private func checkDeviceLocked() async -> HTTPResponse? {
+        guard let biometricService else { return nil }
+        let isUnlocked = await biometricService.isUnlocked
+        if !isUnlocked {
+            return .error(statusCode: 423, message: "Device is locked. Unlock with biometric authentication to access this resource.")
+        }
+        return nil
+    }
 
     private nonisolated func deviceName() async -> String {
         #if os(iOS)

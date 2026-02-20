@@ -14,6 +14,7 @@ struct MainTabView: View {
     @ObservedObject var pairingViewModel: PairingViewModel
     @ObservedObject var lanSyncViewModel: LANSyncViewModel
     let healthKitService: HealthKitService
+    @ObservedObject var securitySettingsViewModel: SecuritySettingsViewModel
 
     // MARK: - Body
 
@@ -55,7 +56,7 @@ struct MainTabView: View {
             .tag(AppTab.automations)
 
             NavigationStack {
-                SettingsView(pairingViewModel: pairingViewModel, lanSyncViewModel: lanSyncViewModel)
+                SettingsView(pairingViewModel: pairingViewModel, lanSyncViewModel: lanSyncViewModel, securitySettingsViewModel: securitySettingsViewModel)
             }
             .tabItem {
                 Label("Settings", systemImage: "gear")
@@ -84,7 +85,7 @@ struct MainTabView: View {
             case .automations:
                 AutomationsView()
             case .settings:
-                SettingsView(pairingViewModel: pairingViewModel, lanSyncViewModel: lanSyncViewModel)
+                SettingsView(pairingViewModel: pairingViewModel, lanSyncViewModel: lanSyncViewModel, securitySettingsViewModel: securitySettingsViewModel)
             }
         }
     }

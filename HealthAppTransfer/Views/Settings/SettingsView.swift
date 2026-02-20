@@ -8,6 +8,7 @@ struct SettingsView: View {
 
     @ObservedObject var pairingViewModel: PairingViewModel
     @ObservedObject var lanSyncViewModel: LANSyncViewModel
+    @ObservedObject var securitySettingsViewModel: SecuritySettingsViewModel
 
     // MARK: - Body
 
@@ -45,6 +46,16 @@ struct SettingsView: View {
                 }
             } header: {
                 Text("Network")
+            }
+
+            Section {
+                NavigationLink {
+                    SecuritySettingsView(viewModel: securitySettingsViewModel)
+                } label: {
+                    Label("Security", systemImage: "lock.shield")
+                }
+            } header: {
+                Text("Security")
             }
 
             Section {
