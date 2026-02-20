@@ -1,0 +1,12 @@
+{
+  "versions": [
+    {
+      "version": 1,
+      "timestamp": "2026-02-20T12:17:36.541463+00:00",
+      "message": "Initial plan created",
+      "author": "system",
+      "parent_version": null
+    }
+  ],
+  "current_version": 1
+}
