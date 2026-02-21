@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-21 03:53
+**Last Updated:** 2026-02-21 03:58
 
 ## Active Tasks
 
@@ -20,6 +20,7 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ chore: update STATE.md with session progress | 2026-02-21 | See commit |
 | ✅ Fix concurrency warnings, CloudKit entitlement, and widget config | 2026-02-21 | ExportService.swift, MQTTAutomation.swift, project.yml, entitlements, Info.plist, Widget/Info.plist |
 
 ## Key Decisions
