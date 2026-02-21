@@ -1,4 +1,0 @@
-module CocoaMQTT {
-header "CocoaMQTT-Swift.h"
-export *
-}
