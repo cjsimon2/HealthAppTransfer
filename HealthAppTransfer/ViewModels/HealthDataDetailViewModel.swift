@@ -20,10 +20,10 @@ class HealthDataDetailViewModel: ObservableObject {
 
     // MARK: - Init
 
-    init(dataType: HealthDataType, healthKitService: HealthKitService) {
+    init(dataType: HealthDataType, healthKitService: HealthKitService, aggregationEngine: AggregationEngine = AggregationEngine()) {
         self.dataType = dataType
         self.healthKitService = healthKitService
-        self.aggregationEngine = AggregationEngine()
+        self.aggregationEngine = aggregationEngine
     }
 
     // MARK: - Computed Properties

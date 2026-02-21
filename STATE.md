@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-21 04:30
+**Last Updated:** 2026-02-21 04:39
 
 ## Active Tasks
 
@@ -20,6 +20,8 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ chore: remove build artifacts from git tracking | 2026-02-21 | See commit |
+| ✅ fix: enable macOS Catalyst build and resolve Info.plist warnings | 2026-02-21 | See commit |
 | ✅ chore: add .gitignore for logs, plans, and build artifacts | 2026-02-21 | See commit |
 | ✅ chore: update STATE.md with session progress | 2026-02-21 | See commit |
 | ✅ Fix concurrency warnings, CloudKit entitlement, and widget config | 2026-02-21 | ExportService.swift, MQTTAutomation.swift, project.yml, entitlements, Info.plist, Widget/Info.plist |

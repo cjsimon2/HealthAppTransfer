@@ -38,10 +38,11 @@ class DashboardViewModel: ObservableObject {
     // MARK: - Dependencies
 
     private let healthKitService: HealthKitService
-    private let aggregationEngine = AggregationEngine()
+    private let aggregationEngine: AggregationEngine
 
-    init(healthKitService: HealthKitService) {
+    init(healthKitService: HealthKitService, aggregationEngine: AggregationEngine = AggregationEngine()) {
         self.healthKitService = healthKitService
+        self.aggregationEngine = aggregationEngine
     }
 
     // MARK: - Data Loading
