@@ -248,15 +248,13 @@ final class HealthDataTypeTests: XCTestCase {
     // MARK: - Static Collections
 
     func testAllSampleTypesExcludesCharacteristics() {
-        let sampleTypes = HealthDataType.allSampleTypes
+        XCTAssertFalse(HealthDataType.allSampleTypes.isEmpty)
         let characteristicTypes: [HealthDataType] = [
             .biologicalSex, .bloodType, .dateOfBirth,
             .fitzpatrickSkinType, .wheelchairUse, .activityMoveMode
         ]
-        for charType in characteristicTypes {
-            // Characteristic types don't have sampleType, so they can't be in the set
-            // Just verify the set has the right count
-            XCTAssertFalse(sampleTypes.isEmpty)
+        for type in characteristicTypes {
+            XCTAssertFalse(type.isSampleBased, "\(type) should not be sample-based")
         }
     }
 

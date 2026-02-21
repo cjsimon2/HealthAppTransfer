@@ -252,10 +252,11 @@ final class HealthSampleMapperTests: XCTestCase {
 
     // MARK: - Workout Type Mapping
 
+    @available(iOS, deprecated: 17.0)
     func testMapWorkoutProducesCorrectDTO() {
         let start = Date(timeIntervalSince1970: 5_000_000)
         let end = start.addingTimeInterval(1800)
-        let workout = HKWorkout(activityType: .running, start: start, end: end)
+        let workout = makeLegacyWorkout(activityType: .running, start: start, end: end)
 
         let dto = HealthSampleMapper.map(workout, type: .workout)
 
@@ -368,5 +369,12 @@ final class HealthSampleMapperTests: XCTestCase {
 
         XCTAssertEqual(decoded.characteristicValue, "female")
         XCTAssertEqual(decoded.type, .biologicalSex)
+    }
+
+    // MARK: - Helpers
+
+    @available(iOS, deprecated: 17.0)
+    private func makeLegacyWorkout(activityType: HKWorkoutActivityType, start: Date, end: Date) -> HKWorkout {
+        HKWorkout(activityType: activityType, start: start, end: end)
     }
 }

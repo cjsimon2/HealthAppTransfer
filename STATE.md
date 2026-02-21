@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-21 04:39
+**Last Updated:** 2026-02-21 05:15
 
 ## Active Tasks
 
@@ -20,6 +20,8 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ fix: resolve build warnings in test files | 2026-02-21 | HealthDataTypeTests.swift, HealthSampleMapperTests.swift |
+| ✅ test: add 34 test files to increase coverage from 14% to ~90% | 2026-02-21 | See commit |
 | ✅ chore: remove build artifacts from git tracking | 2026-02-21 | See commit |
 | ✅ fix: enable macOS Catalyst build and resolve Info.plist warnings | 2026-02-21 | See commit |
 | ✅ chore: add .gitignore for logs, plans, and build artifacts | 2026-02-21 | See commit |
@@ -66,7 +68,8 @@
 ## Metrics
 
 <!-- Project health indicators -->
-- **Tests:** 216 passing, 0 failures
+- **Tests:** 541 passing, 0 failures (44 test files)
+- **Test Coverage:** ~90% file coverage (up from 14%)
 - **Build:** Passing (iOS + macOS, 0 warnings)
 - **Last Successful Run:** 2026-02-21
 
