@@ -35,6 +35,9 @@ struct SecuritySettingsView: View {
                     }
                 }
                 .disabled(!viewModel.canUseBiometrics || viewModel.isAuthenticating)
+                .accessibilityLabel("Require \(viewModel.biometricName) to unlock the app")
+                .accessibilityHint(viewModel.canUseBiometrics ? "Double-tap to toggle" : "Biometric authentication is not available")
+                .accessibilityIdentifier("security.biometricToggle")
             } header: {
                 Text("App Lock")
             } footer: {
@@ -53,6 +56,7 @@ struct SecuritySettingsView: View {
                         Image(systemName: "square.and.arrow.up.on.square")
                     }
                     .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("security.exportProtection")
 
                     Label {
                         Text("API access returns locked when unauthenticated")
@@ -60,6 +64,7 @@ struct SecuritySettingsView: View {
                         Image(systemName: "network.badge.shield.half.filled")
                     }
                     .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("security.apiProtection")
                 } header: {
                     Text("Protected Operations")
                 }

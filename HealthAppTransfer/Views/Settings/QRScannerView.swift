@@ -12,6 +12,8 @@ struct QRScannerView: NSViewRepresentable {
 
     func makeNSView(context: Context) -> NSView {
         let view = CameraPreviewView()
+        view.setAccessibilityLabel("QR code scanner camera view")
+        view.setAccessibilityRole(.image)
         context.coordinator.setupCapture(in: view)
         return view
     }
@@ -135,6 +137,8 @@ struct QRScannerView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> QRScannerViewController {
         let controller = QRScannerViewController()
         controller.onCodeDetected = onCodeDetected
+        controller.view.accessibilityLabel = "QR code scanner camera view"
+        controller.view.isAccessibilityElement = true
         return controller
     }
 

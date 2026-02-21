@@ -27,6 +27,7 @@ struct PairedDevicesView: View {
                     Button("Revoke All", role: .destructive) {
                         showRevokeAllConfirmation = true
                     }
+                    .accessibilityIdentifier("pairedDevices.revokeAllButton")
                 }
             }
         }
@@ -74,6 +75,7 @@ struct PairedDevicesView: View {
                 .font(.title3)
                 .foregroundStyle(.blue)
                 .frame(width: 32)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
@@ -110,6 +112,7 @@ struct PairedDevicesView: View {
             }
         }
         .padding(.vertical, 4)
+        .accessibilityIdentifier("pairedDevices.row.\(device.name)")
     }
 
     // MARK: - Empty State
@@ -133,5 +136,7 @@ struct PairedDevicesView: View {
 
             Spacer()
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("pairedDevices.emptyState")
     }
 }

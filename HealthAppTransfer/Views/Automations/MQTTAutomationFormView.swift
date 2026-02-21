@@ -66,6 +66,7 @@ struct MQTTAutomationFormView: View {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") { save() }
                     .disabled(!isValid)
+                    .accessibilityIdentifier("mqttForm.saveButton")
             }
             if existing == nil {
                 ToolbarItem(placement: .cancellationAction) {
@@ -88,6 +89,8 @@ struct MQTTAutomationFormView: View {
     private var brokerSection: some View {
         Section {
             TextField("Name", text: $name)
+                .accessibilityLabel("Automation name")
+                .accessibilityIdentifier("mqttForm.nameField")
 
             TextField("Broker Host", text: $brokerHost)
                 .autocorrectionDisabled()
@@ -95,13 +98,19 @@ struct MQTTAutomationFormView: View {
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
                 #endif
+                .accessibilityLabel("MQTT broker host address")
+                .accessibilityIdentifier("mqttForm.brokerHostField")
 
             TextField("Port", text: $brokerPort)
                 #if os(iOS)
                 .keyboardType(.numberPad)
                 #endif
+                .accessibilityLabel("MQTT broker port number")
+                .accessibilityIdentifier("mqttForm.portField")
 
             Toggle("Use TLS", isOn: $useTLS)
+                .accessibilityLabel("Enable TLS encryption")
+                .accessibilityIdentifier("mqttForm.tlsToggle")
         } header: {
             Text("Broker")
         } footer: {
@@ -116,8 +125,12 @@ struct MQTTAutomationFormView: View {
                 #if os(iOS)
                 .textInputAutocapitalization(.never)
                 #endif
+                .accessibilityLabel("MQTT username")
+                .accessibilityIdentifier("mqttForm.usernameField")
 
             SecureField("Password", text: $password)
+                .accessibilityLabel("MQTT password")
+                .accessibilityIdentifier("mqttForm.passwordField")
         } header: {
             Text("Authentication")
         } footer: {
@@ -132,12 +145,15 @@ struct MQTTAutomationFormView: View {
                 #if os(iOS)
                 .textInputAutocapitalization(.never)
                 #endif
+                .accessibilityLabel("MQTT publish topic")
+                .accessibilityIdentifier("mqttForm.topicField")
 
             Picker("QoS Level", selection: $qosLevel) {
                 Text("0 — At most once").tag(0)
                 Text("1 — At least once").tag(1)
                 Text("2 — Exactly once").tag(2)
             }
+            .accessibilityIdentifier("mqttForm.qosPicker")
         } header: {
             Text("Publishing")
         } footer: {
@@ -148,6 +164,8 @@ struct MQTTAutomationFormView: View {
     private var homeAssistantSection: some View {
         Section {
             Toggle("Auto-Discovery", isOn: $homeAssistantDiscovery)
+                .accessibilityLabel("Home Assistant auto-discovery")
+                .accessibilityIdentifier("mqttForm.haDiscoveryToggle")
         } header: {
             Text("Home Assistant")
         } footer: {
@@ -167,6 +185,8 @@ struct MQTTAutomationFormView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            .accessibilityLabel("Select health data types, \(enabledTypes.count) selected")
+            .accessibilityIdentifier("mqttForm.typePickerButton")
         }
     }
 
@@ -187,6 +207,8 @@ struct MQTTAutomationFormView: View {
                 }
             }
             .disabled(brokerHost.trimmingCharacters(in: .whitespaces).isEmpty || isTesting)
+            .accessibilityLabel("Test MQTT connection")
+            .accessibilityIdentifier("mqttForm.testButton")
         }
     }
 

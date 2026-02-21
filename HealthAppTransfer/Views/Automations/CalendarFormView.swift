@@ -45,6 +45,7 @@ struct CalendarFormView: View {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") { save() }
                     .disabled(!isValid)
+                    .accessibilityIdentifier("calendarForm.saveButton")
             }
             if existing == nil {
                 ToolbarItem(placement: .cancellationAction) {
@@ -62,8 +63,12 @@ struct CalendarFormView: View {
     private var generalSection: some View {
         Section("General") {
             TextField("Name", text: $name)
+                .accessibilityLabel("Automation name")
+                .accessibilityIdentifier("calendarForm.nameField")
 
             Toggle("Only add new workouts", isOn: $incrementalOnly)
+                .accessibilityLabel("Only add new workouts since last run")
+                .accessibilityIdentifier("calendarForm.incrementalToggle")
         }
     }
 
@@ -82,6 +87,8 @@ struct CalendarFormView: View {
                 Image(systemName: "figure.run")
                     .foregroundStyle(.orange)
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityIdentifier("calendarForm.infoSection")
         } header: {
             Text("What This Does")
         }
@@ -121,6 +128,7 @@ struct CalendarFormView: View {
                 Button("Request Calendar Access") {
                     Task { await requestAccess() }
                 }
+                .accessibilityIdentifier("calendarForm.requestAccessButton")
             }
         } header: {
             Text("Permissions")

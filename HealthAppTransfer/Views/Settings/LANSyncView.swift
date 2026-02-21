@@ -43,6 +43,7 @@ struct LANSyncView: View {
                 .font(.system(size: 40))
                 .foregroundStyle(viewModel.connectionStatus.color)
                 .symbolEffect(.pulse, isActive: isPulsing)
+                .accessibilityHidden(true)
 
             Text(viewModel.connectionStatus.displayText)
                 .font(.title3.bold())
@@ -56,6 +57,9 @@ struct LANSyncView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Connection status: \(viewModel.connectionStatus.displayText)")
+        .accessibilityIdentifier("lanSync.connectionStatus")
     }
 
     private var isPulsing: Bool {
@@ -106,6 +110,8 @@ struct LANSyncView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("lanSync.emptyState")
     }
 
     private func discoveredDeviceRow(_ device: BonjourDiscovery.DiscoveredDevice) -> some View {
@@ -114,6 +120,7 @@ struct LANSyncView: View {
                 .font(.title3)
                 .foregroundStyle(.blue)
                 .frame(width: 32)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(device.name)
@@ -130,6 +137,9 @@ struct LANSyncView: View {
             connectButton(for: device)
         }
         .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(device.name) at \(device.host)")
+        .accessibilityIdentifier("lanSync.device.\(device.name)")
     }
 
     @ViewBuilder
@@ -179,6 +189,8 @@ struct LANSyncView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(viewModel.isSyncing)
+                .accessibilityLabel(viewModel.isSyncing ? "Syncing health data" : "Pull health data from connected device")
+                .accessibilityIdentifier("lanSync.syncButton")
 
                 if let result = viewModel.lastSyncResult {
                     lastSyncInfo(result)
@@ -211,6 +223,9 @@ struct LANSyncView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.green.opacity(0.05))
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Last sync: \(result.typesAvailable) types, \(result.samplesFetched) samples, \(String(format: "%.1f", result.duration)) seconds")
+        .accessibilityIdentifier("lanSync.lastSyncInfo")
     }
 
     // MARK: - Error Banner
@@ -219,11 +234,15 @@ struct LANSyncView: View {
         HStack {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundStyle(.yellow)
+                .accessibilityHidden(true)
             Text(message)
                 .font(.caption)
         }
         .padding(12)
         .background(.red.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 8))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Error: \(message)")
+        .accessibilityIdentifier("lanSync.errorBanner")
     }
 }

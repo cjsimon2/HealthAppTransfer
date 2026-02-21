@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-21 05:15
+**Last Updated:** 2026-02-21 05:45
 
 ## Active Tasks
 
@@ -20,6 +20,10 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ feat: wire up GPX export with workout route fetching | 2026-02-21 | ExportService.swift, HealthKitService.swift |
+| ✅ test: add 9 meaningful UI tests replacing placeholder | 2026-02-21 | HealthAppTransferUITests.swift |
+| ✅ feat: add accessibility labels/identifiers to 8 views | 2026-02-21 | MQTT/Cloud/Calendar/HA forms, Security/LAN/Paired/QR views |
+| ✅ fix: resolve build warnings in test files and update STATE.md metrics | 2026-02-21 | See commit |
 | ✅ fix: resolve build warnings in test files | 2026-02-21 | HealthDataTypeTests.swift, HealthSampleMapperTests.swift |
 | ✅ test: add 34 test files to increase coverage from 14% to ~90% | 2026-02-21 | See commit |
 | ✅ chore: remove build artifacts from git tracking | 2026-02-21 | See commit |
@@ -68,9 +72,10 @@
 ## Metrics
 
 <!-- Project health indicators -->
-- **Tests:** 541 passing, 0 failures (44 test files)
+- **Tests:** 541 unit tests passing, 9 UI tests added (44 test files)
 - **Test Coverage:** ~90% file coverage (up from 14%)
 - **Build:** Passing (iOS + macOS, 0 warnings)
+- **Accessibility:** ~90%+ (labels/identifiers on all automation forms and settings views)
 - **Last Successful Run:** 2026-02-21
 
 ---

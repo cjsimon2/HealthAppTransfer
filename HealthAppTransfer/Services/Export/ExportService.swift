@@ -1,4 +1,6 @@
+import CoreLocation
 import Foundation
+import HealthKit
 import OSLog
 
 // MARK: - Export Format
@@ -121,6 +123,15 @@ actor ExportService {
             throw ExportError.gpxRequiresWorkouts
         }
 
+        // GPX export uses a separate pipeline that fetches workout routes
+        if format == .gpx {
+            return try await exportGPX(
+                startDate: startDate,
+                endDate: endDate,
+                progressHandler: progressHandler
+            )
+        }
+
         Loggers.export.info("Starting \(format.rawValue) export for \(types.count) types")
 
         // Fetch samples for each type
@@ -199,7 +210,8 @@ actor ExportService {
             throw ExportError.noDataFound
         }
 
-        if format == .gpx && !types.contains(.workout) {
+        if format == .gpx {
+            // GPX requires HealthKit workout route data which isn't available from pre-fetched samples
             throw ExportError.gpxRequiresWorkouts
         }
 
@@ -237,7 +249,103 @@ actor ExportService {
         case .jsonV1: return JSONv1Formatter()
         case .jsonV2: return JSONv2Formatter()
         case .csv: return CSVFormatter()
-        case .gpx: return JSONv1Formatter() // GPX uses separate path for route data
+        case .gpx: fatalError("GPX uses exportGPX() — this should not be called")
+        }
+    }
+
+    // MARK: - GPX Export
+
+    /// Fetches workout routes from HealthKit and formats them as GPX XML.
+    private func exportGPX(
+        startDate: Date?,
+        endDate: Date?,
+        progressHandler: (@Sendable (ExportProgress) -> Void)?
+    ) async throws -> ExportResult {
+        Loggers.export.info("Starting GPX export")
+
+        progressHandler?(ExportProgress(completedTypes: 0, totalTypes: 2, currentTypeName: "Workouts"))
+
+        // Fetch workouts
+        let workouts = try await healthKitService.fetchSamples(
+            for: .workout,
+            from: startDate,
+            to: endDate
+        ).compactMap { $0 as? HKWorkout }
+
+        guard !workouts.isEmpty else {
+            throw ExportError.noDataFound
+        }
+
+        progressHandler?(ExportProgress(completedTypes: 1, totalTypes: 2, currentTypeName: "Routes"))
+
+        // Build GPX tracks from workouts with routes
+        var tracks: [GPXTrack] = []
+
+        for workout in workouts {
+            let routes = try await healthKitService.fetchWorkoutRoutes(for: workout)
+
+            for route in routes {
+                let locations = try await healthKitService.fetchRouteLocations(from: route)
+                guard !locations.isEmpty else { continue }
+
+                let points = locations.map { location in
+                    GPXRoutePoint(
+                        latitude: location.coordinate.latitude,
+                        longitude: location.coordinate.longitude,
+                        elevation: location.altitude,
+                        timestamp: location.timestamp,
+                        heartRate: nil
+                    )
+                }
+
+                let trackName = workoutActivityName(workout.workoutActivityType)
+                tracks.append(GPXTrack(name: trackName, startDate: workout.startDate, points: points))
+            }
+        }
+
+        guard !tracks.isEmpty else {
+            throw ExportError.noDataFound
+        }
+
+        progressHandler?(ExportProgress(completedTypes: 2, totalTypes: 2, currentTypeName: nil))
+
+        let formatter = GPXFormatter()
+        let data = try formatter.format(tracks: tracks)
+        let fileURL = try writeToTempFile(data: data, format: .gpx, types: [.workout])
+
+        let totalPoints = tracks.reduce(0) { $0 + $1.points.count }
+        Loggers.export.info("GPX export complete: \(tracks.count) tracks, \(totalPoints) points")
+
+        return ExportResult(
+            fileURL: fileURL,
+            format: .gpx,
+            sampleCount: totalPoints,
+            fileSizeBytes: Int64(data.count),
+            exportedTypes: [.workout]
+        )
+    }
+
+    /// Maps HKWorkoutActivityType to a human-readable name for GPX track names.
+    private func workoutActivityName(_ activityType: HKWorkoutActivityType) -> String {
+        switch activityType {
+        case .running: return "Running"
+        case .walking: return "Walking"
+        case .cycling: return "Cycling"
+        case .hiking: return "Hiking"
+        case .swimming: return "Swimming"
+        case .crossCountrySkiing: return "Cross Country Skiing"
+        case .downhillSkiing: return "Downhill Skiing"
+        case .snowboarding: return "Snowboarding"
+        case .rowing: return "Rowing"
+        case .paddleSports: return "Paddle Sports"
+        case .surfingSports: return "Surfing"
+        case .golf: return "Golf"
+        case .yoga: return "Yoga"
+        case .functionalStrengthTraining: return "Strength Training"
+        case .traditionalStrengthTraining: return "Strength Training"
+        case .elliptical: return "Elliptical"
+        case .stairClimbing: return "Stair Climbing"
+        default: return "Workout"
         }
     }
 

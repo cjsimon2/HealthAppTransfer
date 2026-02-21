@@ -76,6 +76,7 @@ struct HomeAssistantFormView: View {
     private var connectionSection: some View {
         Section {
             TextField("Name", text: $name)
+                .accessibilityLabel("Automation name")
                 .accessibilityIdentifier("haForm.nameField")
 
             TextField("Home Assistant URL", text: $baseURL, prompt: Text("http://homeassistant.local:8123"))
@@ -85,6 +86,7 @@ struct HomeAssistantFormView: View {
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
                 #endif
+                .accessibilityLabel("Home Assistant server URL")
                 .accessibilityIdentifier("haForm.urlField")
 
             SecureField("Long-Lived Access Token", text: $accessToken)
@@ -92,6 +94,7 @@ struct HomeAssistantFormView: View {
                 #if os(iOS)
                 .textInputAutocapitalization(.never)
                 #endif
+                .accessibilityLabel("Home Assistant long-lived access token")
                 .accessibilityIdentifier("haForm.tokenField")
         } header: {
             Text("Connection")
@@ -143,6 +146,7 @@ struct HomeAssistantFormView: View {
             .disabled(baseURL.trimmingCharacters(in: .whitespaces).isEmpty
                       || accessToken.trimmingCharacters(in: .whitespaces).isEmpty
                       || isTesting)
+            .accessibilityLabel("Test Home Assistant connection")
             .accessibilityIdentifier("haForm.testButton")
 
             if let result = testResult {

@@ -50,6 +50,7 @@ struct CloudStorageFormView: View {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") { save() }
                     .disabled(!isValid)
+                    .accessibilityIdentifier("cloudForm.saveButton")
             }
             if existing == nil {
                 ToolbarItem(placement: .cancellationAction) {
@@ -70,8 +71,12 @@ struct CloudStorageFormView: View {
     private var generalSection: some View {
         Section("General") {
             TextField("Name", text: $name)
+                .accessibilityLabel("Automation name")
+                .accessibilityIdentifier("cloudForm.nameField")
 
             Toggle("Export only new data", isOn: $incrementalOnly)
+                .accessibilityLabel("Export only new data since last run")
+                .accessibilityIdentifier("cloudForm.incrementalToggle")
         }
     }
 
@@ -82,6 +87,7 @@ struct CloudStorageFormView: View {
                 Text("JSON v1 (flat)").tag("json_v1")
                 Text("CSV").tag("csv")
             }
+            .accessibilityIdentifier("cloudForm.formatPicker")
         } header: {
             Text("Export Format")
         } footer: {
@@ -101,6 +107,8 @@ struct CloudStorageFormView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            .accessibilityLabel("Select health data types, \(enabledTypes.count) selected")
+            .accessibilityIdentifier("cloudForm.typePickerButton")
         }
     }
 
@@ -121,6 +129,9 @@ struct CloudStorageFormView: View {
                     }
                 }
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(iCloudAvailable ? "iCloud Drive is available" : "iCloud Drive is unavailable, sign in to iCloud in Settings")
+            .accessibilityIdentifier("cloudForm.iCloudStatus")
         }
     }
 

@@ -1,3 +1,4 @@
+import CoreLocation
 import Foundation
 import HealthKit
 
@@ -121,6 +122,54 @@ actor HealthKitService {
     func sampleCount(for type: HealthDataType) async throws -> Int {
         guard type.isSampleBased else { return 0 }
         return try await store.dataExists(for: type.sampleType) ? 1 : 0
+    }
+
+    // MARK: - Workout Routes
+
+    /// Fetch workout route objects associated with a workout.
+    func fetchWorkoutRoutes(for workout: HKWorkout) async throws -> [HKWorkoutRoute] {
+        let routeType = HKSeriesType.workoutRoute()
+        let predicate = HKQuery.predicateForObjects(from: workout)
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: routeType,
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)]
+            ) { _, samples, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    let routes = (samples as? [HKWorkoutRoute]) ?? []
+                    continuation.resume(returning: routes)
+                }
+            }
+            store.execute(query)
+        }
+    }
+
+    /// Fetch all CLLocations from an HKWorkoutRoute.
+    func fetchRouteLocations(from route: HKWorkoutRoute) async throws -> [CLLocation] {
+        try await withCheckedThrowingContinuation { continuation in
+            var allLocations: [CLLocation] = []
+
+            let query = HKWorkoutRouteQuery(route: route) { _, newLocations, done, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+
+                if let newLocations {
+                    allLocations.append(contentsOf: newLocations)
+                }
+
+                if done {
+                    continuation.resume(returning: allLocations)
+                }
+            }
+            store.execute(query)
+        }
     }
 
     /// Get available types with their sample counts.
