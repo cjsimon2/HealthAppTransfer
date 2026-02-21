@@ -50,7 +50,8 @@ enum PersistenceConfiguration {
         let schema = Schema(allModelTypes)
         let configuration = ModelConfiguration(
             schema: schema,
-            isStoredInMemoryOnly: false
+            isStoredInMemoryOnly: false,
+            cloudKitDatabase: .none
         )
         return try ModelContainer(
             for: schema,

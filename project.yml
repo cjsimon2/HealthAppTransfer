@@ -65,7 +65,7 @@ targets:
         com.apple.developer.icloud-container-identifiers:
           - iCloud.com.caseysimon.HealthAppTransfer
         com.apple.developer.icloud-services:
-          - CloudDocuments
+          - CloudKit
         com.apple.developer.ubiquity-container-identifiers:
           - iCloud.com.caseysimon.HealthAppTransfer
     info:
@@ -76,7 +76,12 @@ targets:
         NSLocalNetworkUsageDescription: "This app uses the local network to discover and transfer health data to nearby devices."
         NSSupportsLiveActivities: true
         UIBackgroundModes:
+          - fetch
           - processing
+        BGTaskSchedulerPermittedIdentifiers:
+          - com.caseysimon.HealthAppTransfer.refresh
+          - com.caseysimon.HealthAppTransfer.export
+        LSSupportsOpeningDocumentsInPlace: true
         NSCalendarsFullAccessUsageDescription: "This app creates calendar events for your workouts when the Calendar automation is enabled."
         NSBonjourServices:
           - "_healthsync._tcp"
@@ -135,6 +140,9 @@ targets:
       - sdk: HealthKit.framework
     info:
       path: HealthAppTransferWidget/Info.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
 
   HealthAppTransferTests:
     type: bundle.unit-test

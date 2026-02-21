@@ -32,8 +32,14 @@
 	<string>This app uses the local network to discover and transfer health data to nearby devices.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.caseysimon.HealthAppTransfer.refresh</string>
+		<string>com.caseysimon.HealthAppTransfer.export</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>fetch</string>
 		<string>processing</string>
 	</array>
 	<key>UTImportedTypeDeclarations</key>
@@ -60,6 +66,8 @@
 			</dict>
 		</dict>
 	</array>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

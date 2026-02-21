@@ -1,5 +1,5 @@
 import Foundation
-import CocoaMQTT
+@preconcurrency import CocoaMQTT
 
 // MARK: - MQTT Push Parameters
 
@@ -61,7 +61,7 @@ class MQTTConnectionState: ObservableObject {
 
 /// Publishes health data to a user-configured MQTT broker.
 /// Supports optional TLS, credentials, configurable QoS, and Home Assistant MQTT discovery.
-class MQTTAutomation: NSObject {
+class MQTTAutomation: NSObject, @unchecked Sendable {
 
     // MARK: - Dependencies
 

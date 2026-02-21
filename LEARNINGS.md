@@ -37,11 +37,10 @@
 - XcodeGen `generate` now works again — previously broken in v2.44.1. Run `xcodegen generate` after adding new files; the `sources: - path: HealthAppTransfer` glob picks them up automatically.
 - `AggregatedSample` chart value extraction: use `sample.sum ?? sample.average ?? sample.latest ?? 0` — cumulative types populate `sum`, discrete types populate `average`. Request both `[.sum, .average]` operations and AggregationEngine silently skips incompatible ones.
 - XcodeGen overwrites `.entitlements` files during `generate` — must use `entitlements.properties` in `project.yml` instead of manually editing the plist file, or changes get wiped on next generate.
-- `CloudKitSyncService.swift` has a pre-existing build error (`atomicZone` extra argument) — unrelated to other work, needs separate fix.
 - To avoid threading a ViewModel through ContentView → MainTabView → SettingsView, a leaf view can own its VM via `@StateObject` with init-time injection: `_viewModel = StateObject(wrappedValue: VM(dep: dep))`. Just pass the lightweight dependency (e.g. `HealthKitService`) instead of the full VM.
 - Storing small collections (sync history) as JSON-encoded `Data?` in a SwiftData `@Model` is pragmatic when entries don't need individual queryability — avoids a separate model class and relationship overhead.
 - App Intents (`AppIntent.perform()`) can't use the app's `ServiceContainer` — the system creates intents independently. Create fresh `HealthKitService`/`BackgroundSyncService` instances inside `perform()` since they're lightweight actor wrappers. Use `PersistenceConfiguration.makeModelContainer()` for SwiftData access.
-- `MQTTAutomation.swift` has two pre-existing build errors: main actor isolation violation (line 77) and missing `HealthDataType.defaultUnit` property (line 254) — needs separate fix.
+- `MQTTAutomation.swift` previously had actor isolation and Sendable warnings — fixed with `@unchecked Sendable` class + `@preconcurrency import CocoaMQTT`.
 - `HKWorkoutRouteQuery` delivers `CLLocation` arrays in batches (not all at once) — accumulate in a local array and only resolve the continuation when the `done` flag is `true`. Resuming the continuation on each batch will crash.
 - CloudKit `CKDatabase.modifyRecords(saving:deleting:savePolicy:atomicZone:)` has a 400-record limit per operation — batch uploads accordingly.
 - `CKServerChangeToken` must be archived via `NSKeyedArchiver` to persist as `Data` in SwiftData — `CKServerChangeToken` conforms to `NSSecureCoding`.
@@ -64,7 +63,13 @@ _None documented yet. Use `/learn` to record failures._
 - xcodegen overwrites `.entitlements` files to empty `<dict/>` during `generate` — always restore entitlements content after running xcodegen.
 - This machine has no iPhone 16 simulator — use `iPhone 17` (or check available destinations) for xcodebuild commands.
 - CocoaMQTT pulls two transitive deps: Starscream (WebSocket) and MqttCocoaAsyncSocket (TCP) — these are expected, not extra third-party additions.
-- Pre-existing build errors in `CloudKitSyncService.swift` (extra `atomicZone` arg) and `MQTTAutomation.swift` (actor isolation + missing `defaultUnit`) — these block full builds but are unrelated to view-layer work.
+- `UIDevice.current` properties are main-actor-isolated in Swift 6 — `nonisolated` functions in an actor can't access them. Use `await MainActor.run { ... }` instead.
+- `MQTTAutomation` must be `@unchecked Sendable` (not an actor) because `CocoaMQTTDelegate` requires `NSObject`. Use `@preconcurrency import CocoaMQTT` to suppress third-party Sendable warnings.
+- `CKContainer.default()` crashes at init time without CloudKit entitlements — defer CKContainer creation to first use, not in `init()`. See `CloudKitSyncService.swift`.
+- SwiftData `ModelConfiguration` defaults to CloudKit integration, which rejects `@Attribute(.unique)` — add `cloudKitDatabase: .none` when managing CloudKit manually. See `SchemaVersions.swift`.
+- WidgetKit extensions require `NSExtension` with `NSExtensionPointIdentifier: com.apple.widgetkit-extension` in Info.plist — Simulator refuses to install without it.
+- `BGTaskScheduler.shared.register()` requires matching `BGTaskSchedulerPermittedIdentifiers` in Info.plist — crashes without them. Also needs `fetch` in `UIBackgroundModes` for `BGAppRefreshTask`.
+- `URLSession` moves `httpBody` to `httpBodyStream` before sending — `URLProtocol` subclass mocks must read from `httpBodyStream` to capture request bodies.
 
 ### Anti-Patterns Found
 <!-- Patterns that cause problems here -->

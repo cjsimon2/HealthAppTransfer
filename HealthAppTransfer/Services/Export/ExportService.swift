@@ -158,13 +158,14 @@ actor ExportService {
         }
 
         // Format the data
+        let device = await deviceInfo()
         let options = ExportOptions(
             startDate: startDate,
             endDate: endDate,
             prettyPrint: true,
-            deviceName: deviceName(),
-            deviceModel: deviceModel(),
-            systemVersion: systemVersion(),
+            deviceName: device.name,
+            deviceModel: device.model,
+            systemVersion: device.systemVersion,
             appVersion: appVersion()
         )
 
@@ -204,11 +205,12 @@ actor ExportService {
 
         Loggers.export.info("Starting \(format.rawValue) export from \(samples.count) pre-fetched samples")
 
+        let device = await deviceInfo()
         let options = ExportOptions(
             prettyPrint: true,
-            deviceName: deviceName(),
-            deviceModel: deviceModel(),
-            systemVersion: systemVersion(),
+            deviceName: device.name,
+            deviceModel: device.model,
+            systemVersion: device.systemVersion,
             appVersion: appVersion()
         )
 
@@ -272,27 +274,13 @@ actor ExportService {
 
     // MARK: - Device Info
 
-    private func deviceName() -> String? {
+    private func deviceInfo() async -> (name: String?, model: String?, systemVersion: String?) {
         #if canImport(UIKit)
-        return UIDevice.current.name
+        return await MainActor.run {
+            (UIDevice.current.name, UIDevice.current.model, UIDevice.current.systemVersion)
+        }
         #else
-        return Host.current().localizedName
-        #endif
-    }
-
-    private func deviceModel() -> String? {
-        #if canImport(UIKit)
-        return UIDevice.current.model
-        #else
-        return "Mac"
-        #endif
-    }
-
-    private func systemVersion() -> String? {
-        #if canImport(UIKit)
-        return UIDevice.current.systemVersion
-        #else
-        return ProcessInfo.processInfo.operatingSystemVersionString
+        return (Host.current().localizedName, "Mac", ProcessInfo.processInfo.operatingSystemVersionString)
         #endif
     }
 

@@ -132,13 +132,16 @@ final class GPXFormatterTests: XCTestCase {
     }
 
     func testTrackpointContainsTimestamp() throws {
-        let refDate = Date(timeIntervalSince1970: 1718400000) // 2024-06-15T00:00:00Z
+        let refDate = Date(timeIntervalSince1970: 1718400000)
         let point = makePoint(timestamp: refDate)
         let track = makeTrack(points: [point])
         let data = try formatter.format(tracks: [track])
         let xml = gpxString(from: data)
 
-        XCTAssertTrue(xml.contains("<time>2024-06-15T00:00:00Z</time>"))
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime]
+        let expected = "<time>\(iso.string(from: refDate))</time>"
+        XCTAssertTrue(xml.contains(expected), "Expected \(expected) in GPX output")
     }
 
     // MARK: - Heart Rate Extension

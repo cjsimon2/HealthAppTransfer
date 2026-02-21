@@ -43,8 +43,14 @@ actor CloudKitSyncService {
 
     // MARK: - Properties
 
-    private let container: CKContainer
-    private let database: CKDatabase
+    private var _container: CKContainer?
+    private var container: CKContainer {
+        if let c = _container { return c }
+        let c = CKContainer.default()
+        _container = c
+        return c
+    }
+    private var database: CKDatabase { container.privateCloudDatabase }
     private let modelContainer: ModelContainer
     private let healthKitService: HealthKitService
     private var zoneCreated = false
@@ -52,8 +58,6 @@ actor CloudKitSyncService {
     // MARK: - Init
 
     init(healthKitService: HealthKitService, modelContainer: ModelContainer) {
-        self.container = CKContainer.default()
-        self.database = CKContainer.default().privateCloudDatabase
         self.modelContainer = modelContainer
         self.healthKitService = healthKitService
     }

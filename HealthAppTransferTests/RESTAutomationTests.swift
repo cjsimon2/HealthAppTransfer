@@ -25,7 +25,21 @@ final class MockURLProtocol: URLProtocol {
     }
 
     override func startLoading() {
-        MockURLProtocol.requestLog.append(request)
+        var captured = request
+        // URLSession moves httpBody to httpBodyStream; read it back
+        if captured.httpBody == nil, let stream = request.httpBodyStream {
+            stream.open()
+            var data = Data()
+            let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 4096)
+            defer { buffer.deallocate() }
+            while stream.hasBytesAvailable {
+                let read = stream.read(buffer, maxLength: 4096)
+                if read > 0 { data.append(buffer, count: read) } else { break }
+            }
+            stream.close()
+            captured.httpBody = data
+        }
+        MockURLProtocol.requestLog.append(captured)
 
         let urlString = request.url?.absoluteString ?? ""
 

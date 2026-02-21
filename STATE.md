@@ -4,9 +4,9 @@
 
 ## Current Phase
 
-**Phase:** Setup
-**Status:** Not Started
-**Last Updated:** {{DATE}}
+**Phase:** Active Development
+**Status:** In Progress
+**Last Updated:** 2026-02-21
 
 ## Active Tasks
 
@@ -20,7 +20,7 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
-| _None yet_ | - | - |
+| ✅ Fix concurrency warnings & config issues | 2026-02-21 | ExportService.swift, MQTTAutomation.swift, project.yml, entitlements, Info.plist, Widget/Info.plist |
 
 ## Key Decisions
 
@@ -60,9 +60,9 @@
 ## Metrics
 
 <!-- Project health indicators -->
-- **Tests:** Unknown
-- **Build:** Unknown
-- **Last Successful Run:** Never
+- **Tests:** 216 passing, 0 failures
+- **Build:** Passing (1 pre-existing version mismatch warning)
+- **Last Successful Run:** 2026-02-21
 
 ---
 *This file is updated automatically by Claude. Manual edits are preserved.*
