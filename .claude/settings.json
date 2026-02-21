@@ -186,11 +186,6 @@
             "type": "command",
             "command": "python .claude/hooks/verify-completion.py",
             "timeout": 10000
-          },
-          {
-            "type": "command",
-            "command": "python .claude/hooks/auto-learner.py",
-            "timeout": 10000
           }
         ]
       }

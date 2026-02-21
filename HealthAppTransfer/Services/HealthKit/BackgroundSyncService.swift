@@ -1,4 +1,4 @@
-#if canImport(ActivityKit)
+#if os(iOS) && canImport(ActivityKit)
 import ActivityKit
 #endif
 #if canImport(UIKit)
@@ -28,7 +28,7 @@ actor BackgroundSyncService {
     private let cloudKitSync: CloudKitSyncService
     private var automationScheduler: AutomationScheduler?
     private var observerQueries: [HKObserverQuery] = []
-    #if canImport(ActivityKit)
+    #if os(iOS) && canImport(ActivityKit)
     private var currentActivity: Activity<SyncActivityAttributes>?
     #endif
 
@@ -220,7 +220,7 @@ actor BackgroundSyncService {
             var totalSamples = 0
             var typesSynced = 0
 
-            #if canImport(ActivityKit)
+            #if os(iOS) && canImport(ActivityKit)
             startLiveActivity(totalTypes: sampleBasedTypes.count)
             #endif
 
@@ -236,7 +236,7 @@ actor BackgroundSyncService {
                     Loggers.sync.debug("Fetched \(samples.count) samples for \(type.rawValue)")
                 }
 
-                #if canImport(ActivityKit)
+                #if os(iOS) && canImport(ActivityKit)
                 await updateLiveActivity(
                     typesSynced: typesSynced,
                     totalSamples: totalSamples,
@@ -253,7 +253,7 @@ actor BackgroundSyncService {
 
             Loggers.sync.info("Background sync completed: \(totalSamples) samples")
 
-            #if canImport(ActivityKit)
+            #if os(iOS) && canImport(ActivityKit)
             await endLiveActivity(
                 totalSamples: totalSamples,
                 totalTypes: sampleBasedTypes.count,
@@ -272,7 +272,7 @@ actor BackgroundSyncService {
         } catch {
             Loggers.sync.error("Background sync failed: \(error.localizedDescription)")
 
-            #if canImport(ActivityKit)
+            #if os(iOS) && canImport(ActivityKit)
             await endLiveActivity(totalSamples: 0, totalTypes: 0, success: false)
             #endif
 
@@ -282,7 +282,7 @@ actor BackgroundSyncService {
 
     // MARK: - Live Activity
 
-    #if canImport(ActivityKit)
+    #if os(iOS) && canImport(ActivityKit)
     /// Start a Live Activity to show sync progress on Dynamic Island and Lock Screen.
     private func startLiveActivity(totalTypes: Int) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {

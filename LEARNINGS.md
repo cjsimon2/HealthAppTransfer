@@ -32,6 +32,8 @@
 - Available simulators are iPhone 17 series (17, 17 Pro, 17 Pro Max, Air) — no iPhone 16. Use `iPhone 17 Pro` for xcodebuild commands.
 - SwiftData persistence uses `PersistenceConfiguration.makeModelContainer()` factory in `SchemaVersions.swift` — all model types registered in `SchemaV1` with `HealthAppMigrationPlan` for future migrations.
 - `enableBackgroundDelivery(for:frequency:)` is iOS-only (not macOS) — needs `#if os(iOS)` guard, separate from `#if canImport(UIKit)` used for BGTask code. `HKObserverQuery` works on macOS but only fires while app is running.
+- `#if canImport(ActivityKit)` is true on macOS (module exists in SDK) but ActivityKit APIs (`Activity`, `ActivityAuthorizationInfo`) are unavailable at runtime — use `#if os(iOS) && canImport(ActivityKit)` instead.
+- Widget extension (HealthAppTransferWidget.appex) is iOS-only — macOS Catalyst builds fail with "embedded content built for iOS platform" unless `platformFilters = (ios, )` is added to both the embed build file and target dependency in project.pbxproj.
 - BGTaskScheduler.shared.register() must be called before app finishes launching — in SwiftUI, call it in the App struct's `init()` after creating the service.
 - `HealthDataType.groupedByCategory` is the canonical way to get types grouped by `HealthDataCategory` in display order — use it in views/VMs instead of manually filtering `allCases`.
 - XcodeGen `generate` now works again — previously broken in v2.44.1. Run `xcodegen generate` after adding new files; the `sources: - path: HealthAppTransfer` glob picks them up automatically.
@@ -61,11 +63,13 @@ _None documented yet. Use `/learn` to record failures._
 ### Common Pitfalls
 <!-- Gotchas specific to this project -->
 - xcodegen overwrites `.entitlements` files to empty `<dict/>` during `generate` — always restore entitlements content after running xcodegen.
+- Both app and widget Info.plist had hardcoded `CFBundleShortVersionString = 1.0` instead of `$(MARKETING_VERSION)` — causes version mismatch warning. Also app Info.plist was missing `UISupportedInterfaceOrientations` and `UILaunchScreen` keys (required unless app declares full-screen-only).
 - This machine has no iPhone 16 simulator — use `iPhone 17` (or check available destinations) for xcodebuild commands.
 - CocoaMQTT pulls two transitive deps: Starscream (WebSocket) and MqttCocoaAsyncSocket (TCP) — these are expected, not extra third-party additions.
 - `UIDevice.current` properties are main-actor-isolated in Swift 6 — `nonisolated` functions in an actor can't access them. Use `await MainActor.run { ... }` instead.
 - `MQTTAutomation` must be `@unchecked Sendable` (not an actor) because `CocoaMQTTDelegate` requires `NSObject`. Use `@preconcurrency import CocoaMQTT` to suppress third-party Sendable warnings.
 - `CKContainer.default()` crashes at init time without CloudKit entitlements — defer CKContainer creation to first use, not in `init()`. See `CloudKitSyncService.swift`.
+- macOS Mac Catalyst builds with CloudKit/HealthKit entitlements can't be run from CLI (`xcodebuild` + `open`) — `CODE_SIGNING_ALLOWED=NO` strips entitlements and `CKContainer.default()` crashes with nil containerIdentifier. Must build/run from Xcode GUI with automatic signing ("My Mac" destination).
 - SwiftData `ModelConfiguration` defaults to CloudKit integration, which rejects `@Attribute(.unique)` — add `cloudKitDatabase: .none` when managing CloudKit manually. See `SchemaVersions.swift`.
 - WidgetKit extensions require `NSExtension` with `NSExtensionPointIdentifier: com.apple.widgetkit-extension` in Info.plist — Simulator refuses to install without it.
 - `BGTaskScheduler.shared.register()` requires matching `BGTaskSchedulerPermittedIdentifiers` in Info.plist — crashes without them. Also needs `fetch` in `UIBackgroundModes` for `BGAppRefreshTask`.

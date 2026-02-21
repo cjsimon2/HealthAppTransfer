@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-21 03:58
+**Last Updated:** 2026-02-21 04:30
 
 ## Active Tasks
 
@@ -20,8 +20,11 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ chore: add .gitignore for logs, plans, and build artifacts | 2026-02-21 | See commit |
 | ✅ chore: update STATE.md with session progress | 2026-02-21 | See commit |
 | ✅ Fix concurrency warnings, CloudKit entitlement, and widget config | 2026-02-21 | ExportService.swift, MQTTAutomation.swift, project.yml, entitlements, Info.plist, Widget/Info.plist |
+| ✅ Enable macOS Mac Catalyst build | 2026-02-21 | project.pbxproj, BackgroundSyncService.swift, SyncActivityAttributes.swift |
+| ✅ Fix Info.plist warnings (version, orientations, launch screen) | 2026-02-21 | App/Info.plist, Widget/Info.plist |
 
 ## Key Decisions
 
@@ -62,7 +65,7 @@
 
 <!-- Project health indicators -->
 - **Tests:** 216 passing, 0 failures
-- **Build:** Passing (1 pre-existing version mismatch warning)
+- **Build:** Passing (iOS + macOS, 0 warnings)
 - **Last Successful Run:** 2026-02-21
 
 ---
