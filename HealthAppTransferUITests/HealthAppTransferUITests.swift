@@ -12,11 +12,13 @@ final class HealthAppTransferUITests: XCTestCase {
 
     // MARK: - Helpers
 
-    /// Skip onboarding if the skip button is visible.
+    /// Skip onboarding if the skip button is visible, then wait for main content to load.
     private func skipOnboardingIfNeeded() {
         let skipButton = app.buttons["Skip onboarding"]
         if skipButton.waitForExistence(timeout: 3) {
             skipButton.tap()
+            // Wait for the tab bar to confirm onboarding completed and main content loaded
+            _ = app.tabBars.buttons["Dashboard"].waitForExistence(timeout: 5)
         }
     }
 
