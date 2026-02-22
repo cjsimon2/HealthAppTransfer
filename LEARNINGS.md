@@ -75,6 +75,7 @@ _None documented yet. Use `/learn` to record failures._
 - WidgetKit extensions require `NSExtension` with `NSExtensionPointIdentifier: com.apple.widgetkit-extension` in Info.plist — Simulator refuses to install without it.
 - `BGTaskScheduler.shared.register()` requires matching `BGTaskSchedulerPermittedIdentifiers` in Info.plist — crashes without them. Also needs `fetch` in `UIBackgroundModes` for `BGAppRefreshTask`.
 - `URLSession` moves `httpBody` to `httpBodyStream` before sending — `URLProtocol` subclass mocks must read from `httpBodyStream` to capture request bodies.
+- HealthKit disallows requesting **read** authorization for `HKCorrelationType` (`bloodPressure`, `food`) — crashes with `NSInvalidArgumentException`. Must authorize their component quantity types instead (e.g. `bloodPressureSystolic`/`Diastolic`, dietary types). Exclude correlation types from `allObjectTypes` used in `requestAuthorization()`.
 
 ### Anti-Patterns Found
 <!-- Patterns that cause problems here -->

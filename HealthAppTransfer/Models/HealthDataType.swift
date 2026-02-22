@@ -541,8 +541,10 @@ extension HealthDataType {
     }
 
     /// All types as HKObjectType for HealthKit authorization requests.
+    /// Excludes correlation types — HealthKit disallows reading them directly;
+    /// their component quantity types (already included) provide the authorization.
     static var allObjectTypes: Set<HKObjectType> {
-        Set(allCases.map(\.objectType))
+        Set(allCases.filter { $0.kind != .correlation }.map(\.objectType))
     }
 }
 

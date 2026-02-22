@@ -40,6 +40,18 @@
         }
       }
     },
+    "NSCameraUsageDescription" : {
+      "comment" : "Privacy - Camera Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This app uses the camera to scan QR codes for device pairing."
+          }
+        }
+      }
+    },
     "NSFaceIDUsageDescription" : {
       "comment" : "Permission dialog: explains why the app uses Face ID for authentication",
       "extractionState" : "manual",
