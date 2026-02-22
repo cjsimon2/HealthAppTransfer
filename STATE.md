@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-21 05:45
+**Last Updated:** 2026-02-21 23:22
 
 ## Active Tasks
 
@@ -20,6 +20,7 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ style: UI/UX polish across 10 view files | 2026-02-21 | MetricCardView, DashboardView, SettingsView, HealthDataDetailView, HealthDataView, QuickExportView, AutomationsView, OnboardingView, ContentView, HealthAppTransferApp |
 | ✅ feat: wire up GPX export with workout route fetching | 2026-02-21 | ExportService.swift, HealthKitService.swift |
 | ✅ test: add 9 meaningful UI tests replacing placeholder | 2026-02-21 | HealthAppTransferUITests.swift |
 | ✅ feat: add accessibility labels/identifiers to 8 views | 2026-02-21 | MQTT/Cloud/Calendar/HA forms, Security/LAN/Paired/QR views |
@@ -72,10 +73,11 @@
 ## Metrics
 
 <!-- Project health indicators -->
-- **Tests:** 541 unit tests passing, 9 UI tests added (44 test files)
+- **Tests:** 541 unit tests passing, 5/9 UI tests passing (44 test files)
 - **Test Coverage:** ~90% file coverage (up from 14%)
-- **Build:** Passing (iOS + macOS, 0 warnings)
+- **Build:** Passing (iOS, 0 errors)
 - **Accessibility:** ~90%+ (labels/identifiers on all automation forms and settings views)
+- **UI Polish:** Applied (card shadows, colored icons, animated indicators, styled empty states)
 - **Last Successful Run:** 2026-02-21
 
 ---

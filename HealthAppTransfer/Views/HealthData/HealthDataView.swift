@@ -43,28 +43,33 @@ struct HealthDataView: View {
     // MARK: - Subviews
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "list.bullet.clipboard")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary)
+        VStack(spacing: 20) {
+            Spacer()
+
+            Image(systemName: "list.bullet.clipboard.fill")
+                .font(.system(size: 56))
+                .foregroundStyle(.blue.opacity(0.6))
+                .symbolRenderingMode(.hierarchical)
                 .accessibilityHidden(true)
 
             Text("No Health Data")
-                .font(.title3.bold())
+                .font(.title2.bold())
 
             #if os(macOS)
             Text("Sync health data from your iPhone to browse available types.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+                .frame(maxWidth: 300)
             #else
             Text("Authorize HealthKit access to browse your health data types.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+                .frame(maxWidth: 300)
             #endif
+
+            Spacer()
         }
     }
 
@@ -97,8 +102,13 @@ struct HealthDataView: View {
     }
 
     private func typeRow(_ typeInfo: HealthDataViewModel.TypeInfo) -> some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
+        HStack(spacing: 12) {
+            Circle()
+                .fill(typeInfo.type.category.chartColor.gradient)
+                .frame(width: 8, height: 8)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 3) {
                 Text(typeInfo.displayName)
                     .font(.body.weight(.medium))
 
@@ -116,13 +126,16 @@ struct HealthDataView: View {
             Spacer()
 
             if typeInfo.count > 0 {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
-                    .font(.caption)
+                Text("\(typeInfo.count)")
+                    .font(.subheadline.monospacedDigit())
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(.fill.quaternary, in: Capsule())
                     .accessibilityLabel("Has data")
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 2)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(typeInfo.displayName), \(typeInfo.count > 0 ? "\(typeInfo.count) samples" : "no data")")
         .accessibilityIdentifier("healthData.row.\(typeInfo.type.rawValue)")

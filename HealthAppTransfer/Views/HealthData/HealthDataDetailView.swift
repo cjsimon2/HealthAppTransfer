@@ -75,10 +75,18 @@ struct HealthDataDetailView: View {
     // MARK: - Chart Section
 
     private var chartSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Chart")
-                .font(.headline)
-                .accessibilityAddTraits(.isHeader)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Trends")
+                    .font(.headline)
+                    .accessibilityAddTraits(.isHeader)
+
+                Spacer()
+
+                Image(systemName: viewModel.dataType.category.iconName)
+                    .font(.subheadline)
+                    .foregroundStyle(viewModel.dataType.category.chartColor)
+            }
 
             HealthChartView(
                 dataType: viewModel.dataType,
@@ -103,21 +111,29 @@ struct HealthDataDetailView: View {
             }
         }
         .padding(16)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+        .background {
+            RoundedRectangle(cornerRadius: 14)
+                .fill(.background)
+                .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+        }
     }
 
     private func statItem(title: String, value: String) -> some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 6) {
             Text(title)
-                .font(.caption)
+                .font(.caption.weight(.medium))
                 .foregroundStyle(.secondary)
+                .textCase(.uppercase)
 
             Text(value)
-                .font(.title3.bold())
+                .font(.title3.bold().monospacedDigit())
+                .foregroundStyle(viewModel.dataType.category.chartColor)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
         }
         .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+        .background(.fill.quaternary, in: RoundedRectangle(cornerRadius: 8))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title): \(value)")
         .accessibilityIdentifier("detail.stat.\(title.lowercased())")
@@ -126,14 +142,23 @@ struct HealthDataDetailView: View {
     // MARK: - Recent Samples
 
     private var recentSamplesSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Recent Samples")
                 .font(.headline)
                 .accessibilityAddTraits(.isHeader)
 
-            ForEach(viewModel.recentDTOs) { dto in
-                sampleRow(dto)
+            VStack(spacing: 0) {
+                ForEach(Array(viewModel.recentDTOs.enumerated()), id: \.element.id) { index, dto in
+                    sampleRow(dto)
+
+                    if index < viewModel.recentDTOs.count - 1 {
+                        Divider()
+                            .padding(.leading, 16)
+                    }
+                }
             }
+            .padding(.vertical, 4)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
         }
     }
 
@@ -152,7 +177,7 @@ struct HealthDataDetailView: View {
 
             if let value = dto.value, let unit = dto.unit {
                 Text(formatDTOValue(value, unit: unit))
-                    .font(.body.monospacedDigit())
+                    .font(.body.bold().monospacedDigit())
                     .foregroundStyle(viewModel.dataType.category.chartColor)
             } else if let categoryValue = dto.categoryValue {
                 Text("\(categoryValue)")
@@ -160,7 +185,8 @@ struct HealthDataDetailView: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .padding(.vertical, 6)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(sampleRowLabel(dto))
     }

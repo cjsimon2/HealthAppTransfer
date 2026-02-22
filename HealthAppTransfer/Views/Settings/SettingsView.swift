@@ -19,7 +19,7 @@ struct SettingsView: View {
                 NavigationLink {
                     SyncSettingsView(healthKitService: healthKitService)
                 } label: {
-                    Label("Sync Settings", systemImage: "arrow.triangle.2.circlepath")
+                    settingsRow("Sync Settings", icon: "arrow.triangle.2.circlepath", color: .blue)
                 }
                 .accessibilityIdentifier("settings.syncSettings")
             } header: {
@@ -30,14 +30,14 @@ struct SettingsView: View {
                 NavigationLink {
                     PairingView(viewModel: pairingViewModel)
                 } label: {
-                    Label("Pair Device", systemImage: "qrcode")
+                    settingsRow("Pair Device", icon: "qrcode", color: .orange)
                 }
                 .accessibilityIdentifier("settings.pairDevice")
 
                 NavigationLink {
                     PairedDevicesView(viewModel: pairingViewModel)
                 } label: {
-                    Label("Paired Devices", systemImage: "link")
+                    settingsRow("Paired Devices", icon: "link", color: .green)
                 }
                 .accessibilityIdentifier("settings.pairedDevices")
             } header: {
@@ -48,14 +48,11 @@ struct SettingsView: View {
                 NavigationLink {
                     LANSyncView(viewModel: lanSyncViewModel)
                 } label: {
-                    Label {
-                        HStack {
-                            Text("LAN Sync")
-                            Spacer()
-                            connectionStatusBadge
-                        }
-                    } icon: {
-                        Image(systemName: "wifi")
+                    HStack {
+                        settingsIconBadge("wifi", color: .purple)
+                        Text("LAN Sync")
+                        Spacer()
+                        connectionStatusBadge
                     }
                 }
                 .accessibilityLabel("LAN Sync, \(connectionStatusLabel)")
@@ -68,7 +65,7 @@ struct SettingsView: View {
                 NavigationLink {
                     SecuritySettingsView(viewModel: securitySettingsViewModel)
                 } label: {
-                    Label("Security", systemImage: "lock.shield")
+                    settingsRow("Security", icon: "lock.shield", color: .red)
                 }
                 .accessibilityIdentifier("settings.security")
             } header: {
@@ -76,14 +73,34 @@ struct SettingsView: View {
             }
 
             Section {
-                Label("Version 1.0.0", systemImage: "info.circle")
-                    .foregroundStyle(.secondary)
-                    .accessibilityIdentifier("settings.version")
+                HStack(spacing: 12) {
+                    settingsIconBadge("info.circle", color: .gray)
+                    Text("Version 1.0.0")
+                        .foregroundStyle(.secondary)
+                }
+                .accessibilityIdentifier("settings.version")
             } header: {
                 Text("About")
             }
         }
         .navigationTitle("Settings")
+    }
+
+    // MARK: - Settings Row
+
+    private func settingsRow(_ title: String, icon: String, color: Color) -> some View {
+        HStack(spacing: 12) {
+            settingsIconBadge(icon, color: color)
+            Text(title)
+        }
+    }
+
+    private func settingsIconBadge(_ icon: String, color: Color) -> some View {
+        Image(systemName: icon)
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(.white)
+            .frame(width: 28, height: 28)
+            .background(color.gradient, in: RoundedRectangle(cornerRadius: 6))
     }
 
     // MARK: - Helpers

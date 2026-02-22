@@ -184,10 +184,17 @@ struct QuickExportView: View {
                     } else {
                         Label("Export & Share", systemImage: "square.and.arrow.up")
                             .font(.headline)
+                            .foregroundStyle(.white)
                     }
                     Spacer()
                 }
+                .padding(.vertical, 4)
             }
+            .listRowBackground(
+                viewModel.canExport
+                    ? Color.accentColor
+                    : Color.accentColor.opacity(0.4)
+            )
             .disabled(!viewModel.canExport)
             .accessibilityLabel(viewModel.isExporting ? "Exporting data" : "Export and share")
             .accessibilityIdentifier("export.exportButton")

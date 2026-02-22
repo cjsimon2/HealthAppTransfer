@@ -103,20 +103,23 @@ struct AutomationsView: View {
     // MARK: - Subviews
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "bolt.horizontal")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary)
+        VStack(spacing: 20) {
+            Spacer()
+
+            Image(systemName: "bolt.horizontal.fill")
+                .font(.system(size: 56))
+                .foregroundStyle(.orange.opacity(0.6))
+                .symbolRenderingMode(.hierarchical)
                 .accessibilityHidden(true)
 
             Text("No Automations")
-                .font(.title3.bold())
+                .font(.title2.bold())
 
-            Text("Set up automations to automatically push health data to external services.")
+            Text("Automatically push health data to REST APIs, MQTT brokers, iCloud Drive, and more.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+                .frame(maxWidth: 300)
 
             Menu {
                 Button {
@@ -150,10 +153,13 @@ struct AutomationsView: View {
                 }
             } label: {
                 Label("Add Automation", systemImage: "plus.circle.fill")
+                    .font(.subheadline.weight(.semibold))
             }
             .buttonStyle(.borderedProminent)
-            .padding(.top, 8)
+            .padding(.top, 4)
             .accessibilityIdentifier("automations.emptyState.addMenu")
+
+            Spacer()
         }
         .accessibilityIdentifier("automations.emptyState")
     }
@@ -190,8 +196,13 @@ struct AutomationsView: View {
     private func automationRow(_ automation: AutomationConfiguration) -> some View {
         HStack(spacing: 12) {
             Image(systemName: automationIcon(automation))
-                .foregroundStyle(automation.isEnabled ? .green : .secondary)
-                .frame(width: 24)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white)
+                .frame(width: 32, height: 32)
+                .background(
+                    (automation.isEnabled ? automationColor(automation) : Color.gray).gradient,
+                    in: RoundedRectangle(cornerRadius: 7)
+                )
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(automation.name)
@@ -218,14 +229,28 @@ struct AutomationsView: View {
 
             Spacer()
 
-            if automation.triggerIntervalSeconds > 0 {
-                Label(intervalLabel(automation.triggerIntervalSeconds), systemImage: "timer")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            } else {
-                Label("On change", systemImage: "bolt")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+            VStack(alignment: .trailing, spacing: 2) {
+                if automation.triggerIntervalSeconds > 0 {
+                    Text(intervalLabel(automation.triggerIntervalSeconds))
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(.fill.quaternary, in: Capsule())
+                } else {
+                    Text("On change")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(.fill.quaternary, in: Capsule())
+                }
+
+                if !automation.isEnabled {
+                    Text("Paused")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                }
             }
         }
         .padding(.vertical, 4)
@@ -256,13 +281,22 @@ struct AutomationsView: View {
     // MARK: - Helpers
 
     private func automationIcon(_ automation: AutomationConfiguration) -> String {
-        guard automation.isEnabled else { return "bolt.slash" }
         switch automation.automationType {
         case "mqtt": return "antenna.radiowaves.left.and.right"
         case "cloud_storage": return "icloud"
         case "calendar": return "calendar"
         case "home_assistant": return "house"
         default: return "bolt.fill"
+        }
+    }
+
+    private func automationColor(_ automation: AutomationConfiguration) -> Color {
+        switch automation.automationType {
+        case "mqtt": return .purple
+        case "cloud_storage": return .blue
+        case "calendar": return .red
+        case "home_assistant": return .cyan
+        default: return .orange
         }
     }
 

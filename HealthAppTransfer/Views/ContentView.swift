@@ -96,18 +96,21 @@ struct ContentView: View {
             lockedBackground
                 .ignoresSafeArea()
 
-            VStack(spacing: 24) {
+            VStack(spacing: 28) {
                 Image(systemName: "lock.shield.fill")
-                    .font(.system(size: 64))
-                    .foregroundStyle(.secondary)
+                    .font(.system(size: 72))
+                    .foregroundStyle(.red.opacity(0.5))
+                    .symbolRenderingMode(.hierarchical)
                     .accessibilityHidden(true)
 
-                Text("HealthAppTransfer is Locked")
-                    .font(.title2.weight(.semibold))
+                VStack(spacing: 8) {
+                    Text("HealthAppTransfer is Locked")
+                        .font(.title2.weight(.bold))
 
-                Text("Authenticate to access your health data")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    Text("Authenticate to access your health data")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
 
                 Button {
                     Task { await authenticateToUnlock() }

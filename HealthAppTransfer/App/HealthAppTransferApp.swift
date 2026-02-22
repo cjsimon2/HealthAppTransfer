@@ -51,6 +51,7 @@ struct HealthAppTransferApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(services: services)
+                .tint(.red)
                 .task { await startBackgroundSync() }
         }
         .modelContainer(modelContainer)

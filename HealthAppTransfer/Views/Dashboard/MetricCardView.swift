@@ -23,7 +23,17 @@ struct MetricCardView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 12))
+        .background {
+            RoundedRectangle(cornerRadius: 14)
+                .fill(.background)
+                .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+        }
+        .overlay(alignment: .top) {
+            Capsule()
+                .fill(dataType.category.chartColor.gradient)
+                .frame(width: 32, height: 3)
+                .padding(.top, 6)
+        }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityDescription)
         .accessibilityAddTraits(.isButton)
@@ -81,21 +91,29 @@ struct MetricCardView: View {
         let activeSamples = samples.filter { $0.count > 0 }
         if activeSamples.count >= 2 {
             Chart(activeSamples, id: \.startDate) { sample in
+                AreaMark(
+                    x: .value("Date", sample.startDate),
+                    y: .value("Value", chartValue(for: sample))
+                )
+                .interpolationMethod(.catmullRom)
+                .foregroundStyle(dataType.category.chartColor.opacity(0.12).gradient)
+
                 LineMark(
                     x: .value("Date", sample.startDate),
                     y: .value("Value", chartValue(for: sample))
                 )
                 .interpolationMethod(.catmullRom)
+                .foregroundStyle(dataType.category.chartColor.gradient)
+                .lineStyle(StrokeStyle(lineWidth: 2))
             }
             .chartXAxis(.hidden)
             .chartYAxis(.hidden)
             .chartLegend(.hidden)
-            .foregroundStyle(dataType.category.chartColor.gradient)
             .frame(height: 40)
             .accessibilityHidden(true)
         } else {
-            Rectangle()
-                .fill(.clear)
+            RoundedRectangle(cornerRadius: 6)
+                .fill(dataType.category.chartColor.opacity(0.06))
                 .frame(height: 40)
                 .overlay {
                     Text("No trend data")

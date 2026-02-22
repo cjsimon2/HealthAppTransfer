@@ -35,7 +35,13 @@ struct DashboardView: View {
     var body: some View {
         Group {
             if viewModel.isLoading && viewModel.cards.isEmpty {
-                ProgressView("Loading dashboard...")
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .controlSize(.large)
+                    Text("Loading dashboard...")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             } else if viewModel.cards.isEmpty {
                 emptyState
             } else {
@@ -48,7 +54,7 @@ struct DashboardView: View {
                 Button {
                     showingMetricPicker = true
                 } label: {
-                    Image(systemName: "gear")
+                    Image(systemName: "slider.horizontal.3")
                 }
                 .accessibilityLabel("Configure dashboard metrics")
                 .accessibilityIdentifier("dashboard.configureButton")
@@ -83,34 +89,50 @@ struct DashboardView: View {
     // MARK: - Subviews
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "heart.text.square")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary)
+        VStack(spacing: 20) {
+            Spacer()
+
+            Image(systemName: "heart.text.square.fill")
+                .font(.system(size: 56))
+                .foregroundStyle(.red.opacity(0.6))
+                .symbolRenderingMode(.hierarchical)
                 .accessibilityHidden(true)
 
             Text("No Health Data")
-                .font(.title3.bold())
+                .font(.title2.bold())
 
             #if os(macOS)
             Text("Sync health data from your iPhone via CloudKit or LAN to see your overview.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+                .frame(maxWidth: 300)
             #else
             Text("Authorize HealthKit access to see your health data overview.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+                .frame(maxWidth: 300)
             #endif
+
+            Button {
+                showingMetricPicker = true
+            } label: {
+                Label("Configure Dashboard", systemImage: "slider.horizontal.3")
+                    .font(.subheadline.weight(.semibold))
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.regular)
+            .padding(.top, 4)
+            .accessibilityIdentifier("dashboard.emptyState.configureButton")
+
+            Spacer()
         }
     }
 
     private var metricGrid: some View {
         ScrollView {
-            LazyVGrid(columns: gridColumns, spacing: 12) {
+            LazyVGrid(columns: gridColumns, spacing: 16) {
                 ForEach(viewModel.cards) { card in
                     NavigationLink {
                         HealthDataDetailView(
@@ -130,7 +152,8 @@ struct DashboardView: View {
                     .accessibilityIdentifier("dashboard.card.\(card.dataType.rawValue)")
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
             .padding(.bottom, 100)
         }
     }
