@@ -283,18 +283,38 @@ actor ExportService {
 
         for workout in workouts {
             let routes = try await healthKitService.fetchWorkoutRoutes(for: workout)
+            guard !routes.isEmpty else { continue }
+
+            // Fetch heart rate samples for this workout's time window
+            let hrSamples: [HKQuantitySample]
+            do {
+                hrSamples = try await healthKitService.fetchHeartRateSamples(
+                    from: workout.startDate,
+                    to: workout.endDate
+                )
+            } catch {
+                Loggers.export.warning("Failed to fetch heart rate for workout: \(error.localizedDescription)")
+                hrSamples = []
+            }
+
+            let bpmUnit = HKUnit.count().unitDivided(by: .minute())
 
             for route in routes {
                 let locations = try await healthKitService.fetchRouteLocations(from: route)
                 guard !locations.isEmpty else { continue }
 
                 let points = locations.map { location in
-                    GPXRoutePoint(
+                    let hr = Self.nearestHeartRate(
+                        for: location.timestamp,
+                        in: hrSamples,
+                        unit: bpmUnit
+                    )
+                    return GPXRoutePoint(
                         latitude: location.coordinate.latitude,
                         longitude: location.coordinate.longitude,
                         elevation: location.altitude,
                         timestamp: location.timestamp,
-                        heartRate: nil
+                        heartRate: hr
                     )
                 }
 
@@ -323,6 +343,36 @@ actor ExportService {
             fileSizeBytes: Int64(data.count),
             exportedTypes: [.workout]
         )
+    }
+
+    /// Finds the nearest heart rate sample within 5 seconds of a given timestamp.
+    /// HR samples are expected to be sorted ascending by startDate.
+    static func nearestHeartRate(
+        for timestamp: Date,
+        in samples: [HKQuantitySample],
+        unit: HKUnit,
+        maxInterval: TimeInterval = 5.0
+    ) -> Double? {
+        guard !samples.isEmpty else { return nil }
+
+        var bestSample: HKQuantitySample?
+        var bestDistance: TimeInterval = .greatestFiniteMagnitude
+
+        for sample in samples {
+            let distance = abs(sample.startDate.timeIntervalSince(timestamp))
+            if distance < bestDistance {
+                bestDistance = distance
+                bestSample = sample
+            }
+            // Samples are sorted ascending — once we pass the timestamp and distance
+            // starts growing, no future sample will be closer
+            if sample.startDate > timestamp && distance > bestDistance {
+                break
+            }
+        }
+
+        guard let best = bestSample, bestDistance <= maxInterval else { return nil }
+        return best.quantity.doubleValue(for: unit)
     }
 
     /// Maps HKWorkoutActivityType to a human-readable name for GPX track names.

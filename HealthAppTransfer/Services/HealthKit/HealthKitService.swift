@@ -172,6 +172,31 @@ actor HealthKitService {
         }
     }
 
+    /// Fetch heart rate samples for a workout's time range.
+    /// Returns samples sorted by start date ascending for efficient timestamp correlation.
+    func fetchHeartRateSamples(from startDate: Date, to endDate: Date) async throws -> [HKQuantitySample] {
+        let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: heartRateType,
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: [sortDescriptor]
+            ) { _, samples, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    let quantitySamples = (samples as? [HKQuantitySample]) ?? []
+                    continuation.resume(returning: quantitySamples)
+                }
+            }
+            store.execute(query)
+        }
+    }
+
     /// Get available types with their sample counts.
     /// Uses TaskGroup for parallel HealthKit queries — ~10x faster than sequential with 180+ types.
     /// Skips characteristic types (not sample-based).

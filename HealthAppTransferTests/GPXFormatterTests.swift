@@ -215,4 +215,34 @@ final class GPXFormatterTests: XCTestCase {
         let trkptCount = xml.components(separatedBy: "<trkpt").count - 1
         XCTAssertEqual(trkptCount, 3)
     }
+
+    // MARK: - Mixed Heart Rate Points
+
+    func testMixedHeartRatePointsRenderCorrectly() throws {
+        let base = Date()
+        let points = [
+            makePoint(latitude: 37.7749, longitude: -122.4194, elevation: 10, timestamp: base, heartRate: 120),
+            makePoint(latitude: 37.7750, longitude: -122.4195, elevation: 11, timestamp: base.addingTimeInterval(5), heartRate: nil),
+            makePoint(latitude: 37.7751, longitude: -122.4196, elevation: 12, timestamp: base.addingTimeInterval(10), heartRate: 155),
+        ]
+        let track = makeTrack(points: points)
+        let data = try formatter.format(tracks: [track])
+        let xml = gpxString(from: data)
+
+        XCTAssertTrue(xml.contains("<gpxtpx:hr>120</gpxtpx:hr>"))
+        XCTAssertTrue(xml.contains("<gpxtpx:hr>155</gpxtpx:hr>"))
+
+        // Count HR extensions — should be exactly 2 (not 3)
+        let hrCount = xml.components(separatedBy: "<gpxtpx:hr>").count - 1
+        XCTAssertEqual(hrCount, 2, "Only points with heart rate should have HR extensions")
+    }
+
+    func testHeartRateRoundsToInteger() throws {
+        let point = makePoint(heartRate: 142.7)
+        let track = makeTrack(points: [point])
+        let data = try formatter.format(tracks: [track])
+        let xml = gpxString(from: data)
+
+        XCTAssertTrue(xml.contains("<gpxtpx:hr>142</gpxtpx:hr>"), "HR should be rounded to integer")
+    }
 }
