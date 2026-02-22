@@ -62,6 +62,7 @@ _None documented yet. Use `/learn` to record failures._
 
 ### Common Pitfalls
 <!-- Gotchas specific to this project -->
+- Claude Code hooks are loaded into memory at session start — deleting hook script files mid-session causes every subsequent tool call and stop event to error with "No such file or directory". Always remove the settings reference first, then start a new session before deleting the script files.
 - xcodegen overwrites `.entitlements` files to empty `<dict/>` during `generate` — always restore entitlements content after running xcodegen.
 - Both app and widget Info.plist had hardcoded `CFBundleShortVersionString = 1.0` instead of `$(MARKETING_VERSION)` — causes version mismatch warning. Also app Info.plist was missing `UISupportedInterfaceOrientations` and `UILaunchScreen` keys (required unless app declares full-screen-only).
 - This machine has no iPhone 16 simulator — use `iPhone 17` (or check available destinations) for xcodebuild commands.

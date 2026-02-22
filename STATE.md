@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-22 02:00
+**Last Updated:** 2026-02-22 02:06
 
 ## Active Tasks
 
@@ -20,6 +20,7 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ chore: delete unreferenced project hooks, simplify safety-check | 2026-02-22 | See commit |
 | ✅ fix: remove duplicate hooks from project settings | 2026-02-22 | See commit |
 | ✅ style: Wes Anderson UI overhaul with warm theme system | 2026-02-22 | See commit |
 | ✅ docs: fix simulator name in README, update handoff.md | 2026-02-22 | See commit |
