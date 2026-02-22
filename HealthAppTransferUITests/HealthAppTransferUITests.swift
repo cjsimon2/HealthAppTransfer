@@ -7,30 +7,31 @@ final class HealthAppTransferUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-        app.launch()
     }
 
     // MARK: - Helpers
 
-    /// Skip onboarding if the skip button is visible, then wait for main content to load.
-    private func skipOnboardingIfNeeded() {
-        let skipButton = app.buttons["Skip onboarding"]
-        if skipButton.waitForExistence(timeout: 3) {
-            skipButton.tap()
-            // Wait for the tab bar to confirm onboarding completed and main content loaded
-            _ = app.tabBars.buttons["Dashboard"].waitForExistence(timeout: 5)
-        }
+    /// Launch the app with onboarding bypassed via launch argument.
+    private func launchSkippingOnboarding() {
+        app.launchArguments.append("-UITestingSkipOnboarding")
+        app.launch()
+        // Wait for the tab bar to confirm main content loaded
+        XCTAssertTrue(
+            app.tabBars.buttons["Dashboard"].waitForExistence(timeout: 5),
+            "Dashboard tab should appear after launch"
+        )
     }
 
     // MARK: - Onboarding
 
     func testOnboardingCanBeSkipped() {
+        // Launch WITHOUT skip argument so onboarding actually shows
+        app.launch()
         let skipButton = app.buttons["Skip onboarding"]
         if skipButton.waitForExistence(timeout: 3) {
             skipButton.tap()
-            // After skipping, tab bar should be visible
             let dashboardTab = app.tabBars.buttons["Dashboard"]
-            XCTAssertTrue(dashboardTab.waitForExistence(timeout: 3), "Dashboard tab should appear after skipping onboarding")
+            XCTAssertTrue(dashboardTab.waitForExistence(timeout: 5), "Dashboard tab should appear after skipping onboarding")
         }
         // If onboarding was already completed, that's fine — test passes
     }
@@ -38,10 +39,10 @@ final class HealthAppTransferUITests: XCTestCase {
     // MARK: - Tab Bar
 
     func testAllFiveTabsExist() {
-        skipOnboardingIfNeeded()
+        launchSkippingOnboarding()
 
         let tabBar = app.tabBars
-        XCTAssertTrue(tabBar.buttons["Dashboard"].waitForExistence(timeout: 3))
+        XCTAssertTrue(tabBar.buttons["Dashboard"].exists)
         XCTAssertTrue(tabBar.buttons["Health Data"].exists)
         XCTAssertTrue(tabBar.buttons["Export"].exists)
         XCTAssertTrue(tabBar.buttons["Automations"].exists)
@@ -49,7 +50,7 @@ final class HealthAppTransferUITests: XCTestCase {
     }
 
     func testTabSwitching() {
-        skipOnboardingIfNeeded()
+        launchSkippingOnboarding()
 
         let tabBar = app.tabBars
 
@@ -72,7 +73,7 @@ final class HealthAppTransferUITests: XCTestCase {
     // MARK: - Dashboard
 
     func testDashboardConfigureButton() {
-        skipOnboardingIfNeeded()
+        launchSkippingOnboarding()
 
         let configureButton = app.buttons["dashboard.configureButton"]
         guard configureButton.waitForExistence(timeout: 3) else {
@@ -89,7 +90,7 @@ final class HealthAppTransferUITests: XCTestCase {
     // MARK: - Export
 
     func testExportTabShowsFormElements() {
-        skipOnboardingIfNeeded()
+        launchSkippingOnboarding()
 
         app.tabBars.buttons["Export"].tap()
 
@@ -103,7 +104,7 @@ final class HealthAppTransferUITests: XCTestCase {
     // MARK: - Automations
 
     func testAutomationsAddMenu() {
-        skipOnboardingIfNeeded()
+        launchSkippingOnboarding()
 
         app.tabBars.buttons["Automations"].tap()
 
@@ -127,7 +128,7 @@ final class HealthAppTransferUITests: XCTestCase {
     // MARK: - Settings
 
     func testSettingsShowsAllLinks() {
-        skipOnboardingIfNeeded()
+        launchSkippingOnboarding()
 
         app.tabBars.buttons["Settings"].tap()
 
@@ -145,7 +146,7 @@ final class HealthAppTransferUITests: XCTestCase {
     }
 
     func testSettingsNavigationToSyncSettings() {
-        skipOnboardingIfNeeded()
+        launchSkippingOnboarding()
 
         app.tabBars.buttons["Settings"].tap()
 
@@ -170,7 +171,7 @@ final class HealthAppTransferUITests: XCTestCase {
     // MARK: - Health Data
 
     func testHealthDataTabShowsCategories() {
-        skipOnboardingIfNeeded()
+        launchSkippingOnboarding()
 
         app.tabBars.buttons["Health Data"].tap()
 

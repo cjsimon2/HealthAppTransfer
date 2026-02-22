@@ -174,6 +174,11 @@ struct ContentView: View {
     // MARK: - Onboarding
 
     private func loadOnboardingState() {
+        if ProcessInfo.processInfo.arguments.contains("-UITestingSkipOnboarding") {
+            hasCompletedOnboarding = true
+            hasRequestedHealthKitAuth = true
+            return
+        }
         let descriptor = FetchDescriptor<UserPreferences>()
         hasCompletedOnboarding = (try? modelContext.fetch(descriptor).first?.hasCompletedOnboarding) ?? false
     }
