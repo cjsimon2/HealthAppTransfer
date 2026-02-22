@@ -260,7 +260,8 @@ enum HealthSampleMapper {
     /// Returns the preferred HKUnit for a given quantity data type.
     static func preferredUnit(for type: HealthDataType) -> HKUnit {
         guard let unit = unitMap[type] else {
-            fatalError("\(type) does not have a preferred HKUnit")
+            assertionFailure("\(type) does not have a preferred HKUnit")
+            return .count()
         }
         return unit
     }

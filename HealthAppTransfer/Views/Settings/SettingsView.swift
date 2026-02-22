@@ -75,7 +75,7 @@ struct SettingsView: View {
             Section {
                 HStack(spacing: 12) {
                     settingsIconBadge("info.circle", color: .gray)
-                    Text("Version 1.0.0")
+                    Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0")")
                         .foregroundStyle(.secondary)
                 }
                 .accessibilityIdentifier("settings.version")

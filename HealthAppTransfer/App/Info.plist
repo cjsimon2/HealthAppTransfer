@@ -41,6 +41,8 @@
 	<string>This app creates calendar events for your workouts when the Calendar automation is enabled.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>This app uses Face ID to protect access to your health data and sensitive settings.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app uses the camera to scan QR codes for device pairing.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>This app needs access to your health data to transfer it between devices.</string>
 	<key>NSLocalNetworkUsageDescription</key>
@@ -51,6 +53,12 @@
 	<array>
 		<string>com.caseysimon.HealthAppTransfer.refresh</string>
 		<string>com.caseysimon.HealthAppTransfer.export</string>
+	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>healthkit</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

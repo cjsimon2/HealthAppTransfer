@@ -339,7 +339,8 @@ extension HealthDataType {
         if Self.correlationIdentifiers[self] != nil { return .correlation }
         if Self.characteristicIdentifiers[self] != nil { return .characteristic }
         if self == .workout { return .workout }
-        fatalError("No kind defined for \(self)")
+        assertionFailure("No kind defined for \(self)")
+        return .quantity
     }
 
     /// UI category for grouping.
@@ -478,38 +479,43 @@ extension HealthDataType {
         case .workout:
             return HKWorkoutType.workoutType()
         case .characteristic:
-            fatalError("\(self) is a characteristic type with no sample type")
+            assertionFailure("\(self) is a characteristic type with no sample type")
+            return HKWorkoutType.workoutType()
         }
     }
 
     /// The corresponding `HKQuantityTypeIdentifier`. Fatal error for non-quantity types.
     var quantityTypeIdentifier: HKQuantityTypeIdentifier {
         guard let id = Self.quantityIdentifiers[self] else {
-            fatalError("\(self) is not a quantity type")
+            assertionFailure("\(self) is not a quantity type")
+            return .stepCount
         }
         return id
     }
 
-    /// The corresponding `HKCategoryTypeIdentifier`. Fatal error for non-category types.
+    /// The corresponding `HKCategoryTypeIdentifier`.
     var categoryTypeIdentifier: HKCategoryTypeIdentifier {
         guard let id = Self.categoryIdentifiers[self] else {
-            fatalError("\(self) is not a category type")
+            assertionFailure("\(self) is not a category type")
+            return .sleepAnalysis
         }
         return id
     }
 
-    /// The corresponding `HKCorrelationTypeIdentifier`. Fatal error for non-correlation types.
+    /// The corresponding `HKCorrelationTypeIdentifier`.
     var correlationTypeIdentifier: HKCorrelationTypeIdentifier {
         guard let id = Self.correlationIdentifiers[self] else {
-            fatalError("\(self) is not a correlation type")
+            assertionFailure("\(self) is not a correlation type")
+            return .bloodPressure
         }
         return id
     }
 
-    /// The corresponding `HKCharacteristicTypeIdentifier`. Fatal error for non-characteristic types.
+    /// The corresponding `HKCharacteristicTypeIdentifier`.
     var characteristicTypeIdentifier: HKCharacteristicTypeIdentifier {
         guard let id = Self.characteristicIdentifiers[self] else {
-            fatalError("\(self) is not a characteristic type")
+            assertionFailure("\(self) is not a characteristic type")
+            return .biologicalSex
         }
         return id
     }

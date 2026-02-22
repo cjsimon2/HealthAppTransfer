@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-21 23:22
+**Last Updated:** 2026-02-22 01:28
 
 ## Active Tasks
 
@@ -20,6 +20,17 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ fix: harden GPX export — double-resume guard, altitude filter, HR rounding | 2026-02-22 | See commit |
+| ✅ fix: make UI tests reliable with launch argument to bypass onboarding | 2026-02-22 | See commit |
+| ✅ chore: replace app icon with new illustrated design | 2026-02-22 | See commit |
+| ✅ fix: App Store audit — entitlements, Info.plist, fatalErrors, version | 2026-02-22 | Entitlements, Info.plist, HealthDataType, ExportService, HealthSampleMapper, SettingsView |
+| ✅ fix: GPX export — double-resume guard, altitude filter, HR rounding | 2026-02-22 | HealthKitService, ExportService, GPXFormatter, GPXFormatterTests |
+| ✅ fix: UI tests — launch argument to bypass onboarding | 2026-02-22 | ContentView, HealthAppTransferUITests |
+| ✅ chore: simplify gitignore for xcuserdata and .claudify | 2026-02-22 | See commit |
+| ✅ chore: use absolute paths for hook commands in settings | 2026-02-22 | See commit |
+| ✅ fix: wait for main content after skipping onboarding in UI tests | 2026-02-22 | See commit |
+| ✅ chore: add app icon and simplify asset catalog | 2026-02-22 | See commit |
+| ✅ feat: add heart rate data to GPX export | 2026-02-22 | See commit |
 | ✅ style: UI/UX polish across 10 view files | 2026-02-21 | MetricCardView, DashboardView, SettingsView, HealthDataDetailView, HealthDataView, QuickExportView, AutomationsView, OnboardingView, ContentView, HealthAppTransferApp |
 | ✅ feat: wire up GPX export with workout route fetching | 2026-02-21 | ExportService.swift, HealthKitService.swift |
 | ✅ test: add 9 meaningful UI tests replacing placeholder | 2026-02-21 | HealthAppTransferUITests.swift |
@@ -73,12 +84,13 @@
 ## Metrics
 
 <!-- Project health indicators -->
-- **Tests:** 541 unit tests passing, 5/9 UI tests passing (44 test files)
+- **Tests:** 541 unit tests passing, 9/9 UI tests expected passing (44 test files)
 - **Test Coverage:** ~90% file coverage (up from 14%)
-- **Build:** Passing (iOS, 0 errors)
+- **Build:** Passing (iOS, 0 errors, 0 fatalError calls)
+- **App Store Readiness:** HealthKit entitlement, camera description, encryption declaration, device capabilities — all added
 - **Accessibility:** ~90%+ (labels/identifiers on all automation forms and settings views)
 - **UI Polish:** Applied (card shadows, colored icons, animated indicators, styled empty states)
-- **Last Successful Run:** 2026-02-21
+- **Last Successful Build:** 2026-02-22
 
 ---
 *This file is updated automatically by Claude. Manual edits are preserved.*
