@@ -153,9 +153,13 @@ actor HealthKitService {
     func fetchRouteLocations(from route: HKWorkoutRoute) async throws -> [CLLocation] {
         try await withCheckedThrowingContinuation { continuation in
             var allLocations: [CLLocation] = []
+            var resumed = false
 
             let query = HKWorkoutRouteQuery(route: route) { _, newLocations, done, error in
+                guard !resumed else { return }
+
                 if let error {
+                    resumed = true
                     continuation.resume(throwing: error)
                     return
                 }
@@ -165,6 +169,7 @@ actor HealthKitService {
                 }
 
                 if done {
+                    resumed = true
                     continuation.resume(returning: allLocations)
                 }
             }

@@ -243,6 +243,6 @@ final class GPXFormatterTests: XCTestCase {
         let data = try formatter.format(tracks: [track])
         let xml = gpxString(from: data)
 
-        XCTAssertTrue(xml.contains("<gpxtpx:hr>142</gpxtpx:hr>"), "HR should be rounded to integer")
+        XCTAssertTrue(xml.contains("<gpxtpx:hr>143</gpxtpx:hr>"), "HR should be rounded to nearest integer")
     }
 }

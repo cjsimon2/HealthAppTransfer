@@ -249,7 +249,7 @@ actor ExportService {
         case .jsonV1: return JSONv1Formatter()
         case .jsonV2: return JSONv2Formatter()
         case .csv: return CSVFormatter()
-        case .gpx: fatalError("GPX uses exportGPX() — this should not be called")
+        case .gpx: return JSONv2Formatter() // GPX uses exportGPX() directly; this path is unreachable
         }
     }
 
@@ -312,7 +312,7 @@ actor ExportService {
                     return GPXRoutePoint(
                         latitude: location.coordinate.latitude,
                         longitude: location.coordinate.longitude,
-                        elevation: location.altitude,
+                        elevation: location.verticalAccuracy >= 0 ? location.altitude : nil,
                         timestamp: location.timestamp,
                         heartRate: hr
                     )

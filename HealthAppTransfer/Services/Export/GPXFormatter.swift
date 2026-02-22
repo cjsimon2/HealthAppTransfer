@@ -107,7 +107,7 @@ struct GPXFormatter: Sendable {
         if let hr = point.heartRate {
             xml += "\n        <extensions>"
             xml += "\n          <gpxtpx:TrackPointExtension>"
-            xml += "\n            <gpxtpx:hr>\(Int(hr))</gpxtpx:hr>"
+            xml += "\n            <gpxtpx:hr>\(Int(hr.rounded()))</gpxtpx:hr>"
             xml += "\n          </gpxtpx:TrackPointExtension>"
             xml += "\n        </extensions>"
         }
