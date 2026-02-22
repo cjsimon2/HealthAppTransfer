@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-22
+**Last Updated:** 2026-02-22 01:30
 
 ## Active Tasks
 
@@ -20,6 +20,7 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ docs: add comprehensive README and update STATE.md | 2026-02-22 | See commit |
 | ✅ fix: resolve App Store audit findings | 2026-02-22 | See commit |
 | ✅ fix: harden GPX export — double-resume guard, altitude filter, HR rounding | 2026-02-22 | See commit |
 | ✅ fix: make UI tests reliable with launch argument to bypass onboarding | 2026-02-22 | See commit |
