@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-22 01:28
+**Last Updated:** 2026-02-22
 
 ## Active Tasks
 
@@ -20,6 +20,7 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ fix: resolve App Store audit findings | 2026-02-22 | See commit |
 | ✅ fix: harden GPX export — double-resume guard, altitude filter, HR rounding | 2026-02-22 | See commit |
 | ✅ fix: make UI tests reliable with launch argument to bypass onboarding | 2026-02-22 | See commit |
 | ✅ chore: replace app icon with new illustrated design | 2026-02-22 | See commit |
@@ -51,7 +52,12 @@
 <!-- Important decisions made during development -->
 | Decision | Rationale | Date | Reversible |
 |----------|-----------|------|------------|
-| _None yet_ | - | - | - |
+| Swift actors for all services | Thread-safe HealthKit/Network/Pairing without manual locking | 2026-02-21 | No |
+| ServiceContainer struct (not class) | Value-type DI container, memberwise init for test injection | 2026-02-21 | Yes |
+| SwiftData over Core Data | Better SwiftUI integration, schema versioning, iCloud sync | 2026-02-21 | No |
+| ExportFormatter protocol | Strategy pattern for multiple export formats (JSON/CSV/GPX) | 2026-02-21 | Yes |
+| HealthDataType single enum (180+ cases) | Single source of truth for all HK type mapping, display names, categories | 2026-02-21 | No |
+| Bearer token auth for LAN API | Simple, stateless auth; tokens persisted in Keychain | 2026-02-21 | Yes |
 
 ## Current Blockers
 
@@ -67,29 +73,49 @@
 
 ## Codebase Insights
 
-<!-- Discovered patterns, gotchas, and important context -->
 ### Patterns Found
-- _None documented yet_
+- All services are Swift actors (HealthKitService, ExportService, NetworkServer, PairingService, etc.)
+- ViewModels are `@MainActor` ObservableObjects created via ServiceContainer factory methods
+- HealthDataType enum is the central mapping layer — all HealthKit identifiers, display names, categories derive from it
+- Export uses strategy pattern: `ExportFormatter` protocol with JSON v1/v2, CSV, GPX concrete formatters
+- Background sync chain: BGTask -> performSync() -> CloudKit sync -> execute automations
+- Automations use HKObserverQuery (on-change) and Task.sleep timers (interval) as triggers
 
 ### Gotchas & Warnings
-- _None documented yet_
+- HealthKit not available in iOS Simulator — must test on device for real data
+- HKWorkoutRouteQuery handler fires multiple times (batch delivery) — need `resumed` guard
+- GPX altitude requires `verticalAccuracy >= 0` check; negative means unreliable
+- CloudKit zone must be created before any upload/download; idempotent create on each sync
+- UI tests use `-UITestingSkipOnboarding` launch argument to bypass onboarding flow
 
 ### Important Files
 | File | Purpose | Notes |
 |------|---------|-------|
+| `README.md` | Project documentation | Created 2026-02-22 |
 | `CLAUDE.md` | Project guidance | Read at session start |
 | `STATE.md` | This file | Auto-updated |
-| `LEARNINGS.md` | Accumulated learnings | Grows over time |
+| `ServiceContainer.swift` | DI container | All services + ViewModel factories |
+| `HealthDataType.swift` | 180+ type enum | Maps to HK identifiers, display names, categories |
+| `HealthKitService.swift` | Core HealthKit actor | Fetch samples, routes, heart rate |
+| `ExportService.swift` | Export pipeline actor | Fetch -> format -> write temp file |
+| `NetworkServer.swift` | TLS HTTP server actor | /status, /pair, /health/types, /health/data |
+| `BackgroundSyncService.swift` | BGTask + observer queries | Orchestrates sync + CloudKit + automations |
+| `AutomationScheduler.swift` | Automation trigger engine | HKObserverQuery + interval timers |
 
 ## Metrics
 
 <!-- Project health indicators -->
-- **Tests:** 541 unit tests passing, 9/9 UI tests expected passing (44 test files)
-- **Test Coverage:** ~90% file coverage (up from 14%)
-- **Build:** Passing (iOS, 0 errors, 0 fatalError calls)
+- **Source Files:** 85 Swift files across 15 directories
+- **Health Data Types:** 180+ (quantity, category, correlation, characteristic, workout)
+- **Tests:** 541 unit tests, 9 UI tests (44 test files)
+- **Test Coverage:** ~90% file coverage
+- **Build:** Passing (iOS + macOS Catalyst, 0 errors)
 - **App Store Readiness:** HealthKit entitlement, camera description, encryption declaration, device capabilities — all added
-- **Accessibility:** ~90%+ (labels/identifiers on all automation forms and settings views)
-- **UI Polish:** Applied (card shadows, colored icons, animated indicators, styled empty states)
+- **Accessibility:** ~90%+ (labels/identifiers on all interactive elements)
+- **Export Formats:** 4 (JSON flat, JSON grouped, CSV, GPX)
+- **Automation Types:** 5 (REST, MQTT, Home Assistant, Cloud Storage, Calendar)
+- **Siri Shortcuts:** 3 (Get value, Sync, Export)
+- **API Endpoints:** 4 (/status, /api/v1/pair, /health/types, /health/data)
 - **Last Successful Build:** 2026-02-22
 
 ---
