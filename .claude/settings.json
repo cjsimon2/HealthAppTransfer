@@ -88,28 +88,6 @@
         ]
       }
     ],
-    "TeammateIdle": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/teammate-idle.py",
-            "timeout": 5000
-          }
-        ]
-      }
-    ],
-    "TaskCompleted": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/task-completed.py",
-            "timeout": 5000
-          }
-        ]
-      }
-    ],
     "SubagentStop": [
       {
         "hooks": [
@@ -121,42 +99,6 @@
         ]
       }
     ],
-    "PreCompact": [
-      {
-        "matcher": "auto",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/context-monitor.py",
-            "timeout": 10000
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/safety-check.py",
-            "timeout": 5000
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/state-tracker.py",
-            "timeout": 10000
-          }
-        ]
-      }
-    ],
     "PostToolUseFailure": [
       {
         "matcher": "Bash",
@@ -164,27 +106,6 @@
           {
             "type": "command",
             "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/tool-failure-tracker.py",
-            "timeout": 10000
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/context-monitor.py",
-            "timeout": 10000
-          },
-          {
-            "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/session-logger.py",
-            "timeout": 10000
-          },
-          {
-            "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/verify-completion.py",
             "timeout": 10000
           }
         ]
