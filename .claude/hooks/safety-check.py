@@ -2,121 +2,62 @@
 """Pre-execution safety check for dangerous commands.
 
 This hook checks bash commands before execution to prevent
-potentially dangerous operations. Uses the hookSpecificOutput
-PreToolUse schema (v2.1.9+) for all decisions: deny dangerous
-commands, allow safe ones with optional additionalContext.
+potentially dangerous operations.
 """
 
 import json
 import re
 import sys
 
+
 # Patterns that indicate potentially dangerous commands
+# (pattern, reason, guidance) — guidance is injected via additionalContext
 DANGEROUS_PATTERNS = [
-    (r"rm\s+-rf\s+/", "Recursive delete from root"),
-    (r"rm\s+-rf\s+~", "Recursive delete from home"),
-    (r"rm\s+-rf\s+\*", "Recursive delete with wildcard"),
-    (r"sudo\s+rm", "Sudo delete operation"),
-    (r">\s*/dev/sd", "Write to disk device"),
-    (r"mkfs\.", "Filesystem format command"),
-    (r"dd\s+if=.*of=/dev", "Direct disk write"),
-    (r"chmod\s+-R\s+777", "Recursive world-writable permissions"),
-    (r":()\{\s*:\|:&\s*\};:", "Fork bomb"),
-    (r"curl.*\|\s*bash", "Pipe curl to bash"),
-    (r"wget.*\|\s*bash", "Pipe wget to bash"),
+    (r"rm\s+-rf\s+/", "Recursive delete from root", "Use a targeted path instead of /. Consider moving to trash with `mv` first."),
+    (r"rm\s+-rf\s+~", "Recursive delete from home", "Use a specific subdirectory path instead of ~."),
+    (r"rm\s+-rf\s+\*", "Recursive delete with wildcard", "List files first with `ls`, then delete specific targets."),
+    (r"sudo\s+rm", "Sudo delete operation", "Avoid sudo rm. Use specific paths and confirm with `ls` first."),
+    (r">\s*/dev/sd", "Write to disk device", "Do not write directly to block devices."),
+    (r"mkfs\.", "Filesystem format command", "Filesystem formatting is destructive and irreversible."),
+    (r"dd\s+if=.*of=/dev", "Direct disk write", "dd to block devices is irreversible. Double-check the target device."),
+    (r"chmod\s+-R\s+777", "Recursive world-writable permissions", "Use minimal permissions (e.g., 755 for dirs, 644 for files)."),
+    (r":()\{\s*:\|:&\s*\};:", "Fork bomb", "This is a fork bomb that will crash the system."),
+    (r"curl.*\|\s*bash", "Pipe curl to bash", "Download the script first, review it, then execute."),
+    (r"wget.*\|\s*bash", "Pipe wget to bash", "Download the script first, review it, then execute."),
 ]
 
-# SQL patterns
+# SQL patterns: (pattern, reason, guidance)
 SQL_DANGEROUS = [
-    (r"DROP\s+TABLE", "SQL DROP TABLE"),
-    (r"DROP\s+DATABASE", "SQL DROP DATABASE"),
-    (r"TRUNCATE\s+TABLE", "SQL TRUNCATE"),
-    (r"DELETE\s+FROM.*WHERE\s+1\s*=\s*1", "SQL DELETE all rows"),
-    (r"DELETE\s+FROM(?!.*WHERE)", "SQL DELETE without WHERE"),
-]
-
-# Patterns that warrant safety context (not blocked, but noted)
-CAUTION_PATTERNS = [
-    (r"rm\s+-r", "Recursive delete — verify target path is correct"),
-    (r"git\s+reset\s+--hard", "Hard reset discards uncommitted changes"),
-    (r"git\s+push\s+.*--force", "Force push rewrites remote history"),
-    (r"git\s+clean\s+-[fd]", "Git clean permanently removes untracked files"),
-    (r"pip\s+install\s+(?!-r\b)(?!--)", "Installing package — verify source is trusted"),
-    (r"npm\s+install\s+(?!--save-dev)", "Installing package — verify source is trusted"),
-    (r"chmod\s+", "Changing file permissions"),
-    (r"docker\s+rm", "Removing Docker container"),
-    (r"docker\s+system\s+prune", "Docker prune removes unused data"),
+    (r"DROP\s+TABLE", "SQL DROP TABLE", "Back up the table before dropping. Use DROP TABLE IF EXISTS."),
+    (r"DROP\s+DATABASE", "SQL DROP DATABASE", "Back up the database first. This is irreversible."),
+    (r"TRUNCATE\s+TABLE", "SQL TRUNCATE", "Consider SELECT COUNT(*) first to verify scope."),
+    (r"DELETE\s+FROM.*WHERE\s+1\s*=\s*1", "SQL DELETE all rows", "Use TRUNCATE if you intend to clear the table, or add a specific WHERE clause."),
+    (r"DELETE\s+FROM(?!.*WHERE)", "SQL DELETE without WHERE", "Add a WHERE clause to limit the scope of deletion."),
 ]
 
 
-def _make_output(
-    decision: str,
-    reason: str = "",
-    context: str = "",
-) -> dict:
-    """Build a hookSpecificOutput dict for PreToolUse (v2.1.9+ schema).
-
-    Args:
-        decision: "allow", "deny", or "ask"
-        reason: Explanation for the decision
-        context: Additional context injected into Claude's prompt
-    """
-    output: dict = {
-        "hookEventName": "PreToolUse",
-        "permissionDecision": decision,
-    }
-    if reason:
-        output["permissionDecisionReason"] = reason
-    if context:
-        output["additionalContext"] = context
-    return {"hookSpecificOutput": output}
-
-
-def check_command(command: str) -> tuple[bool, str]:
+def check_command(command: str) -> tuple[bool, str, str]:
     """Check if a command is potentially dangerous.
 
-    Args:
-        command: The command to check
-
     Returns:
-        Tuple of (is_dangerous, reason)
+        Tuple of (is_dangerous, reason, guidance)
     """
-    # Check bash patterns
-    for pattern, reason in DANGEROUS_PATTERNS:
+    for pattern, reason, guidance in DANGEROUS_PATTERNS:
         if re.search(pattern, command, re.IGNORECASE):
-            return True, reason
+            return True, reason, guidance
 
-    # Check SQL patterns
-    for pattern, reason in SQL_DANGEROUS:
+    for pattern, reason, guidance in SQL_DANGEROUS:
         if re.search(pattern, command, re.IGNORECASE):
-            return True, reason
+            return True, reason, guidance
 
-    return False, ""
-
-
-def get_caution_context(command: str) -> str | None:
-    """Get safety context for commands that warrant a caution note.
-
-    Args:
-        command: The command to check
-
-    Returns:
-        Caution message or None if no caution needed
-    """
-    notes = []
-    for pattern, note in CAUTION_PATTERNS:
-        if re.search(pattern, command, re.IGNORECASE):
-            notes.append(note)
-    if notes:
-        return "Safety note: " + "; ".join(notes)
-    return None
+    return False, "", ""
 
 
 def main():
     """Process hook input and check safety."""
     try:
         data = json.loads(sys.stdin.read())
-    except (json.JSONDecodeError, ValueError):
+    except (json.JSONDecodeError, Exception):
         print(json.dumps({}))
         return
 
@@ -128,25 +69,20 @@ def main():
         print(json.dumps({}))
         return
 
-    is_dangerous, reason = check_command(command)
+    is_dangerous, reason, guidance = check_command(command)
 
     if is_dangerous:
-        result = _make_output(
-            decision="deny",
-            reason=f"Potentially dangerous command blocked: {reason}",
-        )
+        print(json.dumps({
+            "hookSpecificOutput": {
+                "hookEventName": "PreToolUse",
+                "permissionDecision": "deny",
+                "permissionDecisionReason": f"Blocked: {reason}",
+                "additionalContext": f"Command blocked by safety hook: {reason}. {guidance}",
+            }
+        }))
     else:
-        caution = get_caution_context(command)
-        if caution:
-            result = _make_output(
-                decision="allow",
-                reason="Command allowed with safety note",
-                context=caution,
-            )
-        else:
-            result = _make_output(decision="allow")
-
-    print(json.dumps(result))
+        # Allow the command to proceed
+        print(json.dumps({}))
 
 
 if __name__ == "__main__":
