@@ -78,7 +78,7 @@ struct HealthDataDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("Trends")
-                    .font(.headline)
+                    .font(AppTypography.displaySmall)
                     .accessibilityAddTraits(.isHeader)
 
                 Spacer()
@@ -100,7 +100,7 @@ struct HealthDataDetailView: View {
     private var statsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Statistics")
-                .font(.headline)
+                .font(AppTypography.displaySmall)
                 .accessibilityAddTraits(.isHeader)
 
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
@@ -111,11 +111,7 @@ struct HealthDataDetailView: View {
             }
         }
         .padding(16)
-        .background {
-            RoundedRectangle(cornerRadius: 14)
-                .fill(.background)
-                .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
-        }
+        .warmCard()
     }
 
     private func statItem(title: String, value: String) -> some View {
@@ -144,7 +140,7 @@ struct HealthDataDetailView: View {
     private var recentSamplesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Recent Samples")
-                .font(.headline)
+                .font(AppTypography.displaySmall)
                 .accessibilityAddTraits(.isHeader)
 
             VStack(spacing: 0) {

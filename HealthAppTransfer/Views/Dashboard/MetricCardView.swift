@@ -23,11 +23,7 @@ struct MetricCardView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background {
-            RoundedRectangle(cornerRadius: 14)
-                .fill(.background)
-                .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
-        }
+        .warmCard()
         .overlay(alignment: .top) {
             Capsule()
                 .fill(dataType.category.chartColor.gradient)
@@ -49,7 +45,7 @@ struct MetricCardView: View {
                 .foregroundStyle(dataType.category.chartColor)
 
             Text(dataType.displayName)
-                .font(.caption.weight(.medium))
+                .font(AppTypography.captionMedium)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
         }
@@ -58,7 +54,7 @@ struct MetricCardView: View {
     private var latestValueLabel: some View {
         HStack(spacing: 4) {
             Text(latestValue)
-                .font(.title3.bold().monospacedDigit())
+                .font(AppTypography.monoValue)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
 
@@ -72,11 +68,11 @@ struct MetricCardView: View {
         case .up:
             Image(systemName: "arrow.up.right")
                 .font(.caption2.bold())
-                .foregroundStyle(.green)
+                .foregroundStyle(AppColors.secondary)
         case .down:
             Image(systemName: "arrow.down.right")
                 .font(.caption2.bold())
-                .foregroundStyle(.red)
+                .foregroundStyle(AppColors.accent)
         case .flat:
             Image(systemName: "arrow.right")
                 .font(.caption2.bold())

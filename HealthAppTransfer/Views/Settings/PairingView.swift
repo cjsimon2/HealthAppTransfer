@@ -54,7 +54,7 @@ private struct iOSPairingView: View {
         VStack(spacing: 8) {
             Image(systemName: "qrcode")
                 .font(.system(size: 40))
-                .foregroundStyle(.blue)
+                .foregroundStyle(AppColors.primary)
 
             Text("Device Pairing")
                 .font(.title2.bold())
@@ -151,7 +151,7 @@ private struct iOSPairingView: View {
     // MARK: - Helpers
 
     private var countdownColor: Color {
-        viewModel.timeRemaining < 60 ? .red : .secondary
+        viewModel.timeRemaining < 60 ? AppColors.accent : .secondary
     }
 
     private var countdownText: String {
@@ -169,7 +169,7 @@ private struct iOSPairingView: View {
                 .font(.caption)
         }
         .padding(12)
-        .background(.red.opacity(0.1))
+        .background(AppColors.accent.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
@@ -214,7 +214,7 @@ private struct macOSPairingView: View {
         VStack(spacing: 8) {
             Image(systemName: "iphone.and.arrow.forward")
                 .font(.system(size: 40))
-                .foregroundStyle(.blue)
+                .foregroundStyle(AppColors.primary)
 
             Text("Connect to iPhone")
                 .font(.title2.bold())
@@ -254,7 +254,7 @@ private struct macOSPairingView: View {
     private func payloadPreview(_ payload: QRPairingPayload) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Server Found", systemImage: "checkmark.circle.fill")
-                .foregroundStyle(.green)
+                .foregroundStyle(AppColors.secondary)
                 .font(.headline)
 
             Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 4) {
@@ -299,12 +299,12 @@ private struct macOSPairingView: View {
     private var successBanner: some View {
         HStack {
             Image(systemName: "checkmark.circle.fill")
-                .foregroundStyle(.green)
+                .foregroundStyle(AppColors.secondary)
             Text("Successfully paired! You can now transfer health data.")
                 .font(.subheadline)
         }
         .padding(12)
-        .background(.green.opacity(0.1))
+        .background(AppColors.secondary.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
@@ -316,7 +316,7 @@ private struct macOSPairingView: View {
                 .font(.caption)
         }
         .padding(12)
-        .background(.red.opacity(0.1))
+        .background(AppColors.accent.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }

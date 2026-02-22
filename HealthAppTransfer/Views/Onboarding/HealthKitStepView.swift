@@ -36,11 +36,11 @@ struct HealthKitStepView: View {
         VStack(spacing: 16) {
             Image(systemName: "heart.fill")
                 .font(.system(size: 64))
-                .foregroundStyle(.red)
+                .foregroundStyle(AppColors.accent)
                 .accessibilityHidden(true)
 
             Text("Health Data Access")
-                .font(.title.bold())
+                .font(AppTypography.displayLarge)
                 .multilineTextAlignment(.center)
 
             Text("HealthAppTransfer needs read access to your health data so you can browse, export, and transfer it.")
@@ -68,13 +68,13 @@ struct HealthKitStepView: View {
                 .padding(.top, 4)
         }
         .padding(20)
-        .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 16))
+        .background(AppColors.surfaceElevated, in: RoundedRectangle(cornerRadius: 16))
     }
 
     private func dataTypeRow(icon: String, text: String) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .foregroundStyle(.tint)
+                .foregroundStyle(AppColors.primary)
                 .frame(width: 24)
                 .accessibilityHidden(true)
 
@@ -89,7 +89,7 @@ struct HealthKitStepView: View {
             if isAuthorized {
                 Label("Access Granted", systemImage: "checkmark.circle.fill")
                     .font(.headline)
-                    .foregroundStyle(.green)
+                    .foregroundStyle(AppColors.secondary)
             } else if !HealthKitService.isAvailable {
                 Text("HealthKit is not available on this device.")
                     .font(.subheadline)

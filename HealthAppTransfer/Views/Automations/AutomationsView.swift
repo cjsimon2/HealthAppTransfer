@@ -108,12 +108,12 @@ struct AutomationsView: View {
 
             Image(systemName: "bolt.horizontal.fill")
                 .font(.system(size: 56))
-                .foregroundStyle(.orange.opacity(0.6))
+                .foregroundStyle(AppColors.accent.opacity(0.6))
                 .symbolRenderingMode(.hierarchical)
                 .accessibilityHidden(true)
 
             Text("No Automations")
-                .font(.title2.bold())
+                .font(AppTypography.displayMedium)
 
             Text("Automatically push health data to REST APIs, MQTT brokers, iCloud Drive, and more.")
                 .font(.subheadline)
@@ -293,10 +293,10 @@ struct AutomationsView: View {
     private func automationColor(_ automation: AutomationConfiguration) -> Color {
         switch automation.automationType {
         case "mqtt": return .purple
-        case "cloud_storage": return .blue
-        case "calendar": return .red
-        case "home_assistant": return .cyan
-        default: return .orange
+        case "cloud_storage": return AppColors.primary
+        case "calendar": return AppColors.accent
+        case "home_assistant": return AppColors.secondary
+        default: return AppColors.accent
         }
     }
 

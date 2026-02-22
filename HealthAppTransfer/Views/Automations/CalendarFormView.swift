@@ -85,7 +85,7 @@ struct CalendarFormView: View {
                 }
             } icon: {
                 Image(systemName: "figure.run")
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(AppColors.accent)
             }
             .accessibilityElement(children: .combine)
             .accessibilityIdentifier("calendarForm.infoSection")

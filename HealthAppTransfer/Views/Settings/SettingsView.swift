@@ -19,7 +19,7 @@ struct SettingsView: View {
                 NavigationLink {
                     SyncSettingsView(healthKitService: healthKitService)
                 } label: {
-                    settingsRow("Sync Settings", icon: "arrow.triangle.2.circlepath", color: .blue)
+                    settingsRow("Sync Settings", icon: "arrow.triangle.2.circlepath", color: AppColors.primary)
                 }
                 .accessibilityIdentifier("settings.syncSettings")
             } header: {
@@ -30,14 +30,14 @@ struct SettingsView: View {
                 NavigationLink {
                     PairingView(viewModel: pairingViewModel)
                 } label: {
-                    settingsRow("Pair Device", icon: "qrcode", color: .orange)
+                    settingsRow("Pair Device", icon: "qrcode", color: AppColors.accent)
                 }
                 .accessibilityIdentifier("settings.pairDevice")
 
                 NavigationLink {
                     PairedDevicesView(viewModel: pairingViewModel)
                 } label: {
-                    settingsRow("Paired Devices", icon: "link", color: .green)
+                    settingsRow("Paired Devices", icon: "link", color: AppColors.secondary)
                 }
                 .accessibilityIdentifier("settings.pairedDevices")
             } header: {
@@ -49,7 +49,7 @@ struct SettingsView: View {
                     LANSyncView(viewModel: lanSyncViewModel)
                 } label: {
                     HStack {
-                        settingsIconBadge("wifi", color: .purple)
+                        settingsIconBadge("wifi", color: AppColors.primary)
                         Text("LAN Sync")
                         Spacer()
                         connectionStatusBadge
@@ -65,7 +65,7 @@ struct SettingsView: View {
                 NavigationLink {
                     SecuritySettingsView(viewModel: securitySettingsViewModel)
                 } label: {
-                    settingsRow("Security", icon: "lock.shield", color: .red)
+                    settingsRow("Security", icon: "lock.shield", color: AppColors.accent)
                 }
                 .accessibilityIdentifier("settings.security")
             } header: {
@@ -74,7 +74,7 @@ struct SettingsView: View {
 
             Section {
                 HStack(spacing: 12) {
-                    settingsIconBadge("info.circle", color: .gray)
+                    settingsIconBadge("info.circle", color: AppColors.textSecondary)
                     Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0")")
                         .foregroundStyle(.secondary)
                 }

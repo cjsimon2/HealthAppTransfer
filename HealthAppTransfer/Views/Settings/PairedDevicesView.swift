@@ -73,7 +73,7 @@ struct PairedDevicesView: View {
         HStack(spacing: 12) {
             Image(systemName: device.platform == "macOS" ? "desktopcomputer" : "iphone")
                 .font(.title3)
-                .foregroundStyle(.blue)
+                .foregroundStyle(AppColors.primary)
                 .frame(width: 32)
                 .accessibilityHidden(true)
 
@@ -85,10 +85,10 @@ struct PairedDevicesView: View {
                     if !device.isAuthorized {
                         Text("Revoked")
                             .font(.caption2)
-                            .foregroundStyle(.red)
+                            .foregroundStyle(AppColors.accent)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(.red.opacity(0.1))
+                            .background(AppColors.accent.opacity(0.1))
                             .clipShape(Capsule())
                     }
                 }
@@ -105,7 +105,7 @@ struct PairedDevicesView: View {
                     Task { await viewModel.revokeDevice(device, modelContext: modelContext) }
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.red.opacity(0.6))
+                        .foregroundStyle(AppColors.accent.opacity(0.6))
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Revoke \(device.name)")

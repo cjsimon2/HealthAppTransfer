@@ -1,35 +1,45 @@
-# Session Handoff - 2026-02-22
+# Session Handoff - 2026-02-22 (UI Overhaul)
 
 ## Completed This Session
 
-- **App icon replaced**: New illustrated clipboard-heart design (1024x1024 PNG)
-- **Comprehensive README.md created**: Architecture, API docs, export formats, automations, privacy, testing
-- **STATE.md expanded**: Key decisions, codebase patterns, gotchas, important files, expanded metrics
-- **All changes committed and pushed** to `main`
+### Wes Anderson UI Overhaul — All 10 phases done
 
-## Previous Session (2026-02-21) Completed
+**5 new Theme files** in `HealthAppTransfer/Theme/`:
+- `AppColors.swift` — Adaptive light/dark tokens (ochre gold, terracotta, sage, aged paper)
+- `AppTypography.swift` — Serif display + sans body fonts (New York + SF Pro)
+- `AppLayout.swift` — Corner radii, shadow params, spacing scale
+- `ChartColors.swift` — Warm `chartColor` for all 17 health categories
+- `ViewModifiers.swift` — `.warmCard()`, button styles, `PaperGrainOverlay`
 
-- App Store audit fixes (entitlements, Info.plist, fatalErrors)
-- GPX export hardening (double-resume guard, altitude filter, HR rounding)
-- UI test reliability (onboarding bypass via launch argument)
-- Heart rate data added to GPX export
-- UI/UX polish across 10 views
-- 541 unit tests + 9 UI tests (44 test files, ~90% coverage)
-- Accessibility labels on all interactive elements
+**25 modified view files** — replaced system colors with warm tokens:
+- App tint `.red` → `AppColors.primary`, checkmarks `.blue` → `AppColors.primary`
+- Trend up `.green` → `AppColors.secondary`, trend down `.red` → `AppColors.accent`
+- Cards use `.warmCard()`, root has `PaperGrainOverlay()`, headers use serif fonts
+- Semantic colors (connection status, error indicators) kept standard
+
+**Project updated**: `project.pbxproj` has Theme group with all 5 file refs
+
+## Not Yet Done
+- **Build not verified** — Cmd+B in Xcode needed to confirm compile
+- **SyncSettingsView.swift / SecuritySettingsView.swift** — verify decorative colors were saved (check git diff)
+- **Visual QA** — run in Simulator (light mode first, then dark mode)
+- **Accessibility** — toggle Reduce Transparency, verify grain disappears
+- **No commits made** — all changes unstaged
+
+## Key Reference Files
+- `style.md` — Complete style guide with all token values and usage
+- `style_plan.md` — Implementation plan with migration patterns
+- `CLAUDE.md` — Project conventions
+
+## Previous Sessions
+- 2026-02-22: App icon, README, STATE.md, all committed
+- 2026-02-21: App Store audit, GPX hardening, UI tests, 541 unit tests, accessibility
 
 ## Blockers
-
 None.
 
 ## Next Steps
-
-1. Run full test suite on device to verify HealthKit integration
-2. TestFlight build for real-world testing
-3. App Store submission preparation
-4. Consider adding watchOS companion app
-
-## Git Status
-
-- Branch: `main`
-- Last commit: `8770a51` — chore: update STATE.md with latest completed task
-- Working tree: clean (except auto-updated STATE.md)
+1. Build in Xcode (Cmd+B) to verify no compile errors
+2. Run in Simulator — check light mode then dark mode
+3. Commit all changes
+4. Run full test suite to verify no regressions

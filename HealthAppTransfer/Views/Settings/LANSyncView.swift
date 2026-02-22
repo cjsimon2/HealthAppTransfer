@@ -118,7 +118,7 @@ struct LANSyncView: View {
         HStack(spacing: 12) {
             Image(systemName: "iphone")
                 .font(.title3)
-                .foregroundStyle(.blue)
+                .foregroundStyle(AppColors.primary)
                 .frame(width: 32)
                 .accessibilityHidden(true)
 
@@ -221,7 +221,7 @@ struct LANSyncView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.green.opacity(0.05))
+        .background(AppColors.secondary.opacity(0.05))
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Last sync: \(result.typesAvailable) types, \(result.samplesFetched) samples, \(String(format: "%.1f", result.duration)) seconds")
@@ -239,7 +239,7 @@ struct LANSyncView: View {
                 .font(.caption)
         }
         .padding(12)
-        .background(.red.opacity(0.1))
+        .background(AppColors.accent.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Error: \(message)")

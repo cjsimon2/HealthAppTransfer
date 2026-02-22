@@ -28,11 +28,11 @@ struct WelcomeStepView: View {
         VStack(spacing: 16) {
             Image(systemName: "heart.text.square.fill")
                 .font(.system(size: 72))
-                .foregroundStyle(.tint)
+                .foregroundStyle(AppColors.primary)
                 .accessibilityHidden(true)
 
             Text("Welcome to HealthAppTransfer")
-                .font(.title.bold())
+                .font(AppTypography.displayLarge)
                 .multilineTextAlignment(.center)
 
             Text("Securely view, export, and transfer your Apple Health data between devices.")
@@ -70,14 +70,14 @@ struct WelcomeStepView: View {
             )
         }
         .padding(20)
-        .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 16))
+        .background(AppColors.surfaceElevated, in: RoundedRectangle(cornerRadius: 16))
     }
 
     private func featureRow(icon: String, title: String, description: String) -> some View {
         HStack(alignment: .top, spacing: 16) {
             Image(systemName: icon)
                 .font(.title3)
-                .foregroundStyle(.tint)
+                .foregroundStyle(AppColors.primary)
                 .frame(width: 32)
                 .accessibilityHidden(true)
 

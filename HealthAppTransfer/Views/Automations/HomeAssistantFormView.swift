@@ -182,7 +182,7 @@ struct HomeAssistantFormView: View {
                                     Spacer()
                                     if enabledTypes.contains(type.rawValue) {
                                         Image(systemName: "checkmark")
-                                            .foregroundStyle(.blue)
+                                            .foregroundStyle(AppColors.primary)
                                     }
                                 }
                             }

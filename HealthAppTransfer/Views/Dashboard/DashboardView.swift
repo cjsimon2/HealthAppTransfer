@@ -94,12 +94,12 @@ struct DashboardView: View {
 
             Image(systemName: "heart.text.square.fill")
                 .font(.system(size: 56))
-                .foregroundStyle(.red.opacity(0.6))
+                .foregroundStyle(AppColors.primary.opacity(0.6))
                 .symbolRenderingMode(.hierarchical)
                 .accessibilityHidden(true)
 
             Text("No Health Data")
-                .font(.title2.bold())
+                .font(AppTypography.displayMedium)
 
             #if os(macOS)
             Text("Sync health data from your iPhone via CloudKit or LAN to see your overview.")
@@ -219,7 +219,7 @@ private struct MetricPickerSheet: View {
 
                                     if selected.contains(type) {
                                         Image(systemName: "checkmark")
-                                            .foregroundStyle(.blue)
+                                            .foregroundStyle(AppColors.primary)
                                     }
                                 }
                             }

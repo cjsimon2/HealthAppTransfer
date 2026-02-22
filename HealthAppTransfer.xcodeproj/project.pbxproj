@@ -161,6 +161,11 @@
 		10E6A8A4D2110E5EFFE14E58 /* SyncedHealthSampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AECFCCF946559667336D7FB /* SyncedHealthSampleTests.swift */; };
 		FFB267A300204E560A722954 /* WidgetDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9A861AE854E0CE0A9529C4 /* WidgetDataStoreTests.swift */; };
 		B5C9729DB05AC7D346F8FDC8 /* WidgetMetricSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC08589E34D0A1F30EA4FDE5 /* WidgetMetricSnapshotTests.swift */; };
+		1DD3444F044D066FF0907FE4 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = F518AA2DB68FD64AB79B50D2 /* AppColors.swift */; };
+		0694A74A79F3D4F9E3769C57 /* AppLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F30E10C2171B870396866C /* AppLayout.swift */; };
+		B935C3B41D3756D26805F4E9 /* AppTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F266E5B21CD97F822F83120 /* AppTypography.swift */; };
+		8001AA85FB925A0CE1AEA44D /* ChartColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37B302898E9B67B800ECB62 /* ChartColors.swift */; };
+		3704C031E8FD2310A336D688 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEB736AB80AEA28D8CAE3A3F /* ViewModifiers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -356,6 +361,11 @@
 		7AECFCCF946559667336D7FB /* SyncedHealthSampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncedHealthSampleTests.swift; sourceTree = "<group>"; };
 		0D9A861AE854E0CE0A9529C4 /* WidgetDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataStoreTests.swift; sourceTree = "<group>"; };
 		EC08589E34D0A1F30EA4FDE5 /* WidgetMetricSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetMetricSnapshotTests.swift; sourceTree = "<group>"; };
+		F518AA2DB68FD64AB79B50D2 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
+		D3F30E10C2171B870396866C /* AppLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLayout.swift; sourceTree = "<group>"; };
+		6F266E5B21CD97F822F83120 /* AppTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTypography.swift; sourceTree = "<group>"; };
+		F37B302898E9B67B800ECB62 /* ChartColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartColors.swift; sourceTree = "<group>"; };
+		FEB736AB80AEA28D8CAE3A3F /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -397,6 +407,7 @@
 				B2E58AEEFCB9E0AEE59282CF /* Models */,
 				082B39EB7BA0F220A713577D /* Resources */,
 				7490B0A81A9E253306D050FE /* Services */,
+				7999BCA23EC4E9B2C00838D3 /* Theme */,
 				DA1415C2B3227A650E462455 /* ViewModels */,
 				EFB46E76D4F25665DA2B7050 /* Views */,
 			);
@@ -778,6 +789,18 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
+		7999BCA23EC4E9B2C00838D3 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				F518AA2DB68FD64AB79B50D2 /* AppColors.swift */,
+				D3F30E10C2171B870396866C /* AppLayout.swift */,
+				6F266E5B21CD97F822F83120 /* AppTypography.swift */,
+				F37B302898E9B67B800ECB62 /* ChartColors.swift */,
+				FEB736AB80AEA28D8CAE3A3F /* ViewModifiers.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -952,7 +975,12 @@
 				C73C60797122B46FA4400A41 /* CalendarAutomation.swift in Sources */,
 				773F5E50B1F79C38325FFE60 /* CalendarFormView.swift in Sources */,
 				4511B1209E4FDA8B8D74A4B5 /* CertificateService.swift in Sources */,
+				1DD3444F044D066FF0907FE4 /* AppColors.swift in Sources */,
+				0694A74A79F3D4F9E3769C57 /* AppLayout.swift in Sources */,
+				B935C3B41D3756D26805F4E9 /* AppTypography.swift in Sources */,
+				8001AA85FB925A0CE1AEA44D /* ChartColors.swift in Sources */,
 				C62799B3C2F261489EBF4DBA /* ChartStyleModifier.swift in Sources */,
+				3704C031E8FD2310A336D688 /* ViewModifiers.swift in Sources */,
 				62D93780E6BA3A25AD9971E5 /* ChartViewModel.swift in Sources */,
 				7E103BA6B20841330DD1A72B /* CloudKitRecordMapper.swift in Sources */,
 				929A0D241BC8AEF546C3DD25 /* CloudKitSyncService.swift in Sources */,

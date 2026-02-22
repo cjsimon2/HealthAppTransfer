@@ -89,14 +89,14 @@ struct OnboardingView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 16)
         }
-        .background(.ultraThinMaterial)
+        .background(AppColors.surface.opacity(0.95))
     }
 
     private var pageIndicator: some View {
         HStack(spacing: 8) {
             ForEach(viewModel.activeSteps, id: \.self) { step in
                 Capsule()
-                    .fill(step == viewModel.currentStep ? Color.accentColor : Color.secondary.opacity(0.3))
+                    .fill(step == viewModel.currentStep ? AppColors.primary : AppColors.textSecondary.opacity(0.3))
                     .frame(width: step == viewModel.currentStep ? 24 : 8, height: 8)
                     .animation(.easeInOut(duration: 0.25), value: viewModel.currentStep)
             }

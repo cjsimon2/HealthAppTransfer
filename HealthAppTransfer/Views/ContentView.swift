@@ -65,6 +65,8 @@ struct ContentView: View {
                 lockedOverlay
             }
         }
+        .background(AppColors.surface.ignoresSafeArea())
+        .overlay(PaperGrainOverlay())
         .task {
             await pairingViewModel.pairingService.loadPersistedTokens()
             await requestHealthKitAuthIfNeeded()
@@ -99,13 +101,13 @@ struct ContentView: View {
             VStack(spacing: 28) {
                 Image(systemName: "lock.shield.fill")
                     .font(.system(size: 72))
-                    .foregroundStyle(.red.opacity(0.5))
+                    .foregroundStyle(AppColors.primary.opacity(0.5))
                     .symbolRenderingMode(.hierarchical)
                     .accessibilityHidden(true)
 
                 VStack(spacing: 8) {
                     Text("HealthAppTransfer is Locked")
-                        .font(.title2.weight(.bold))
+                        .font(AppTypography.displayMedium)
 
                     Text("Authenticate to access your health data")
                         .font(.subheadline)
@@ -129,11 +131,7 @@ struct ContentView: View {
     }
 
     private var lockedBackground: Color {
-        #if canImport(UIKit)
-        Color(.systemBackground)
-        #else
-        Color(.windowBackgroundColor)
-        #endif
+        AppColors.surface
     }
 
     // MARK: - Biometric Lock

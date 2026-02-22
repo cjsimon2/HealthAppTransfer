@@ -34,11 +34,11 @@ struct QuickSetupStepView: View {
         VStack(spacing: 16) {
             Image(systemName: "slider.horizontal.3")
                 .font(.system(size: 64))
-                .foregroundStyle(.tint)
+                .foregroundStyle(AppColors.primary)
                 .accessibilityHidden(true)
 
             Text("Quick Setup")
-                .font(.title.bold())
+                .font(AppTypography.displayLarge)
                 .multilineTextAlignment(.center)
 
             Text("Pick the health categories you care about most for your dashboard, and choose whether to enable background sync.")
@@ -69,7 +69,7 @@ struct QuickSetupStepView: View {
             }
         }
         .padding(20)
-        .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 16))
+        .background(AppColors.surfaceElevated, in: RoundedRectangle(cornerRadius: 16))
     }
 
     private func metricChip(_ metric: OnboardingViewModel.DashboardMetric) -> some View {
@@ -90,19 +90,19 @@ struct QuickSetupStepView: View {
             .padding(.vertical, 10)
             .padding(.horizontal, 4)
             .background(
-                metric.isSelected ? Color.accentColor.opacity(0.15) : Color.clear,
+                metric.isSelected ? AppColors.primary.opacity(0.15) : Color.clear,
                 in: RoundedRectangle(cornerRadius: 10)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .strokeBorder(
-                        metric.isSelected ? Color.accentColor : Color.secondary.opacity(0.3),
+                        metric.isSelected ? AppColors.primary : AppColors.textSecondary.opacity(0.3),
                         lineWidth: metric.isSelected ? 2 : 1
                     )
             )
         }
         .buttonStyle(.plain)
-        .foregroundStyle(metric.isSelected ? Color.accentColor : .primary)
+        .foregroundStyle(metric.isSelected ? AppColors.primary : AppColors.textPrimary)
         .accessibilityLabel("\(metric.category.displayName), \(metric.isSelected ? "selected" : "not selected")")
         .accessibilityAddTraits(metric.isSelected ? .isSelected : [])
     }
@@ -121,6 +121,6 @@ struct QuickSetupStepView: View {
             }
         }
         .padding(20)
-        .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 16))
+        .background(AppColors.surfaceElevated, in: RoundedRectangle(cornerRadius: 16))
     }
 }

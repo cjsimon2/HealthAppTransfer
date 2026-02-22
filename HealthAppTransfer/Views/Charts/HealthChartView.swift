@@ -206,7 +206,7 @@ struct HealthChartView: View {
                 .font(.headline)
         }
         .padding(8)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8))
+        .background(AppColors.surfaceElevated, in: RoundedRectangle(cornerRadius: 8))
         .accessibilityElement(children: .combine)
         .accessibilityLabel(
             "\(viewModel.dataType.displayName): \(String(format: "%.1f", value)) \(viewModel.displayUnit)"
@@ -248,7 +248,7 @@ struct HealthChartView: View {
         VStack(spacing: 12) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 36))
-                .foregroundStyle(.orange)
+                .foregroundStyle(AppColors.accent)
                 .accessibilityHidden(true)
 
             Text("Chart Error")

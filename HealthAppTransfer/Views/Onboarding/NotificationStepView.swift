@@ -37,11 +37,11 @@ struct NotificationStepView: View {
         VStack(spacing: 16) {
             Image(systemName: "bell.badge.fill")
                 .font(.system(size: 64))
-                .foregroundStyle(.orange)
+                .foregroundStyle(AppColors.accent)
                 .accessibilityHidden(true)
 
             Text("Stay Informed")
-                .font(.title.bold())
+                .font(AppTypography.displayLarge)
                 .multilineTextAlignment(.center)
 
             Text("Get notified when transfers complete, sync runs in the background, or a new device pairs.")
@@ -73,14 +73,14 @@ struct NotificationStepView: View {
             )
         }
         .padding(20)
-        .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 16))
+        .background(AppColors.surfaceElevated, in: RoundedRectangle(cornerRadius: 16))
     }
 
     private func benefitRow(icon: String, title: String, description: String) -> some View {
         HStack(alignment: .top, spacing: 16) {
             Image(systemName: icon)
                 .font(.title3)
-                .foregroundStyle(.orange)
+                .foregroundStyle(AppColors.accent)
                 .frame(width: 32)
                 .accessibilityHidden(true)
 
@@ -101,7 +101,7 @@ struct NotificationStepView: View {
             if isAuthorized {
                 Label("Notifications Enabled", systemImage: "checkmark.circle.fill")
                     .font(.headline)
-                    .foregroundStyle(.green)
+                    .foregroundStyle(AppColors.secondary)
             } else {
                 Button {
                     Task { await onAuthorize() }
@@ -116,7 +116,7 @@ struct NotificationStepView: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(.orange)
+                .tint(AppColors.accent)
                 .controlSize(.large)
                 .disabled(isRequesting)
             }

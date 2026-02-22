@@ -299,7 +299,7 @@ private struct TypePickerView: View {
                                 Spacer()
                                 if selectedTypes.contains(type) {
                                     Image(systemName: "checkmark")
-                                        .foregroundStyle(.blue)
+                                        .foregroundStyle(AppColors.primary)
                                         .font(.body.weight(.semibold))
                                 }
                             }

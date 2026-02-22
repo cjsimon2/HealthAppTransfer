@@ -48,12 +48,12 @@ struct HealthDataView: View {
 
             Image(systemName: "list.bullet.clipboard.fill")
                 .font(.system(size: 56))
-                .foregroundStyle(.blue.opacity(0.6))
+                .foregroundStyle(AppColors.primary.opacity(0.6))
                 .symbolRenderingMode(.hierarchical)
                 .accessibilityHidden(true)
 
             Text("No Health Data")
-                .font(.title2.bold())
+                .font(AppTypography.displayMedium)
 
             #if os(macOS)
             Text("Sync health data from your iPhone to browse available types.")
