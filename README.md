@@ -135,10 +135,10 @@ Automations execute on health data changes (HKObserverQuery) or timed intervals:
 
 ```bash
 # Run unit tests (541 tests)
-xcodebuild test -project HealthAppTransfer.xcodeproj -scheme HealthAppTransfer -destination 'platform=iOS Simulator,name=iPhone 16'
+xcodebuild test -project HealthAppTransfer.xcodeproj -scheme HealthAppTransfer -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 
 # Run UI tests (9 tests)
-xcodebuild test -project HealthAppTransfer.xcodeproj -scheme HealthAppTransfer -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:HealthAppTransferUITests
+xcodebuild test -project HealthAppTransfer.xcodeproj -scheme HealthAppTransfer -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:HealthAppTransferUITests
 ```
 
 - **Unit test coverage:** ~90% file coverage across 44 test files

@@ -20,6 +20,7 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ chore: update STATE.md with latest completed task | 2026-02-22 | See commit |
 | ✅ docs: add comprehensive README and update STATE.md | 2026-02-22 | See commit |
 | ✅ fix: resolve App Store audit findings | 2026-02-22 | See commit |
 | ✅ fix: harden GPX export — double-resume guard, altitude filter, HR rounding | 2026-02-22 | See commit |
