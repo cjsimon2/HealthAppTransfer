@@ -104,11 +104,21 @@ _None documented yet. Use `/learn` to record failures._
 
 ### Key Abstractions
 <!-- Important concepts/classes/modules and how they work -->
-_None documented yet._
+- **ServiceContainer** — Struct-based DI container created once in `HealthAppTransferApp.init()`. Holds all actor services. Memberwise init enables test injection; convenience `init()` wires production dependencies. Also provides `@MainActor` ViewModel factory methods.
+- **HealthDataType** — 182-case enum that is the single source of truth for all health data. Static dictionaries (not switches) map rawValue → HKIdentifier, displayName, unit. `kind` property derived from which dictionary contains the type. `groupedByCategory` provides canonical display ordering.
+- **ExportFormatter protocol** — Strategy pattern: `format(samples:options:) throws -> Data`. Four implementations: `JSONv1Formatter` (flat array), `JSONv2Formatter` (grouped by type), `CSVFormatter` (flat table), `GPXFormatter` (separate `format(tracks:)` signature — not conforming to protocol since it needs `[GPXTrack]` not `[HealthSampleDTO]`).
+- **HealthStoreProtocol** — Abstraction over `HKHealthStore` for testability. Provides async methods like `dataExists(for:)` that bypass untestable completion-handler-based HK queries.
+- **SyncedHealthSample** — SwiftData `@Model` that mirrors HealthKit samples for Mac Catalyst (where HealthKit is unavailable). Static `aggregate()` and `recentDTOs()` methods provide the same data shape as HealthKit for view model consumption.
+- **WidgetMetricSnapshot** — Codable struct shared between main app and widget extension via App Groups. Contains metric type, display name, current value, unit, and sparkline values for trend visualization.
 
 ### Integration Points
 <!-- How different parts connect -->
-_None documented yet._
+- **App Launch Chain:** `HealthAppTransferApp.init()` → `ServiceContainer()` → `PersistenceConfiguration.makeModelContainer()` → `BackgroundSyncService` + `AutomationScheduler` → `BackgroundSyncService.registerBackgroundTasks()`. In `.task`: wire automation scheduler → `automationScheduler.start()` → setup observer queries (iOS) or pull CloudKit (macOS/Catalyst).
+- **Background Sync Pipeline:** `BGAppRefreshTask` / `HKObserverQuery` fires → `performSync()` → `requestAuthorization()` → fetch samples per enabled type → update `SyncConfiguration.lastSyncDate` → `cloudKitSync.performSync()` → `automationScheduler.executeAll()`. Live Activity shows progress throughout.
+- **Export Pipeline:** View selects types/format/dates → `ExportService.export()` → fetch DTOs per type → `makeFormatter(for:)` → `formatter.format(samples:options:)` → `writeToTempFile()` → return `ExportResult` with file URL. GPX takes a separate path through `exportGPX()` → fetch workouts → fetch routes → fetch heart rate → `GPXFormatter.format(tracks:)`.
+- **Pairing Flow:** `PairingViewModel.startPairing()` → `NetworkServer.start()` → TLS server listening → `PairingService.generatePairingCode()` → display code/QR → client sends `POST /api/v1/pair` with code → `PairingService.validateCode()` → returns bearer token → client uses token for `/health/types` and `/health/data` requests.
+- **Widget Data Flow:** Main app writes `WidgetMetricSnapshot` array to `WidgetDataStore` (App Groups shared `UserDefaults`) → Widget extension's `HealthMetricProvider` reads cached data → attempts live HealthKit query for fresh values → falls back to cache → renders in widget views.
+- **Automation Trigger Flow:** `AutomationScheduler.reload()` loads enabled `AutomationConfiguration` from SwiftData → sets up `HKObserverQuery` (on-change) and/or `Task.sleep` timers (interval) → fires → `AutomationExecutor.execute(configuration:in:)` → dispatches to concrete automation (REST, MQTT, HomeAssistant, CloudStorage, Calendar).
 
 ### Performance Considerations
 <!-- What affects performance in this codebase -->
@@ -120,11 +130,16 @@ _None documented yet._
 
 ### Library Quirks
 <!-- Unexpected behaviors in dependencies -->
-_None documented yet._
+- **HealthKit:** `HKStatisticsCollection` and `HKStatistics` can't be constructed in tests. `HKCategorySample` for `menstrualFlow` requires `HKMetadataKeyMenstrualCycleStart` metadata. `HKCorrelation` requires at least one `HKSample`. Cumulative types only support `.cumulativeSum`; discrete types only support `.discreteAverage/.min/.max`.
+- **SwiftData:** `ModelConfiguration` defaults to CloudKit integration (rejects `@Attribute(.unique)`) — must set `cloudKitDatabase: .none`. `@Model` classes aren't `Sendable` — snapshot into a Sendable struct before passing to another actor. `persistentModelID` is unset until `save()` — must insert+save before reading.
+- **Network.framework:** `sec_identity_create()` can return nil for malformed identities — must fail hard, not silently continue without TLS.
+- **CocoaMQTT:** Requires `NSObject` for `CocoaMQTTDelegate` — use `@unchecked Sendable` class with `@preconcurrency import CocoaMQTT` instead of an actor.
 
 ### API Patterns
 <!-- How to effectively use external APIs -->
-_None documented yet._
+- **HealthKit Authorization:** `requestAuthorization()` is a no-op if already granted — safe to call defensively before every data fetch. Must call per-platform (iPhone and Mac Catalyst each need their own authorization).
+- **CloudKit:** `CKDatabase.modifyRecords()` has a 400-record limit per operation — batch uploads. `CKServerChangeToken` archived via `NSKeyedArchiver` to persist as `Data` in SwiftData.
+- **BGTaskScheduler:** `register()` must be called before app finishes launching — do it in `App.init()`. Requires matching `BGTaskSchedulerPermittedIdentifiers` in Info.plist and `fetch` in `UIBackgroundModes`.
 
 ## Process Learnings
 

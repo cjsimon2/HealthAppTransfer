@@ -1,32 +1,24 @@
-# Session Handoff - 2026-02-22 (Catalyst Data Fix)
+# Session Handoff - 2026-02-23 (Documentation Sweep)
 
 ## Completed This Session
 
-### Mac Catalyst SwiftData fallback fix (15 files)
+### `/document ALL` — Comprehensive documentation update (3 files)
 
-**Problem:** App showed "Chart Error — Health data is unavailable" on every screen when running on Mac Catalyst. CloudKit synced 608 samples into SwiftData, but all views tried HealthKit and failed.
+**README.md** — Added Mac Catalyst and Widget features, expanded architecture tree with file counts and widget extension, added Widgets section (3 sizes + Live Activity), corrected test count to 550, added design decisions for runtime HealthKit checks and WidgetDataStore.
 
-**Root cause:** `#if os(macOS)` is FALSE on Mac Catalyst (Catalyst compiles as `os(iOS)`). All SwiftData fallback paths in view models were dead code — never compiled on Catalyst.
+**STATE.md** — Fixed source file count (149 total, was 85), added SwiftData Models/ViewModels/Widget metrics, deduplicated completed tasks (40+ → 15), populated session history table, added 4 important files (PairingService, ContentView, SchemaVersions, WidgetDataStore).
 
-**Fix:** Replaced compile-time `#if os(macOS)` with runtime `!HealthKitService.isAvailable` checks in 6 view models. Added shared `SyncedHealthSample.aggregate()` and `.recentDTOs()` static methods to consolidate SwiftData aggregation. Fixed empty state messages in DashboardView and HealthDataView.
+**LEARNINGS.md** — Filled in Key Abstractions (6 entries), Integration Points (6 data flow paths), Library Quirks (4 dependencies), API Patterns (3 entries). Previously empty sections now contain verified codebase knowledge.
 
-### Previous session: Deep Debug — 13 bugs across 16 files (committed)
+No code changes — source files already had comprehensive `///` docstrings on all public APIs.
 
 ## Build & Test Results
 
-- **Build:** Passing (iOS Simulator + Mac Catalyst, 0 errors)
-- **Tests:** 550 unit tests passed, 0 failures
-
-## Not Yet Done (Low Priority — 4 items)
-
-- `isAuthorized` dead flag in HealthKitService (unused, harmless)
-- Duplicate `HKHealthStore` in BackgroundSyncService (functional, un-mockable)
-- `mapCorrelation` silent nil for unknown types (only 2 types exist)
-- Missing `NSHealthUpdateUsageDescription` (only needed if write access added)
+- No code changes, build/test status unchanged from previous session
+- **Build:** Passing (iOS + macOS Catalyst, 0 errors)
+- **Tests:** 550 unit tests, 9 UI tests
 
 ## Next Steps
 
-1. Test on real Mac Catalyst device — verify synced data now displays in charts/dashboard
-2. Test on real iPhone — verify no regressions in HealthKit data loading
-3. Test pairing flow end-to-end after Catalyst device name fix
-4. Verify background sync fires with new entitlement (iPhone only)
+1. No blockers — documentation is current and accurate
+2. Consider filling in remaining empty LEARNINGS.md sections (Effective Workflows, Communication Patterns, Session Insights) as patterns emerge over future sessions

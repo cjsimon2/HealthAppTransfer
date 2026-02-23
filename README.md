@@ -8,11 +8,13 @@ An iOS/macOS app for exporting, syncing, and automating Apple Health data. Built
 - **Multi-Format Export** — Export health data as JSON (flat or grouped), CSV, or GPX (with workout routes and heart rate).
 - **Device-to-Device Transfer** — TLS-secured local network server with QR code pairing and bearer token auth.
 - **CloudKit Sync** — Delta sync via CKServerChangeToken between iOS and macOS using iCloud private database.
-- **Background Sync** — BGTaskScheduler + HKObserverQuery for automatic hourly sync with Live Activity progress.
+- **Background Sync** — BGTaskScheduler + HKObserverQuery for automatic hourly sync with Live Activity progress on Dynamic Island and Lock Screen.
+- **Home Screen Widgets** — WidgetKit widgets (small, medium, large) showing configurable health metrics with sparkline charts, powered by live HealthKit queries with cached fallback.
 - **Automations** — Configurable triggers (on-change or interval) that push health data to REST APIs, MQTT brokers, Home Assistant, cloud storage, or Calendar events.
 - **Siri Shortcuts** — App Intents for "Get latest value", "Sync now", and "Export health data".
 - **Biometric Lock** — Optional Face ID / Touch ID gate on app launch.
 - **Bonjour Discovery** — Automatic LAN discovery via `_healthsync._tcp` so Mac clients find the iOS server.
+- **Mac Catalyst** — Runs natively on macOS via Mac Catalyst with NavigationSplitView sidebar, macOS menu commands (Cmd+Shift+R sync, Cmd+E export), and SwiftData fallback for health data (since HealthKit is unavailable on Mac).
 
 ## Requirements
 
@@ -45,31 +47,42 @@ An iOS/macOS app for exporting, syncing, and automating Apple Health data. Built
 MVVM with Combine, using Swift actors for thread-safe service layer.
 
 ```
-HealthAppTransfer/
-├── App/                        # App entry point, entitlements, Info.plist
-├── Views/                      # SwiftUI views (MVVM)
-│   ├── Dashboard/              # Health metrics dashboard
-│   ├── HealthData/             # Browse & detail views for all types
-│   ├── Export/                 # Quick export UI
-│   ├── Automations/            # REST, MQTT, Calendar, Cloud, Home Assistant forms
-│   ├── Settings/               # Pairing, LAN sync, security, sync config
-│   ├── Onboarding/             # Welcome, HealthKit, notification, quick-setup steps
-│   └── Charts/                 # Swift Charts + MapKit workout route view
-├── ViewModels/                 # @MainActor ObservableObject view models
-├── Models/                     # HealthDataType (180+ types), HealthSampleDTO, SwiftData models
-│   └── Persistence/            # SwiftData models (SyncConfig, PairedDevice, ExportRecord, etc.)
+HealthAppTransfer/                  # Main app target (99 Swift files)
+├── App/                            # App entry point, entitlements, Info.plist
+├── Views/                          # SwiftUI views (MVVM)
+│   ├── Dashboard/                  # Health metrics dashboard with metric cards
+│   ├── HealthData/                 # Browse & detail views for all types
+│   ├── Export/                     # Quick export UI
+│   ├── Automations/                # REST, MQTT, Calendar, Cloud, Home Assistant forms
+│   ├── Settings/                   # Pairing, LAN sync, security, sync config
+│   ├── Onboarding/                 # Welcome, HealthKit, notification, quick-setup steps
+│   └── Charts/                     # Swift Charts + MapKit workout route view
+├── ViewModels/                     # @MainActor ObservableObject view models (10 files)
+├── Models/                         # HealthDataType (180+ types), HealthSampleDTO, DTOs
+│   └── Persistence/                # SwiftData @Model classes (8 models)
 ├── Services/
-│   ├── HealthKit/              # HealthKitService (actor), BackgroundSyncService, AggregationEngine
-│   ├── Export/                 # ExportService (actor), JSON/CSV/GPX formatters
-│   ├── Network/                # NetworkServer (TLS HTTP), BonjourDiscovery, LANSyncClient
-│   ├── Security/               # PairingService, CertificateService, KeychainStore, BiometricService
-│   ├── Sync/                   # CloudKitSyncService, CloudKitRecordMapper
-│   ├── Automations/            # AutomationScheduler, AutomationExecutor, 5 automation types
-│   ├── Audit/                  # AuditService for security event logging
-│   └── Widget/                 # WidgetDataStore for sharing data with widgets
-├── Intents/                    # App Intents for Siri Shortcuts
-├── Extensions/                 # DER encoder, loggers, network helpers, QR renderer, ShareSheet
-└── Resources/                  # Assets catalog, localization
+│   ├── HealthKit/                  # HealthKitService (actor), BackgroundSyncService, AggregationEngine
+│   ├── Export/                     # ExportService (actor), JSON v1/v2, CSV, GPX formatters
+│   ├── Network/                    # NetworkServer (TLS HTTP), BonjourDiscovery, LANSyncClient
+│   ├── Security/                   # PairingService, CertificateService, KeychainStore, BiometricService
+│   ├── Sync/                       # CloudKitSyncService, CloudKitRecordMapper
+│   ├── Automations/                # AutomationScheduler, AutomationExecutor, 5 automation types
+│   ├── Audit/                      # AuditService for security event logging
+│   └── Widget/                     # WidgetDataStore for sharing data with widgets
+├── Intents/                        # App Intents for Siri Shortcuts (5 files)
+├── Extensions/                     # DER encoder, loggers, network helpers, QR renderer, ShareSheet
+├── Theme/                          # AppColors, AppTypography, AppLayout, ChartColors, ViewModifiers
+└── Resources/                      # Assets catalog, localization
+
+HealthAppTransferWidget/            # Widget extension (5 Swift files)
+├── HealthAppTransferWidgetBundle   # Widget bundle entry point
+├── HealthMetricWidget              # Configurable health metric widget (small/medium/large)
+├── HealthMetricProvider            # AppIntentTimelineProvider with HealthKit queries
+├── HealthWidgetViews               # Widget views: small, medium, large + sparkline
+└── SyncLiveActivity                # Live Activity for background sync progress
+
+HealthAppTransferTests/             # Unit tests (44 files, 550 tests)
+HealthAppTransferUITests/           # UI tests (1 file, 9 tests)
 ```
 
 ### Key Design Decisions
@@ -77,10 +90,12 @@ HealthAppTransfer/
 | Decision | Rationale |
 |----------|-----------|
 | Swift actors for services | Thread-safe access to HealthKit, network, and pairing state without manual locking |
-| ServiceContainer (struct) | Single dependency container created at launch, injected into view hierarchy |
-| SwiftData for persistence | Leverages iCloud sync, schema versioning, and `@Model` for paired devices, sync config, exports |
+| ServiceContainer (struct) | Single dependency container created at launch, injected into view hierarchy; memberwise init for test injection |
+| SwiftData for persistence | Schema versioning via `HealthAppMigrationPlan`, iCloud sync, `@Model` for 8 persistent types |
 | ExportFormatter protocol | Strategy pattern for JSON v1, JSON v2, CSV, and GPX output — easy to add new formats |
 | HealthDataType enum (180+ cases) | Single source of truth mapping app types to HKQuantityTypeIdentifier, display names, categories |
+| Runtime HealthKit checks | `HealthKitService.isAvailable` instead of `#if os(macOS)` — needed because Mac Catalyst compiles as `os(iOS)` |
+| WidgetDataStore (App Groups) | Shared UserDefaults suite for passing health metric snapshots between main app and widget extension |
 
 ## Network API
 
@@ -121,6 +136,29 @@ Automations execute on health data changes (HKObserverQuery) or timed intervals:
 | Cloud Storage | iCloud Drive / Files | Export file to cloud provider |
 | Calendar | Apple Calendar | Create workout events with details |
 
+## Widgets
+
+The app includes a WidgetKit extension with two widget types:
+
+### Health Metric Widget
+
+Configurable widget showing health metrics with sparkline trends. Uses `AppIntentConfiguration` for user-selectable metrics.
+
+| Size | Metrics Shown | Layout |
+|------|--------------|--------|
+| Small | 1 | Single metric with sparkline and value |
+| Medium | Up to 3 | Horizontal layout with dividers |
+| Large | Up to 6 | 2-column grid with header |
+
+Data pipeline: HealthKit live query (today's stats) → cached `WidgetMetricSnapshot` fallback → placeholder data. Refreshes every 15 minutes.
+
+### Sync Live Activity
+
+Shows background sync progress on Dynamic Island and Lock Screen via `ActivityKit`:
+- Compact: sync icon + percentage
+- Expanded: progress bar, current type name, sample count
+- Lock Screen: full progress view with status badge
+
 ## Privacy & Security
 
 - **Read-only HealthKit access** — The app never writes to HealthKit
@@ -134,16 +172,23 @@ Automations execute on health data changes (HKObserverQuery) or timed intervals:
 ## Testing
 
 ```bash
-# Run unit tests (541 tests)
+# Run unit tests (550 tests)
 xcodebuild test -project HealthAppTransfer.xcodeproj -scheme HealthAppTransfer -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 
 # Run UI tests (9 tests)
 xcodebuild test -project HealthAppTransfer.xcodeproj -scheme HealthAppTransfer -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:HealthAppTransferUITests
 ```
 
-- **Unit test coverage:** ~90% file coverage across 44 test files
-- **UI tests:** 9 tests covering onboarding, navigation, export, settings, and dashboard flows
+| Metric | Value |
+|--------|-------|
+| Unit tests | 550 across 44 test files |
+| UI tests | 9 covering onboarding, navigation, export, settings, dashboard |
+| File coverage | ~90% |
+| Simulator | iPhone 17 Pro (no iPhone 16 simulators available) |
+
+- HealthKit queries are tested via `HealthStoreProtocol` — mocks return `[AggregatedSample]` to bypass untestable HK types
 - UI tests use `-UITestingSkipOnboarding` launch argument to bypass the onboarding flow
+- SwiftUI `Picker` in `Form` renders as a `Button` in XCUI — use `app.buttons["identifier"]` to find them
 
 ## License
 
