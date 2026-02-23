@@ -91,9 +91,11 @@ _None documented yet. Use `/learn` to record failures._
 - `.sheet` on Mac Catalyst renders lazy `List` content with zero intrinsic height — the sheet collapses to just the title bar. Fix with `.frame(minWidth: 400, minHeight: 500)` on the sheet content. iPhone sheets expand automatically; Catalyst does not.
 - HealthKit is unavailable on Mac/Mac Catalyst (`HKHealthStore.isHealthDataAvailable() == false`). Any sync or data-fetch UI must check `HealthKitService.isAvailable` before attempting operations and disable buttons accordingly. The error from `requestAuthorization()` on Mac is "Health data is unavailable on this device".
 
+- **`#if os(macOS)` is FALSE on Mac Catalyst.** Catalyst compiles as `os(iOS)` with `targetEnvironment(macCatalyst)`. Any code gated behind `#if os(macOS)` is dead code on Catalyst. For SwiftData fallback paths (dashboard, charts, export, health data listing), use runtime `!HealthKitService.isAvailable` checks instead. All view models that load data now have dual paths: HealthKit (iOS) and SwiftData via `SyncedHealthSample.aggregate()` (Catalyst/Mac). The shared aggregation helper lives on `SyncedHealthSample` as static methods.
+
 ### Anti-Patterns Found
 <!-- Patterns that cause problems here -->
-_None documented yet._
+- **Using `#if os(macOS)` for Catalyst-specific behavior.** Always use runtime checks (`HealthKitService.isAvailable`, `ProcessInfo.isMacCatalystApp`) or `#if targetEnvironment(macCatalyst)` when code must behave differently on Catalyst vs iPhone.
 
 ## Codebase Knowledge
 

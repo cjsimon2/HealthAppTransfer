@@ -1,62 +1,21 @@
-# Session Handoff - 2026-02-22 (Deep Debug Session)
+# Session Handoff - 2026-02-22 (Catalyst Data Fix)
 
 ## Completed This Session
 
-### Deep Debug: 13 bugs fixed across 16 files
+### Mac Catalyst SwiftData fallback fix (15 files)
 
-**Investigation:** Four parallel code-explorer agents audited the entire codebase for bugs, crash risks, and platform-specific issues. Found 17 issues total, fixed the 13 critical+medium ones.
+**Problem:** App showed "Chart Error — Health data is unavailable" on every screen when running on Mac Catalyst. CloudKit synced 608 samples into SwiftData, but all views tried HealthKit and failed.
 
-### Critical Fixes (6)
+**Root cause:** `#if os(macOS)` is FALSE on Mac Catalyst (Catalyst compiles as `os(iOS)`). All SwiftData fallback paths in view models were dead code — never compiled on Catalyst.
 
-1. **Missing `com.apple.developer.healthkit.background-delivery` entitlement**
-   - Files: `HealthAppTransfer.entitlements`, `project.yml`
-   - Background sync was completely non-functional — all `enableBackgroundDelivery` calls silently failed
+**Fix:** Replaced compile-time `#if os(macOS)` with runtime `!HealthKitService.isAvailable` checks in 6 view models. Added shared `SyncedHealthSample.aggregate()` and `.recentDTOs()` static methods to consolidate SwiftData aggregation. Fixed empty state messages in DashboardView and HealthDataView.
 
-2. **`performSync()` never requested HealthKit authorization**
-   - File: `BackgroundSyncService.swift`
-   - Queries silently returned zero samples; sync window advanced, permanently losing data
-
-3. **`#if os(iOS)` should be `#if os(iOS) && !targetEnvironment(macCatalyst)`**
-   - Files: `BackgroundSyncService.swift`, `HealthAppTransferApp.swift`
-   - `enableBackgroundDelivery` and `BGTask` scheduling are unsupported on Mac Catalyst
-
-4. **HealthKit auth dialog raced with Face ID**
-   - File: `ContentView.swift`
-   - Reordered `.task` to run biometric check before HealthKit auth request
-
-5. **Duplicate HealthKit auth prompt on second launch**
-   - File: `ContentView.swift`
-   - `@AppStorage` and SwiftData flags were never synced; now reads SwiftData flag first
-
-6. **TLS failure silently swallowed + force-unwrap**
-   - File: `NetworkServer.swift`
-   - Now throws on TLS failure; added `NetworkServerError` enum; replaced `secIdentity!` with guard
-
-### Medium Fixes (7)
-
-7. **`GENERATE_INFOPLIST_FILE = YES` conflicting with explicit Info.plist**
-   - Files: `project.yml`, `project.pbxproj`
-
-8. **`assertionFailure` fallback to `.count()` in release builds**
-   - File: `HealthSampleMapper.swift` — replaced with `Loggers.healthKit.error()`
-
-9. **`fatalError` on ModelContainer — crash loop on store corruption**
-   - Files: `HealthAppTransferApp.swift`, `SchemaVersions.swift`
-   - Added `deleteExisting` recovery parameter
-
-10. **Device name + Bonjour wrong on Mac Catalyst**
-    - Files: `PairingViewModel.swift`, `NetworkServer.swift`
-
-11. **Force unwraps in `ChartViewModel` + `DashboardViewModel`** (5 sites)
-
-12. **Force unwraps `.data(using: .utf8)!`** → `Data(tag.utf8)` in `KeychainStore.swift` (3 sites)
-
-13. **Redundant filter predicate** in `PairingService.swift`; force-unwrap in `CSVFormatter.swift`
+### Previous session: Deep Debug — 13 bugs across 16 files (committed)
 
 ## Build & Test Results
 
-- **Build:** Passing (iOS Simulator, 0 errors)
-- **Tests:** 550 passed, 0 failures
+- **Build:** Passing (iOS Simulator + Mac Catalyst, 0 errors)
+- **Tests:** 550 unit tests passed, 0 failures
 
 ## Not Yet Done (Low Priority — 4 items)
 
@@ -67,7 +26,7 @@
 
 ## Next Steps
 
-1. Commit the 16 modified files
-2. Test on real devices (iPhone + Mac Catalyst) to verify fixes
+1. Test on real Mac Catalyst device — verify synced data now displays in charts/dashboard
+2. Test on real iPhone — verify no regressions in HealthKit data loading
 3. Test pairing flow end-to-end after Catalyst device name fix
-4. Verify background sync actually fires with new entitlement
+4. Verify background sync fires with new entitlement (iPhone only)
