@@ -55,19 +55,13 @@ struct HealthDataView: View {
             Text("No Health Data")
                 .font(AppTypography.displayMedium)
 
-            #if os(macOS)
-            Text("Sync health data from your iPhone to browse available types.")
+            Text(HealthKitService.isAvailable
+                ? "Authorize HealthKit access to browse your health data types."
+                : "Sync health data from your iPhone to browse available types.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 300)
-            #else
-            Text("Authorize HealthKit access to browse your health data types.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: 300)
-            #endif
 
             Spacer()
         }

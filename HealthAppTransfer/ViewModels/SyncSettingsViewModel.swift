@@ -177,6 +177,21 @@ class SyncSettingsViewModel: ObservableObject {
         syncProgress = "Starting sync..."
         error = nil
 
+        guard HealthKitService.isAvailable else {
+            error = "Health data is unavailable on this device"
+            isSyncing = false
+            syncProgress = nil
+
+            let entry = SyncHistoryEntry(
+                source: "manual",
+                sampleCount: 0,
+                success: false,
+                errorMessage: "Health data is unavailable on this device"
+            )
+            addHistoryEntry(entry, context: context)
+            return
+        }
+
         do {
             let enabledDataTypes = enabledTypes.compactMap { HealthDataType(rawValue: $0) }
             let sampleBasedTypes = enabledDataTypes.filter(\.isSampleBased)

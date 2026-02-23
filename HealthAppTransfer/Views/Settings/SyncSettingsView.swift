@@ -144,7 +144,7 @@ struct SyncSettingsView: View {
                     Spacer()
                 }
             }
-            .disabled(viewModel.isSyncing || viewModel.enabledTypes.isEmpty)
+            .disabled(viewModel.isSyncing || viewModel.enabledTypes.isEmpty || !HealthKitService.isAvailable)
             .accessibilityIdentifier("syncSettings.syncNow")
 
             if let lastSync = viewModel.lastSyncDate {
@@ -313,6 +313,7 @@ struct SyncSettingsView: View {
             }
             #endif
         }
+        .frame(minWidth: 400, minHeight: 500)
     }
 
     // MARK: - Bindings

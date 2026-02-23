@@ -88,6 +88,8 @@ _None documented yet. Use `/learn` to record failures._
 - `NetworkServer.start()` must fail hard if TLS setup fails — silently swallowing the error and starting without encryption breaks the entire security model. `sec_identity_create()` can return nil for malformed identities.
 - `PersistenceConfiguration.makeModelContainer(deleteExisting:)` now supports store recovery — a `fatalError` on corrupted SwiftData store causes an unrecoverable crash loop. The recovery path deletes `default.store` + `-shm`/`-wal` and recreates.
 - Core Foundation types (`SecKey`, `SecCertificate`, `SecIdentity`) can't use `as?` conditional downcast — Swift warns "will always succeed". Must keep `as!` with swiftlint disable for these types; the Security API contract guarantees the type when `errSecSuccess`.
+- `.sheet` on Mac Catalyst renders lazy `List` content with zero intrinsic height — the sheet collapses to just the title bar. Fix with `.frame(minWidth: 400, minHeight: 500)` on the sheet content. iPhone sheets expand automatically; Catalyst does not.
+- HealthKit is unavailable on Mac/Mac Catalyst (`HKHealthStore.isHealthDataAvailable() == false`). Any sync or data-fetch UI must check `HealthKitService.isAvailable` before attempting operations and disable buttons accordingly. The error from `requestAuthorization()` on Mac is "Health data is unavailable on this device".
 
 ### Anti-Patterns Found
 <!-- Patterns that cause problems here -->

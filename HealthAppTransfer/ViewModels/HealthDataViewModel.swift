@@ -57,12 +57,10 @@ class HealthDataViewModel: ObservableObject {
     // MARK: - Data Loading
 
     func loadDataTypes(modelContext: ModelContext? = nil) async {
-        #if os(macOS)
-        if let modelContext {
+        if !HealthKitService.isAvailable, let modelContext {
             loadDataTypesFromStore(modelContext: modelContext)
             return
         }
-        #endif
 
         await loadDataTypesFromHealthKit()
     }
@@ -84,9 +82,8 @@ class HealthDataViewModel: ObservableObject {
         }
     }
 
-    // MARK: - SwiftData Path (macOS)
+    // MARK: - SwiftData Path (HealthKit Unavailable)
 
-    #if os(macOS)
     private func loadDataTypesFromStore(modelContext: ModelContext) {
         isLoading = true
         defer { isLoading = false }
@@ -112,5 +109,4 @@ class HealthDataViewModel: ObservableObject {
             return CategoryGroup(category: group.category, types: typeInfos)
         }
     }
-    #endif
 }

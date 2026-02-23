@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 // MARK: - Chart Date Range
 
@@ -138,7 +139,7 @@ class ChartViewModel: ObservableObject {
 
     // MARK: - Data Loading
 
-    func loadData() async {
+    func loadData(modelContext: ModelContext? = nil) async {
         guard dataType.isQuantityType else {
             error = AggregationError.unsupportedType(dataType)
             return
@@ -146,6 +147,18 @@ class ChartViewModel: ObservableObject {
 
         isLoading = true
         defer { isLoading = false }
+
+        if !HealthKitService.isAvailable, let modelContext {
+            samples = SyncedHealthSample.aggregate(
+                type: dataType,
+                interval: interval,
+                from: startDate,
+                to: endDate,
+                modelContext: modelContext
+            )
+            error = nil
+            return
+        }
 
         do {
             samples = try await aggregationEngine.aggregate(

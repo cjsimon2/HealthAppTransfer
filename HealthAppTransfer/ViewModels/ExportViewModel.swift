@@ -53,12 +53,10 @@ class ExportViewModel: ObservableObject {
     // MARK: - Load Available Types
 
     func loadAvailableTypes(modelContext: ModelContext? = nil) async {
-        #if os(macOS)
-        if let modelContext {
+        if !HealthKitService.isAvailable, let modelContext {
             loadAvailableTypesFromStore(modelContext: modelContext)
             return
         }
-        #endif
 
         await loadAvailableTypesFromHealthKit()
     }
@@ -78,7 +76,6 @@ class ExportViewModel: ObservableObject {
         }
     }
 
-    #if os(macOS)
     private func loadAvailableTypesFromStore(modelContext: ModelContext) {
         isLoadingTypes = true
         defer { isLoadingTypes = false }
@@ -101,7 +98,6 @@ class ExportViewModel: ObservableObject {
             return (category: group.category, types: matched)
         }
     }
-    #endif
 
     // MARK: - Type Selection
 
@@ -138,11 +134,12 @@ class ExportViewModel: ObservableObject {
         let sortedTypes = Array(selectedTypes).sorted(by: { $0.rawValue < $1.rawValue })
 
         do {
-            #if os(macOS)
-            let result = try await exportFromStore(types: sortedTypes, modelContext: modelContext)
-            #else
-            let result = try await exportFromHealthKit(types: sortedTypes)
-            #endif
+            let result: ExportResult
+            if !HealthKitService.isAvailable {
+                result = try await exportFromStore(types: sortedTypes, modelContext: modelContext)
+            } else {
+                result = try await exportFromHealthKit(types: sortedTypes)
+            }
 
             exportResult = result
 
@@ -198,9 +195,8 @@ class ExportViewModel: ObservableObject {
         )
     }
 
-    // MARK: - SwiftData Export Path (macOS)
+    // MARK: - SwiftData Export Path (HealthKit Unavailable)
 
-    #if os(macOS)
     private func exportFromStore(types: [HealthDataType], modelContext: ModelContext) async throws -> ExportResult {
         var allSamples: [HealthSampleDTO] = []
         let start = startDate
@@ -236,5 +232,4 @@ class ExportViewModel: ObservableObject {
             types: types
         )
     }
-    #endif
 }

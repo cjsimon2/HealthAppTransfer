@@ -159,6 +159,104 @@ final class SyncedHealthSample {
     }
 }
 
+// MARK: - SwiftData Aggregation
+
+extension SyncedHealthSample {
+
+    /// Aggregate synced samples by time interval — SwiftData equivalent of AggregationEngine.
+    @MainActor
+    static func aggregate(
+        type: HealthDataType,
+        interval: AggregationInterval,
+        from startDate: Date,
+        to endDate: Date,
+        modelContext: ModelContext
+    ) -> [AggregatedSample] {
+        let typeRaw = type.rawValue
+        let descriptor = FetchDescriptor<SyncedHealthSample>(
+            predicate: #Predicate { sample in
+                sample.typeRawValue == typeRaw &&
+                sample.startDate >= startDate &&
+                sample.startDate <= endDate
+            },
+            sortBy: [SortDescriptor(\.startDate)]
+        )
+
+        let samples = (try? modelContext.fetch(descriptor)) ?? []
+
+        // Group by interval bucket
+        let calendar = Calendar.current
+        var groups: [Date: [SyncedHealthSample]] = [:]
+        for sample in samples {
+            let bucket = Self.bucketStart(for: sample.startDate, interval: interval, calendar: calendar)
+            groups[bucket, default: []].append(sample)
+        }
+
+        // Generate all buckets in range
+        var results: [AggregatedSample] = []
+        var current = Self.bucketStart(for: startDate, interval: interval, calendar: calendar)
+
+        while current <= endDate {
+            guard let bucketEnd = calendar.date(byAdding: interval.dateComponents, to: current) else { break }
+            let bucketSamples = groups[current] ?? []
+            let values = bucketSamples.compactMap(\.value)
+            let unit = bucketSamples.first?.unit ?? ""
+
+            results.append(AggregatedSample(
+                startDate: current,
+                endDate: bucketEnd,
+                sum: values.isEmpty ? nil : values.reduce(0, +),
+                average: values.isEmpty ? nil : values.reduce(0, +) / Double(values.count),
+                min: values.min(),
+                max: values.max(),
+                latest: values.last,
+                count: values.isEmpty ? 0 : 1,
+                unit: unit
+            ))
+
+            current = bucketEnd
+        }
+
+        return results
+    }
+
+    /// Fetch recent samples as DTOs from SwiftData.
+    @MainActor
+    static func recentDTOs(
+        for type: HealthDataType,
+        limit: Int,
+        modelContext: ModelContext
+    ) -> [HealthSampleDTO] {
+        let typeRaw = type.rawValue
+        var descriptor = FetchDescriptor<SyncedHealthSample>(
+            predicate: #Predicate { $0.typeRawValue == typeRaw },
+            sortBy: [SortDescriptor(\.startDate, order: .reverse)]
+        )
+        descriptor.fetchLimit = limit
+        let samples = (try? modelContext.fetch(descriptor)) ?? []
+        return samples.map { $0.toDTO() }
+    }
+
+    private static func bucketStart(for date: Date, interval: AggregationInterval, calendar: Calendar) -> Date {
+        switch interval {
+        case .hourly:
+            return calendar.date(from: calendar.dateComponents([.year, .month, .day, .hour], from: date))
+                ?? calendar.startOfDay(for: date)
+        case .daily:
+            return calendar.startOfDay(for: date)
+        case .weekly:
+            let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
+            return calendar.date(from: components) ?? calendar.startOfDay(for: date)
+        case .monthly:
+            let components = calendar.dateComponents([.year, .month], from: date)
+            return calendar.date(from: components) ?? calendar.startOfDay(for: date)
+        case .yearly:
+            let components = calendar.dateComponents([.year], from: date)
+            return calendar.date(from: components) ?? calendar.startOfDay(for: date)
+        }
+    }
+}
+
 // MARK: - Batch Storage
 
 extension SyncedHealthSample {

@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 // MARK: - Health Data Detail ViewModel
 
@@ -59,12 +60,36 @@ class HealthDataDetailViewModel: ObservableObject {
 
     // MARK: - Data Loading
 
-    func loadData() async {
+    func loadData(modelContext: ModelContext? = nil) async {
         isLoading = true
         defer { isLoading = false }
 
+        if !HealthKitService.isAvailable, let modelContext {
+            loadFromStore(modelContext: modelContext)
+            return
+        }
+
         await loadAggregatedData()
         await loadRecentSamples()
+    }
+
+    private func loadFromStore(modelContext: ModelContext) {
+        if dataType.isQuantityType {
+            let range = ChartDateRange.week.defaultDateRange
+            samples = SyncedHealthSample.aggregate(
+                type: dataType,
+                interval: .daily,
+                from: range.start,
+                to: range.end,
+                modelContext: modelContext
+            )
+        }
+
+        recentDTOs = SyncedHealthSample.recentDTOs(
+            for: dataType,
+            limit: 20,
+            modelContext: modelContext
+        )
     }
 
     private func loadAggregatedData() async {

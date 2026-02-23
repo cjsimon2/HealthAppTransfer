@@ -48,12 +48,10 @@ class DashboardViewModel: ObservableObject {
     // MARK: - Data Loading
 
     func loadMetrics(configuredTypes: [HealthDataType], modelContext: ModelContext? = nil) async {
-        #if os(macOS)
-        if let modelContext {
+        if !HealthKitService.isAvailable, let modelContext {
             await loadMetricsFromStore(configuredTypes: configuredTypes, modelContext: modelContext)
             return
         }
-        #endif
 
         await loadMetricsFromHealthKit(configuredTypes: configuredTypes)
     }
@@ -95,9 +93,8 @@ class DashboardViewModel: ObservableObject {
         cards = loadedCards
     }
 
-    // MARK: - SwiftData Path (macOS)
+    // MARK: - SwiftData Path (HealthKit Unavailable)
 
-    #if os(macOS)
     private func loadMetricsFromStore(configuredTypes: [HealthDataType], modelContext: ModelContext) async {
         isLoading = true
         defer { isLoading = false }
@@ -109,8 +106,9 @@ class DashboardViewModel: ObservableObject {
 
         var loadedCards: [MetricCard] = []
         for type in quantityTypes {
-            let samples = aggregateFromStore(
+            let samples = SyncedHealthSample.aggregate(
                 type: type,
+                interval: .daily,
                 from: range.start,
                 to: range.end,
                 modelContext: modelContext
@@ -121,62 +119,6 @@ class DashboardViewModel: ObservableObject {
 
         cards = loadedCards
     }
-
-    /// Aggregate SyncedHealthSample records by day for a given type.
-    private func aggregateFromStore(
-        type: HealthDataType,
-        from startDate: Date,
-        to endDate: Date,
-        modelContext: ModelContext
-    ) -> [AggregatedSample] {
-        let typeRaw = type.rawValue
-        let descriptor = FetchDescriptor<SyncedHealthSample>(
-            predicate: #Predicate { sample in
-                sample.typeRawValue == typeRaw &&
-                sample.startDate >= startDate &&
-                sample.startDate <= endDate
-            },
-            sortBy: [SortDescriptor(\.startDate)]
-        )
-
-        let samples = (try? modelContext.fetch(descriptor)) ?? []
-
-        // Group by day
-        let calendar = Calendar.current
-        var dailyGroups: [Date: [SyncedHealthSample]] = [:]
-        for sample in samples {
-            let dayStart = calendar.startOfDay(for: sample.startDate)
-            dailyGroups[dayStart, default: []].append(sample)
-        }
-
-        // Generate all days in range
-        var results: [AggregatedSample] = []
-        var currentDay = calendar.startOfDay(for: startDate)
-
-        while currentDay <= endDate {
-            guard let dayEnd = calendar.date(byAdding: .day, value: 1, to: currentDay) else { break }
-            let daySamples = dailyGroups[currentDay] ?? []
-            let values = daySamples.compactMap(\.value)
-            let unit = daySamples.first?.unit ?? ""
-
-            results.append(AggregatedSample(
-                startDate: currentDay,
-                endDate: dayEnd,
-                sum: values.isEmpty ? nil : values.reduce(0, +),
-                average: values.isEmpty ? nil : values.reduce(0, +) / Double(values.count),
-                min: values.min(),
-                max: values.max(),
-                latest: values.last,
-                count: values.isEmpty ? 0 : 1,
-                unit: unit
-            ))
-
-            currentDay = dayEnd
-        }
-
-        return results
-    }
-    #endif
 
     // MARK: - Helpers
 

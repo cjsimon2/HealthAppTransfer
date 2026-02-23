@@ -6,6 +6,10 @@ import Accessibility
 
 struct HealthChartView: View {
 
+    // MARK: - Environment
+
+    @Environment(\.modelContext) private var modelContext
+
     // MARK: - Observed Objects
 
     @StateObject private var viewModel: ChartViewModel
@@ -37,10 +41,10 @@ struct HealthChartView: View {
             chartArea
         }
         .padding(.horizontal, 16)
-        .task { await viewModel.loadData() }
+        .task { await viewModel.loadData(modelContext: modelContext) }
         .onChange(of: viewModel.selectedRange) {
             guard viewModel.selectedRange != .custom else { return }
-            Task { await viewModel.loadData() }
+            Task { await viewModel.loadData(modelContext: modelContext) }
         }
     }
 
@@ -81,7 +85,7 @@ struct HealthChartView: View {
             .labelsHidden()
 
             Button("Apply") {
-                Task { await viewModel.loadData() }
+                Task { await viewModel.loadData(modelContext: modelContext) }
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.small)

@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-22 22:15
+**Last Updated:** 2026-02-22 22:53
 
 ## Active Tasks
 
@@ -20,6 +20,7 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ fix: resolve 13 bugs across sync, Catalyst, TLS, auth, and crash safety | 2026-02-22 | See commit |
 | ✅ fix: deep debug — 13 bugs across entitlements, sync, Catalyst, TLS, auth | 2026-02-22 | 16 files (see diff) |
 | ✅ fix: Mac Catalyst pairing and sync issues | 2026-02-22 | See commit |
 | ✅ fix: use correct unit for physicalEffort in HealthSampleMapper | 2026-02-22 | See commit |

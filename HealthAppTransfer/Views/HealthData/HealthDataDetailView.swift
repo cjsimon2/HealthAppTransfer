@@ -4,6 +4,10 @@ import SwiftUI
 
 struct HealthDataDetailView: View {
 
+    // MARK: - Environment
+
+    @Environment(\.modelContext) private var modelContext
+
     // MARK: - Observed Objects
 
     @StateObject private var viewModel: HealthDataDetailViewModel
@@ -38,7 +42,7 @@ struct HealthDataDetailView: View {
                 exportButton
             }
         }
-        .task { await viewModel.loadData() }
+        .task { await viewModel.loadData(modelContext: modelContext) }
         .sheet(isPresented: $showingExportShare) {
             if let url = exportFileURL {
                 ShareSheetView(fileURL: url) {

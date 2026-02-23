@@ -101,19 +101,13 @@ struct DashboardView: View {
             Text("No Health Data")
                 .font(AppTypography.displayMedium)
 
-            #if os(macOS)
-            Text("Sync health data from your iPhone via CloudKit or LAN to see your overview.")
+            Text(HealthKitService.isAvailable
+                ? "Authorize HealthKit access to see your health data overview."
+                : "Sync health data from your iPhone via CloudKit or LAN to see your overview.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 300)
-            #else
-            Text("Authorize HealthKit access to see your health data overview.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: 300)
-            #endif
 
             Button {
                 showingMetricPicker = true

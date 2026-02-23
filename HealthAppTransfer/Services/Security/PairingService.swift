@@ -170,7 +170,6 @@ actor PairingService {
 
     @discardableResult
     private func cleanExpiredCodes() -> Int {
-        let now = Date()
         let before = activeCodes.count
         activeCodes = activeCodes.filter { !$0.value.isExpired }
         return before - activeCodes.count
