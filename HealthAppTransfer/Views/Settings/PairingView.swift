@@ -4,13 +4,15 @@ import SwiftUI
 // MARK: - Pairing View
 
 /// Platform-conditional pairing view.
-/// iOS: Displays QR code for macOS client to scan.
-/// macOS: Provides scan/paste interface to pair with iOS server.
+/// iPhone: Displays QR code for Mac client to scan.
+/// Mac (Catalyst/native): Provides scan/paste interface to pair with iPhone server.
 struct PairingView: View {
     @ObservedObject var viewModel: PairingViewModel
 
     var body: some View {
-        #if os(iOS)
+        #if targetEnvironment(macCatalyst)
+        catalystPairingView(viewModel: viewModel)
+        #elseif os(iOS)
         iOSPairingView(viewModel: viewModel)
         #else
         macOSPairingView(viewModel: viewModel)
@@ -20,7 +22,7 @@ struct PairingView: View {
 
 // MARK: - iOS Pairing View (QR Display)
 
-#if os(iOS)
+#if os(iOS) && !targetEnvironment(macCatalyst)
 private struct iOSPairingView: View {
     @ObservedObject var viewModel: PairingViewModel
 
@@ -159,6 +161,154 @@ private struct iOSPairingView: View {
         let seconds = viewModel.timeRemaining % 60
         let time = "\(minutes):\(String(format: "%02d", seconds))"
         return String(localized: "pairing.expiresIn \(time)")
+    }
+
+    private func errorBanner(_ message: String) -> some View {
+        HStack {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(.yellow)
+            Text(message)
+                .font(.caption)
+        }
+        .padding(12)
+        .background(AppColors.accent.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
+#endif
+
+// MARK: - Mac Catalyst Pairing View (Client)
+
+#if targetEnvironment(macCatalyst)
+private struct catalystPairingView: View {
+    @ObservedObject var viewModel: PairingViewModel
+    @Environment(\.modelContext) private var modelContext
+    @State private var clipboardInput: String = ""
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                headerSection
+                pasteSection
+
+                if let payload = viewModel.scannedPayload {
+                    payloadPreview(payload)
+                    pairButton
+                }
+
+                if viewModel.pairingSuccess {
+                    successBanner
+                }
+
+                if let error = viewModel.scanError {
+                    errorBanner(error)
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 24)
+        }
+        .navigationTitle("Pair with iPhone")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: - Sections
+
+    private var headerSection: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "iphone.and.arrow.forward")
+                .font(.system(size: 40))
+                .foregroundStyle(AppColors.primary)
+
+            Text("Connect to iPhone")
+                .font(.title2.bold())
+
+            Text("On your iPhone, go to Settings → Pair Device → Start Sharing, then paste the pairing code here.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+    }
+
+    private var pasteSection: some View {
+        VStack(spacing: 12) {
+            TextField("Paste pairing data here…", text: $clipboardInput, axis: .vertical)
+                .font(.system(.body, design: .monospaced))
+                .textFieldStyle(.roundedBorder)
+                .lineLimit(4...6)
+
+            HStack(spacing: 12) {
+                Button("Paste from Clipboard") {
+                    if let string = UIPasteboard.general.string {
+                        clipboardInput = string
+                        viewModel.parseClipboard(string)
+                    }
+                }
+                .buttonStyle(.bordered)
+
+                Button("Parse") {
+                    viewModel.parseClipboard(clipboardInput)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(clipboardInput.isEmpty)
+            }
+        }
+    }
+
+    private func payloadPreview(_ payload: QRPairingPayload) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("Server Found", systemImage: "checkmark.circle.fill")
+                .foregroundStyle(AppColors.secondary)
+                .font(.headline)
+
+            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 4) {
+                GridRow {
+                    Text("Host:").foregroundStyle(.secondary)
+                    Text(payload.host).font(.system(.body, design: .monospaced))
+                }
+                GridRow {
+                    Text("Port:").foregroundStyle(.secondary)
+                    Text("\(payload.port)").font(.system(.body, design: .monospaced))
+                }
+                GridRow {
+                    Text("Code:").foregroundStyle(.secondary)
+                    Text(payload.code).font(.system(.body, design: .monospaced))
+                }
+                GridRow {
+                    Text("Expires:").foregroundStyle(.secondary)
+                    Text(payload.expiryDate, style: .relative)
+                }
+            }
+        }
+        .padding(16)
+        .background(.secondary.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    private var pairButton: some View {
+        Button {
+            Task { await viewModel.completePairing(modelContext: modelContext) }
+        } label: {
+            if viewModel.isPairing {
+                ProgressView()
+                    .controlSize(.small)
+            } else {
+                Label("Pair Now", systemImage: "link.badge.plus")
+            }
+        }
+        .buttonStyle(.borderedProminent)
+        .disabled(viewModel.isPairing)
+    }
+
+    private var successBanner: some View {
+        HStack {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(AppColors.secondary)
+            Text("Successfully paired! You can now transfer health data.")
+                .font(.subheadline)
+        }
+        .padding(12)
+        .background(AppColors.secondary.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
     private func errorBanner(_ message: String) -> some View {

@@ -123,7 +123,7 @@ class PairingViewModel: ObservableObject {
         #if os(macOS)
         let myDeviceName = Host.current().localizedName ?? "Mac"
         #else
-        let myDeviceName = "iOS Device"
+        let myDeviceName = UIDevice.current.name
         #endif
 
         let requestBody: [String: String] = [

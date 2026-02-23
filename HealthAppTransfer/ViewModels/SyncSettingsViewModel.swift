@@ -188,6 +188,10 @@ class SyncSettingsViewModel: ObservableObject {
                 return
             }
 
+            // Ensure HealthKit authorization (no-op if already granted)
+            syncProgress = "Requesting HealthKit access..."
+            try await healthKitService.requestAuthorization()
+
             let descriptor = FetchDescriptor<SyncConfiguration>()
             let config = try? context.fetch(descriptor).first
             let sinceDate = config?.incrementalOnly == true ? config?.lastSyncDate : config?.syncStartDate
