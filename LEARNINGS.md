@@ -76,6 +76,7 @@ _None documented yet. Use `/learn` to record failures._
 - `BGTaskScheduler.shared.register()` requires matching `BGTaskSchedulerPermittedIdentifiers` in Info.plist — crashes without them. Also needs `fetch` in `UIBackgroundModes` for `BGAppRefreshTask`.
 - `URLSession` moves `httpBody` to `httpBodyStream` before sending — `URLProtocol` subclass mocks must read from `httpBodyStream` to capture request bodies.
 - HealthKit disallows requesting **read** authorization for `HKCorrelationType` (`bloodPressure`, `food`) — crashes with `NSInvalidArgumentException`. Must authorize their component quantity types instead (e.g. `bloodPressureSystolic`/`Diastolic`, dietary types). Exclude correlation types from `allObjectTypes` used in `requestAuthorization()`.
+- `HKQuantityTypeIdentifier.physicalEffort` uses `kcal/hr·kg` (Apple effort score / METs), NOT `.count()`. Calling `doubleValue(for: .count())` on a physicalEffort sample crashes with `NSInvalidArgumentException: Attempt to convert incompatible units`. This only manifests on real devices (Simulator has no physicalEffort data). Always verify `HealthSampleMapper.unitMap` entries against real device data — the assertionFailure fallback to `.count()` in `preferredUnit(for:)` silently produces crashes in release builds.
 
 ### Anti-Patterns Found
 <!-- Patterns that cause problems here -->

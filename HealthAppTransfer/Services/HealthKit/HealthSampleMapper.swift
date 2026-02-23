@@ -271,6 +271,7 @@ enum HealthSampleMapper {
     private static let mgPerDL = HKUnit.gramUnit(with: .milli).unitDivided(by: .literUnit(with: .deci))
     private static let vo2MaxUnit = HKUnit.literUnit(with: .milli).unitDivided(by: HKUnit.gramUnit(with: .kilo).unitMultiplied(by: .minute()))
     private static let litersPerMinute = HKUnit.liter().unitDivided(by: .minute())
+    private static let appleEffortScore = HKUnit.kilocalorie().unitDivided(by: HKUnit.hour().unitMultiplied(by: HKUnit.gramUnit(with: .kilo)))
 
     // swiftlint:disable closure_body_length
     private static let unitMap: [HealthDataType: HKUnit] = [
@@ -280,7 +281,7 @@ enum HealthSampleMapper {
         .pushCount: .count(),
         .swimmingStrokeCount: .count(),
         .nikeFuel: .count(),
-        .physicalEffort: .count(),
+        .physicalEffort: appleEffortScore,
         // Activity — distance (meters)
         .distanceWalkingRunning: .meter(),
         .distanceCycling: .meter(),
