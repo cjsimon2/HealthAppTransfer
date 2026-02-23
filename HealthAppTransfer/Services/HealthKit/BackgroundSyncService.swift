@@ -141,7 +141,7 @@ actor BackgroundSyncService {
         for type in enabledTypes where type.isSampleBased {
             let sampleType = type.sampleType
 
-            #if os(iOS)
+            #if os(iOS) && !targetEnvironment(macCatalyst)
             do {
                 try await store.enableBackgroundDelivery(for: sampleType, frequency: .hourly)
             } catch {
@@ -194,6 +194,14 @@ actor BackgroundSyncService {
     @discardableResult
     func performSync() async -> Bool {
         Loggers.sync.info("Starting background sync")
+
+        // Ensure HealthKit authorization before fetching — without this,
+        // queries silently return zero results and the sync window advances.
+        do {
+            try await healthKitService.requestAuthorization()
+        } catch {
+            Loggers.sync.error("HealthKit authorization failed: \(error.localizedDescription)")
+        }
 
         do {
             let context = ModelContext(modelContainer)

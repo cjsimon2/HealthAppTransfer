@@ -78,7 +78,7 @@ struct CSVFormatter: ExportFormatter, Sendable {
     private func formatCorrelationValues(_ values: [String: Double]?) -> String {
         guard let values, !values.isEmpty else { return "" }
         // Deterministic key order for consistent output
-        let pairs = values.keys.sorted().map { "\($0)=\(values[$0]!)" }
+        let pairs = values.sorted(by: { $0.key < $1.key }).map { "\($0.key)=\($0.value)" }
         return escapeCSV(pairs.joined(separator: ";"))
     }
 }

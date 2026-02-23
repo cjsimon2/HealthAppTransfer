@@ -37,13 +37,13 @@ enum ChartDateRange: String, CaseIterable, Identifiable {
         case .day:
             return (calendar.startOfDay(for: end), end)
         case .week:
-            return (calendar.date(byAdding: .day, value: -7, to: end)!, end)
+            return (calendar.date(byAdding: .day, value: -7, to: end) ?? end, end)
         case .month:
-            return (calendar.date(byAdding: .month, value: -1, to: end)!, end)
+            return (calendar.date(byAdding: .month, value: -1, to: end) ?? end, end)
         case .year:
-            return (calendar.date(byAdding: .year, value: -1, to: end)!, end)
+            return (calendar.date(byAdding: .year, value: -1, to: end) ?? end, end)
         case .custom:
-            return (calendar.date(byAdding: .month, value: -1, to: end)!, end)
+            return (calendar.date(byAdding: .month, value: -1, to: end) ?? end, end)
         }
     }
 }

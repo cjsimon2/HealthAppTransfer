@@ -80,6 +80,15 @@ _None documented yet. Use `/learn` to record failures._
 - Mac Catalyst does NOT inherit HealthKit authorization from iPhone — each platform requires its own `requestAuthorization()` call. Any code path that fetches HealthKit data (sync, export, intents) must ensure authorization first, not assume onboarding already handled it. `requestAuthorization()` is a no-op if already granted, so calling it defensively is safe.
 - `#if os(iOS)` is TRUE on Mac Catalyst — platform-conditional views using `#if os(iOS)` / `#if os(macOS)` will show the iOS variant on Catalyst, not the macOS one. Use `#if targetEnvironment(macCatalyst)` BEFORE `#if os(iOS)` to distinguish iPhone from Mac Catalyst. The `#if os(macOS)` block is dead code on Catalyst. Similarly, `NSPasteboard` is unavailable on Catalyst — use `UIPasteboard.general.string` instead.
 
+- `enableBackgroundDelivery(for:frequency:)` requires the `com.apple.developer.healthkit.background-delivery` entitlement — without it, every call silently fails and HKObserverQuery callbacks never fire in background. Must be in both `.entitlements` file AND `project.yml` `entitlements.properties` (since xcodegen overwrites entitlements on generate).
+- `BackgroundSyncService.performSync()` must call `requestAuthorization()` before fetching samples — HealthKit silently returns zero results (no error) when unauthorized. The sync window (`lastSyncDate`) still advances, permanently skipping data in that window.
+- `GENERATE_INFOPLIST_FILE = YES` conflicts with an explicit `INFOPLIST_FILE` path — Xcode may silently drop keys from the handwritten plist. Set to `NO` when maintaining a full Info.plist manually.
+- `@AppStorage("hasRequestedHealthKitAuth")` and `UserPreferences.hasRequestedHealthKitAuth` (SwiftData) are separate flags — onboarding sets the SwiftData flag, but ContentView checks the AppStorage flag. Must sync them to avoid double-prompting. Fixed by reading SwiftData flag in `requestHealthKitAuthIfNeeded()`.
+- ContentView `.task` ordering matters: biometric lock check must run BEFORE HealthKit authorization request, otherwise the system permission dialog races with Face ID.
+- `NetworkServer.start()` must fail hard if TLS setup fails — silently swallowing the error and starting without encryption breaks the entire security model. `sec_identity_create()` can return nil for malformed identities.
+- `PersistenceConfiguration.makeModelContainer(deleteExisting:)` now supports store recovery — a `fatalError` on corrupted SwiftData store causes an unrecoverable crash loop. The recovery path deletes `default.store` + `-shm`/`-wal` and recreates.
+- Core Foundation types (`SecKey`, `SecCertificate`, `SecIdentity`) can't use `as?` conditional downcast — Swift warns "will always succeed". Must keep `as!` with swiftlint disable for these types; the Security API contract guarantees the type when `errSecSuccess`.
+
 ### Anti-Patterns Found
 <!-- Patterns that cause problems here -->
 _None documented yet._

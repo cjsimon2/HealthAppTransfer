@@ -107,7 +107,7 @@ actor KeychainStore {
 
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
-            kSecAttrApplicationTag as String: tag.data(using: .utf8)!,
+            kSecAttrApplicationTag as String: Data(tag.utf8),
             kSecValueRef as String: key,
             kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         ]
@@ -122,7 +122,7 @@ actor KeychainStore {
     func loadKey(tag: String) throws -> SecKey? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
-            kSecAttrApplicationTag as String: tag.data(using: .utf8)!,
+            kSecAttrApplicationTag as String: Data(tag.utf8),
             kSecReturnRef as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
@@ -132,6 +132,7 @@ actor KeychainStore {
 
         switch status {
         case errSecSuccess:
+            // SecItemCopyMatching guarantees SecKey when kSecReturnRef + kSecClassKey
             return (result as! SecKey) // swiftlint:disable:this force_cast
         case errSecItemNotFound:
             return nil
@@ -144,7 +145,7 @@ actor KeychainStore {
     func deleteKey(tag: String) throws {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
-            kSecAttrApplicationTag as String: tag.data(using: .utf8)!
+            kSecAttrApplicationTag as String: Data(tag.utf8)
         ]
 
         let status = SecItemDelete(query as CFDictionary)
@@ -186,6 +187,7 @@ actor KeychainStore {
 
         switch status {
         case errSecSuccess:
+            // SecItemCopyMatching guarantees SecCertificate when kSecReturnRef + kSecClassCertificate
             return (result as! SecCertificate) // swiftlint:disable:this force_cast
         case errSecItemNotFound:
             return nil

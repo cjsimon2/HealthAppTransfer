@@ -120,10 +120,10 @@ class PairingViewModel: ObservableObject {
 
         let url = "https://\(payload.host):\(payload.port)/api/v1/pair"
 
-        #if os(macOS)
-        let myDeviceName = Host.current().localizedName ?? "Mac"
-        #else
+        #if os(iOS) && !targetEnvironment(macCatalyst)
         let myDeviceName = UIDevice.current.name
+        #else
+        let myDeviceName = Host.current().localizedName ?? "Mac"
         #endif
 
         let requestBody: [String: String] = [

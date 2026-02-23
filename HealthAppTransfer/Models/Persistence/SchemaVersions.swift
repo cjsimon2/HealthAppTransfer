@@ -46,8 +46,17 @@ enum PersistenceConfiguration {
 
     /// Creates the shared ModelContainer for the app.
     /// Uses the migration plan so future schema changes are handled automatically.
-    static func makeModelContainer() throws -> ModelContainer {
+    /// Pass `deleteExisting: true` to wipe and recreate the store on corruption.
+    static func makeModelContainer(deleteExisting: Bool = false) throws -> ModelContainer {
         let schema = Schema(allModelTypes)
+
+        if deleteExisting {
+            let base = URL.applicationSupportDirectory.appending(path: "default.store")
+            for suffix in ["", "-shm", "-wal"] {
+                try? FileManager.default.removeItem(at: URL(filePath: base.path() + suffix))
+            }
+        }
+
         let configuration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,

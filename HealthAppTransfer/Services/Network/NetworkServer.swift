@@ -61,21 +61,20 @@ actor NetworkServer {
         // Create TLS parameters
         let tlsOptions = NWProtocolTLS.Options()
 
-        // Try to set up TLS with certificate
-        do {
-            let identity = try await certificateService.getOrCreateIdentity()
-            let secIdentity = sec_identity_create(identity)
-            sec_protocol_options_set_local_identity(
-                tlsOptions.securityProtocolOptions,
-                secIdentity!
-            )
-            sec_protocol_options_set_min_tls_protocol_version(
-                tlsOptions.securityProtocolOptions,
-                .TLSv12
-            )
-        } catch {
-            Loggers.network.error("TLS setup failed, starting without TLS: \(error.localizedDescription)")
+        // Set up TLS — fail hard if certificate can't be created, since
+        // the entire security model depends on encrypted connections.
+        let identity = try await certificateService.getOrCreateIdentity()
+        guard let secIdentity = sec_identity_create(identity) else {
+            throw NetworkServerError.tlsSetupFailed
         }
+        sec_protocol_options_set_local_identity(
+            tlsOptions.securityProtocolOptions,
+            secIdentity
+        )
+        sec_protocol_options_set_min_tls_protocol_version(
+            tlsOptions.securityProtocolOptions,
+            .TLSv12
+        )
 
         let tcpOptions = NWProtocolTCP.Options()
         let params = NWParameters(tls: tlsOptions, tcp: tcpOptions)
@@ -136,9 +135,9 @@ actor NetworkServer {
     }
 
     private nonisolated func bonjourServiceName() -> String {
-        #if os(iOS)
-        "iPhone"
-        #elseif os(macOS)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        "HealthSync-iOS"
+        #elseif os(macOS) || targetEnvironment(macCatalyst)
         Host.current().localizedName ?? "Mac"
         #else
         "HealthSync"
@@ -369,12 +368,25 @@ actor NetworkServer {
     }
 
     private nonisolated func deviceName() async -> String {
-        #if os(iOS)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
         await MainActor.run { UIDevice.current.name }
-        #elseif os(macOS)
+        #elseif os(macOS) || targetEnvironment(macCatalyst)
         Host.current().localizedName ?? "Mac"
         #else
         "Unknown"
         #endif
+    }
+}
+
+// MARK: - Errors
+
+enum NetworkServerError: LocalizedError {
+    case tlsSetupFailed
+
+    var errorDescription: String? {
+        switch self {
+        case .tlsSetupFailed:
+            return "Failed to create TLS identity for secure connections"
+        }
     }
 }

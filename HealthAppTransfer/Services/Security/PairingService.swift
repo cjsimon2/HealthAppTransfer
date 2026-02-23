@@ -172,7 +172,7 @@ actor PairingService {
     private func cleanExpiredCodes() -> Int {
         let now = Date()
         let before = activeCodes.count
-        activeCodes = activeCodes.filter { !$0.value.isExpired || $0.value.expiresAt > now }
+        activeCodes = activeCodes.filter { !$0.value.isExpired }
         return before - activeCodes.count
     }
 

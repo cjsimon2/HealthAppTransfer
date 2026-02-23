@@ -154,7 +154,7 @@ class DashboardViewModel: ObservableObject {
         var currentDay = calendar.startOfDay(for: startDate)
 
         while currentDay <= endDate {
-            let dayEnd = calendar.date(byAdding: .day, value: 1, to: currentDay)!
+            guard let dayEnd = calendar.date(byAdding: .day, value: 1, to: currentDay) else { break }
             let daySamples = dailyGroups[currentDay] ?? []
             let values = daySamples.compactMap(\.value)
             let unit = daySamples.first?.unit ?? ""

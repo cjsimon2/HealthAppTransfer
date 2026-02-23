@@ -69,8 +69,8 @@ struct ContentView: View {
         .overlay(PaperGrainOverlay())
         .task {
             await pairingViewModel.pairingService.loadPersistedTokens()
-            await requestHealthKitAuthIfNeeded()
             await checkBiometricLockOnLaunch()
+            await requestHealthKitAuthIfNeeded()
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .background {
@@ -184,6 +184,14 @@ struct ContentView: View {
     // MARK: - HealthKit Authorization
 
     private func requestHealthKitAuthIfNeeded() async {
+        // Also check SwiftData flag to avoid double-prompting users who
+        // already authorized during onboarding (which sets the SwiftData flag
+        // but not the AppStorage flag).
+        let descriptor = FetchDescriptor<UserPreferences>()
+        let alreadyRequested = (try? modelContext.fetch(descriptor).first?.hasRequestedHealthKitAuth) ?? false
+        if alreadyRequested {
+            hasRequestedHealthKitAuth = true
+        }
         guard !hasRequestedHealthKitAuth, HealthKitService.isAvailable else { return }
         showHealthKitAlert = true
     }

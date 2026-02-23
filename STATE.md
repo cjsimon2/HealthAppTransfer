@@ -6,20 +6,23 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-22 02:14
+**Last Updated:** 2026-02-22 22:15
 
 ## Active Tasks
 
 <!-- Tasks currently being worked on -->
 | Task | Status | Progress | Blocker |
 |------|--------|----------|---------|
-| Wes Anderson UI overhaul | Completed | 10/10 phases | None |
+| _None_ | - | - | - |
 
 ## Completed Tasks
 
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ fix: deep debug — 13 bugs across entitlements, sync, Catalyst, TLS, auth | 2026-02-22 | 16 files (see diff) |
+| ✅ fix: Mac Catalyst pairing and sync issues | 2026-02-22 | See commit |
+| ✅ fix: use correct unit for physicalEffort in HealthSampleMapper | 2026-02-22 | See commit |
 | ✅ art: update app icon to phone-to-laptop transfer design | 2026-02-22 | See commit |
 | ✅ docs: update LEARNINGS.md and STATE.md with latest session notes | 2026-02-22 | See commit |
 | ✅ chore: delete unreferenced project hooks, simplify safety-check | 2026-02-22 | See commit |
@@ -115,7 +118,7 @@
 <!-- Project health indicators -->
 - **Source Files:** 85 Swift files across 15 directories
 - **Health Data Types:** 180+ (quantity, category, correlation, characteristic, workout)
-- **Tests:** 541 unit tests, 9 UI tests (44 test files)
+- **Tests:** 550 unit tests, 9 UI tests (44 test files)
 - **Test Coverage:** ~90% file coverage
 - **Build:** Passing (iOS + macOS Catalyst, 0 errors)
 - **App Store Readiness:** HealthKit entitlement, camera description, encryption declaration, device capabilities — all added

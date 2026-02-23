@@ -38,7 +38,23 @@ struct HealthAppTransferApp: App {
                 keychain: services.keychain
             )
         } catch {
-            fatalError("Failed to create ModelContainer: \(error)")
+            // Attempt recovery by deleting the corrupt store and recreating
+            Loggers.persistence.error("ModelContainer creation failed, attempting recovery: \(error.localizedDescription)")
+            do {
+                let container = try PersistenceConfiguration.makeModelContainer(deleteExisting: true)
+                self.modelContainer = container
+                self.backgroundSync = BackgroundSyncService(
+                    healthKitService: services.healthKitService,
+                    modelContainer: container
+                )
+                self.automationScheduler = AutomationScheduler(
+                    healthKitService: services.healthKitService,
+                    modelContainer: container,
+                    keychain: services.keychain
+                )
+            } catch {
+                fatalError("Failed to create ModelContainer even after recovery: \(error)")
+            }
         }
 
         #if canImport(UIKit)
@@ -112,11 +128,11 @@ struct HealthAppTransferApp: App {
         await backgroundSync.setAutomationScheduler(automationScheduler)
         await automationScheduler.start()
 
-        #if os(iOS)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
         await backgroundSync.setupObserverQueries()
         await backgroundSync.scheduleAppRefresh()
         #else
-        // On macOS, pull data from CloudKit on launch
+        // On macOS / Mac Catalyst, pull data from CloudKit on launch
         await performCloudKitSync()
         #endif
     }

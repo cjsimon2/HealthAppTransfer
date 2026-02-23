@@ -169,10 +169,11 @@ actor CertificateService {
         var result: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &result)
 
-        guard status == errSecSuccess else {
+        guard status == errSecSuccess, let result else {
             return nil
         }
 
+        // SecItemCopyMatching guarantees SecIdentity when kSecReturnRef + kSecClassIdentity
         return (result as! SecIdentity) // swiftlint:disable:this force_cast
     }
 }
