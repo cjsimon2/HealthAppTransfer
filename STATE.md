@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-22 23:05
+**Last Updated:** 2026-02-23
 
 ## Active Tasks
 
@@ -20,6 +20,8 @@
 <!-- Recently completed work (last 10) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ fix: UI test assertion mismatches and timing brittleness (4 tests) | 2026-02-23 | HealthAppTransferUITests.swift, LEARNINGS.md |
+| ✅ docs: update LEARNINGS.md with Catalyst #if os(macOS) gotcha and refresh handoff | 2026-02-22 | See commit |
 | ✅ fix: use runtime HealthKit checks instead of compile-time #if os(macOS) for Catalyst | 2026-02-22 | See commit |
 | ✅ fix: resolve 13 bugs across sync, Catalyst, TLS, auth, and crash safety | 2026-02-22 | See commit |
 | ✅ fix: deep debug — 13 bugs across entitlements, sync, Catalyst, TLS, auth | 2026-02-22 | 16 files (see diff) |

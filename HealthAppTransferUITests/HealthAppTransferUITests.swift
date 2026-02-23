@@ -55,19 +55,19 @@ final class HealthAppTransferUITests: XCTestCase {
         let tabBar = app.tabBars
 
         tabBar.buttons["Health Data"].tap()
-        XCTAssertTrue(app.navigationBars["Health Data"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.navigationBars["Health Data"].waitForExistence(timeout: 5))
 
         tabBar.buttons["Export"].tap()
-        XCTAssertTrue(app.navigationBars["Export"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.navigationBars["Export"].waitForExistence(timeout: 5))
 
         tabBar.buttons["Automations"].tap()
-        XCTAssertTrue(app.navigationBars["Automations"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.navigationBars["Automations"].waitForExistence(timeout: 5))
 
         tabBar.buttons["Settings"].tap()
-        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
 
         tabBar.buttons["Dashboard"].tap()
-        XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 5))
     }
 
     // MARK: - Dashboard
@@ -82,9 +82,9 @@ final class HealthAppTransferUITests: XCTestCase {
         }
         configureButton.tap()
 
-        // Verify a sheet or navigation appeared
-        let doneButton = app.buttons["Done"]
-        XCTAssertTrue(doneButton.waitForExistence(timeout: 3), "Configure sheet should present with a Done button")
+        // Verify the metric picker sheet appeared (has Cancel and Save)
+        let saveButton = app.buttons["Save"]
+        XCTAssertTrue(saveButton.waitForExistence(timeout: 3), "Configure sheet should present with a Save button")
     }
 
     // MARK: - Export
@@ -94,7 +94,7 @@ final class HealthAppTransferUITests: XCTestCase {
 
         app.tabBars.buttons["Export"].tap()
 
-        let formatPicker = app.otherElements["export.formatPicker"]
+        let formatPicker = app.buttons["export.formatPicker"]
         XCTAssertTrue(formatPicker.waitForExistence(timeout: 3), "Format picker should be visible")
 
         let exportButton = app.buttons["export.exportButton"]
@@ -120,9 +120,9 @@ final class HealthAppTransferUITests: XCTestCase {
 
         addButton.tap()
 
-        // Verify automation type options appear
+        // Verify automation type options appear (menu animation needs time)
         let restOption = app.buttons["REST API"]
-        XCTAssertTrue(restOption.waitForExistence(timeout: 3), "REST API option should appear in add menu")
+        XCTAssertTrue(restOption.waitForExistence(timeout: 5), "REST API option should appear in add menu")
     }
 
     // MARK: - Settings

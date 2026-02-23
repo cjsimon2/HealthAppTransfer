@@ -15,6 +15,7 @@
 
 ### Testing Patterns
 <!-- What works for testing in this project -->
+- SwiftUI `Picker` inside a `Form` renders as a **Button** in the XCUI accessibility hierarchy, not `otherElements`. Use `app.buttons["identifier"]` to find it. SwiftUI `Menu` items also need generous timeouts (5s+) because popover/action sheet animations delay element availability.
 - HealthKit queries (`HKSampleQuery`, `HKStatisticsQuery`) are untestable via `execute(_ query:)` — completion handlers are internal. Add async methods to `HealthStoreProtocol` (like `dataExists(for:)`) and mock at that level instead.
 - `HKStatisticsCollection` and `HKStatistics` can't be constructed in tests — for `HKStatisticsCollectionQuery`, return `[AggregatedSample]` from the protocol method so mocks bypass HK types entirely.
 - Cumulative quantity types (stepCount, energy) only support `.cumulativeSum`; discrete types (heartRate, bodyMass) only support `.discreteAverage/.discreteMin/.discreteMax`. Mixing causes HK errors — validate aggregation style before building `HKStatisticsOptions`.
