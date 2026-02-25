@@ -1,24 +1,37 @@
-# Session Handoff - 2026-02-23 (Documentation Sweep)
+# Session Handoff — 2026-02-24
 
-## Completed This Session
+## What Was Done
 
-### `/document ALL` — Comprehensive documentation update (3 files)
+Implemented the Data Insights & Correlation Analysis feature — a new **Insights tab** with auto-generated health pattern summaries and interactive cross-metric correlation scatter plots.
 
-**README.md** — Added Mac Catalyst and Widget features, expanded architecture tree with file counts and widget extension, added Widgets section (3 sizes + Live Activity), corrected test count to 550, added design decisions for runtime HealthKit checks and WidgetDataStore.
+### Files Created (5)
+- `HealthAppTransfer/ViewModels/InsightsViewModel.swift` — All business logic: 4 insight generators (weekly summary, personal records, day-of-week patterns, IQR anomaly detection), Pearson correlation with scatter plot data, dual-path data fetching (HealthKit + SwiftData fallback)
+- `HealthAppTransfer/Views/Insights/InsightsView.swift` — Main tab view with Weekly Insights section (card list) and Correlations section (metric pickers, compare button, suggested pairs chips, scatter chart)
+- `HealthAppTransfer/Views/Insights/InsightCardView.swift` — Card per insight with category icon/color and contextual message
+- `HealthAppTransfer/Views/Insights/CorrelationChartView.swift` — Swift Charts scatter plot with PointMark, r-value header, strength label
+- `HealthAppTransferTests/InsightsViewModelTests.swift` — 13 tests covering Pearson correlation (6 edge cases), strength labels (3 boundary tests), initial state, suggested pairs, default types
 
-**STATE.md** — Fixed source file count (149 total, was 85), added SwiftData Models/ViewModels/Widget metrics, deduplicated completed tasks (40+ → 15), populated session history table, added 4 important files (PairingService, ContentView, SchemaVersions, WidgetDataStore).
+### Files Modified (1)
+- `HealthAppTransfer/Views/MainTabView.swift` — Added `.insights` case to `AppTab` enum (after `.export`), wired in iOS TabView and macOS NavigationSplitView
 
-**LEARNINGS.md** — Filled in Key Abstractions (6 entries), Integration Points (6 data flow paths), Library Quirks (4 dependencies), API Patterns (3 entries). Previously empty sections now contain verified codebase knowledge.
+### Also Updated
+- `HealthAppTransfer.xcodeproj/project.pbxproj` — 5 new file refs, Insights PBXGroup, build phase entries
+- `LEARNINGS.md` — Added mock name collision insight
+- `STATE.md` — Updated metrics (154 files, 563 tests, 11 VMs), added completed task, session history
 
-No code changes — source files already had comprehensive `///` docstrings on all public APIs.
+## Verification Status
+- **Build:** Passing (zero errors)
+- **Tests:** 563 passed, 0 failed (full suite, no regressions)
+- **Not yet committed** — all changes are unstaged
 
-## Build & Test Results
-
-- No code changes, build/test status unchanged from previous session
-- **Build:** Passing (iOS + macOS Catalyst, 0 errors)
-- **Tests:** 550 unit tests, 9 UI tests
+## Decisions Made
+- Mock classes in test files prefixed with test context name (`InsightsMockStore`) to avoid cross-file collisions in test target
+- `pearsonCorrelation` and `correlationStrength` are `func` (not `private`) to enable direct unit testing
+- `CorrelationDataPoint` struct exists because SwiftUI Charts requires `Identifiable` — can't iterate tuples
+- Suggested pairs are a static constant on the ViewModel, not a separate config
 
 ## Next Steps
-
-1. No blockers — documentation is current and accurate
-2. Consider filling in remaining empty LEARNINGS.md sections (Effective Workflows, Communication Patterns, Session Insights) as patterns emerge over future sessions
+- Commit the changes
+- Consider adding more insight generators (e.g., streak detection, goal progress)
+- Could add persistence for favorite correlation pairs
+- Widget extension could surface top insight of the day

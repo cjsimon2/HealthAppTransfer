@@ -22,6 +22,7 @@
 - xcodegen's default scheme does NOT include the unit test target. Add an explicit `schemes:` section in `project.yml` with `HealthAppTransferTests` in the test plan.
 - `HKCategorySample` for `menstrualFlow` requires `HKMetadataKeyMenstrualCycleStart` metadata at creation — tests crash with `_HKObjectValidationFailureException` without it.
 - `HKCorrelation` requires at least one `HKSample` object — can't create empty correlations in tests; HealthKit throws `_HKObjectValidationFailureException`.
+- `private` mock classes in test files (e.g. `MockHealthStore`) still collide across the test target — Swift compiles all test files together. Prefix mock names with the test class context (e.g. `DashboardMockStore`, `InsightsMockStore`).
 
 ### Architecture Patterns
 <!-- Structural decisions that work well -->

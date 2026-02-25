@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-23
+**Last Updated:** 2026-02-24
 
 ## Active Tasks
 
@@ -20,6 +20,7 @@
 <!-- Recently completed work (last 15, deduplicated) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ feat: add Insights tab with pattern detection and correlation analysis | 2026-02-24 | 5 new + 1 modified Swift files, project.pbxproj |
 | ✅ docs: comprehensive documentation sweep (README, STATE, LEARNINGS) | 2026-02-23 | README.md, STATE.md, LEARNINGS.md |
 | ✅ fix: correct 4 UI test assertion mismatches and timing brittleness | 2026-02-22 | HealthAppTransferUITests.swift, LEARNINGS.md |
 | ✅ docs: update LEARNINGS.md with Catalyst #if os(macOS) gotcha | 2026-02-22 | LEARNINGS.md |
@@ -58,6 +59,7 @@
 <!-- Last 5 sessions summary -->
 | Date | Work Done | Key Outcomes |
 |------|-----------|--------------|
+| 2026-02-24 | Insights tab feature | New Insights tab with weekly summaries, personal records, day-of-week patterns, anomaly detection, and cross-metric correlation scatter plots. 5 new files + 13 tests |
 | 2026-02-23 | Documentation sweep (`/document ALL`) | README updated (widgets, Catalyst, corrected metrics), STATE.md cleaned up (deduped tasks, accurate counts), LEARNINGS.md filled in (key abstractions, integration points, library quirks) |
 | 2026-02-22 | Catalyst data fix, 13-bug deep debug, UI test fixes | Runtime HealthKit checks replaced compile-time `#if os(macOS)`, TLS/auth/sync hardening, UI test timing fixes |
 | 2026-02-22 | UI theme, App Store audit, GPX improvements | Wes Anderson warm theme, entitlements/Info.plist fixes, HR data in GPX, app icon |
@@ -102,13 +104,13 @@
 ## Metrics
 
 <!-- Project health indicators -->
-- **Source Files:** 99 app + 5 widget + 45 test = 149 Swift files
+- **Source Files:** 103 app + 5 widget + 46 test = 154 Swift files
 - **Source Directories:** 21 (11 app, 1 widget extension, 2 test targets)
 - **Health Data Types:** 180+ (quantity, category, correlation, characteristic, workout)
-- **Tests:** 550 unit tests, 9 UI tests (44 test files + 1 UI test file)
+- **Tests:** 563 unit tests, 9 UI tests (45 test files + 1 UI test file)
 - **Test Coverage:** ~90% file coverage
 - **SwiftData Models:** 8 (SyncConfiguration, PairedDevice, ExportRecord, AuditEventRecord, AutomationConfiguration, UserPreferences, SyncedHealthSample, SchemaVersions)
-- **ViewModels:** 10 (Dashboard, HealthData, HealthDataDetail, Chart, Export, Pairing, LANSync, SecuritySettings, SyncSettings, Onboarding)
+- **ViewModels:** 11 (Dashboard, HealthData, HealthDataDetail, Chart, Export, Insights, Pairing, LANSync, SecuritySettings, SyncSettings, Onboarding)
 - **Build:** Passing (iOS + macOS Catalyst, 0 errors)
 - **App Store Readiness:** HealthKit entitlement, camera description, encryption declaration, device capabilities — all added
 - **Accessibility:** ~90%+ (labels/identifiers on all interactive elements)
@@ -117,7 +119,7 @@
 - **Widget Sizes:** 3 (small, medium, large) + Live Activity
 - **Siri Shortcuts:** 3 (Get value, Sync, Export)
 - **API Endpoints:** 4 (/status, /api/v1/pair, /health/types, /health/data)
-- **Last Successful Build:** 2026-02-22
+- **Last Successful Build:** 2026-02-24
 
 ---
 *This file is updated automatically by Claude. Manual edits are preserved.*

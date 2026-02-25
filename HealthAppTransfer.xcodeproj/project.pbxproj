@@ -166,6 +166,11 @@
 		B935C3B41D3756D26805F4E9 /* AppTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F266E5B21CD97F822F83120 /* AppTypography.swift */; };
 		8001AA85FB925A0CE1AEA44D /* ChartColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37B302898E9B67B800ECB62 /* ChartColors.swift */; };
 		3704C031E8FD2310A336D688 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEB736AB80AEA28D8CAE3A3F /* ViewModifiers.swift */; };
+		AA1B2C3D4E5F6A7B8C9D0E1F /* InsightsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2C3D4E5F6A7B8C9D0E1F2A /* InsightsViewModel.swift */; };
+		AA2B3C4D5E6F7A8B9C0D1E2F /* InsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3C4D5E6F7A8B9C0D1E2F3A /* InsightsView.swift */; };
+		AA3B4C5D6E7F8A9B0C1D2E3F /* InsightCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4C5D6E7F8A9B0C1D2E3F4A /* InsightCardView.swift */; };
+		AA4B5C6D7E8F9A0B1C2D3E4F /* CorrelationChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5C6D7E8F9A0B1C2D3E4F5A /* CorrelationChartView.swift */; };
+		AA5B6C7D8E9F0A1B2C3D4E5F /* InsightsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6C7D8E9F0A1B2C3D4E5F6A /* InsightsViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -366,6 +371,11 @@
 		6F266E5B21CD97F822F83120 /* AppTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTypography.swift; sourceTree = "<group>"; };
 		F37B302898E9B67B800ECB62 /* ChartColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartColors.swift; sourceTree = "<group>"; };
 		FEB736AB80AEA28D8CAE3A3F /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
+		BB2C3D4E5F6A7B8C9D0E1F2A /* InsightsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsViewModel.swift; sourceTree = "<group>"; };
+		BB3C4D5E6F7A8B9C0D1E2F3A /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
+		BB4C5D6E7F8A9B0C1D2E3F4A /* InsightCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightCardView.swift; sourceTree = "<group>"; };
+		BB5C6D7E8F9A0B1C2D3E4F5A /* CorrelationChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrelationChartView.swift; sourceTree = "<group>"; };
+		BB6C7D8E9F0A1B2C3D4E5F6A /* InsightsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -673,6 +683,7 @@
 				B56D604E573F939CD3066F92 /* HealthDataViewModelTests.swift */,
 				ED3E394D812193FB2544A378 /* HealthTypeEntityQueryTests.swift */,
 				5657CD6D7776CA254E56995C /* HomeAssistantAutomationTests.swift */,
+				BB6C7D8E9F0A1B2C3D4E5F6A /* InsightsViewModelTests.swift */,
 				CC83C7E26EF925D5EF7E490C /* LANSyncViewModelTests.swift */,
 				0B1A1A136BF1A6D4ADA3402F /* MQTTAutomationTests.swift */,
 				EF13FC33192EE236AACAF999 /* NetworkHelpersTests.swift */,
@@ -690,6 +701,16 @@
 				EC08589E34D0A1F30EA4FDE5 /* WidgetMetricSnapshotTests.swift */,
 			);
 			path = HealthAppTransferTests;
+			sourceTree = "<group>";
+		};
+		CC7D8E9F0A1B2C3D4E5F6A7B /* Insights */ = {
+			isa = PBXGroup;
+			children = (
+				BB3C4D5E6F7A8B9C0D1E2F3A /* InsightsView.swift */,
+				BB4C5D6E7F8A9B0C1D2E3F4A /* InsightCardView.swift */,
+				BB5C6D7E8F9A0B1C2D3E4F5A /* CorrelationChartView.swift */,
+			);
+			path = Insights;
 			sourceTree = "<group>";
 		};
 		D2FCEF00FEADE8B0AE8A8396 /* HealthData */ = {
@@ -722,6 +743,7 @@
 				EBAA02EA1A6D96BDE1CB5EDB /* OnboardingViewModel.swift */,
 				0DDCE2D7600A1D4377B73660 /* PairingViewModel.swift */,
 				B81046D5D7A0404FB84F1186 /* SecuritySettingsViewModel.swift */,
+				BB2C3D4E5F6A7B8C9D0E1F2A /* InsightsViewModel.swift */,
 				361999716D601E2EF4CF84C5 /* SyncSettingsViewModel.swift */,
 			);
 			path = ViewModels;
@@ -772,6 +794,7 @@
 				D7649A864B0B67D069EAA06A /* Dashboard */,
 				8F4C0D128825A78427DEA4B1 /* Export */,
 				D2FCEF00FEADE8B0AE8A8396 /* HealthData */,
+				CC7D8E9F0A1B2C3D4E5F6A7B /* Insights */,
 				E846E796D511C949FBD8C8E8 /* Onboarding */,
 				59644D2FF7609339CD521716 /* Settings */,
 			);
@@ -990,6 +1013,10 @@
 				ABEED29A83143A70D1FF9B88 /* DEREncoder.swift in Sources */,
 				806A9082655B8669A60FB75E /* DashboardView.swift in Sources */,
 				F8EC2E2BC1BF9406F05E144A /* DashboardViewModel.swift in Sources */,
+				AA1B2C3D4E5F6A7B8C9D0E1F /* InsightsViewModel.swift in Sources */,
+				AA2B3C4D5E6F7A8B9C0D1E2F /* InsightsView.swift in Sources */,
+				AA3B4C5D6E7F8A9B0C1D2E3F /* InsightCardView.swift in Sources */,
+				AA4B5C6D7E8F9A0B1C2D3E4F /* CorrelationChartView.swift in Sources */,
 				04FD3693C44722AE8E9B76A5 /* ExportFormatter.swift in Sources */,
 				85A51C7A42AEFCFDCC89AB9F /* ExportHealthDataIntent.swift in Sources */,
 				8A79F4FC32DBA41346CA6875 /* ExportRecord.swift in Sources */,
@@ -1087,6 +1114,7 @@
 				126713AB56ADC2961BEBB32A /* CloudStorageAutomationTests.swift in Sources */,
 				DE5202DA29E0062A21330645 /* DEREncoderTests.swift in Sources */,
 				01602F591097E44828ED7C2B /* DashboardViewModelTests.swift in Sources */,
+				AA5B6C7D8E9F0A1B2C3D4E5F /* InsightsViewModelTests.swift in Sources */,
 				E0A1CF66EC2F00721C7CFB03 /* ExportServiceTests.swift in Sources */,
 				F7135680E8CC69FAA22B7261 /* ExportViewModelTests.swift in Sources */,
 				B56182DDEEA1D6EA8B768F31 /* GetLatestValueIntentTests.swift in Sources */,

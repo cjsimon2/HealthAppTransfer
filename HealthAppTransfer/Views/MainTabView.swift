@@ -60,6 +60,15 @@ struct MainTabView: View {
             .accessibilityIdentifier("tab.export")
 
             NavigationStack {
+                InsightsView(healthKitService: healthKitService)
+            }
+            .tabItem {
+                Label("Insights", systemImage: "chart.dots.scatter")
+            }
+            .tag(AppTab.insights)
+            .accessibilityIdentifier("tab.insights")
+
+            NavigationStack {
                 AutomationsView()
             }
             .tabItem {
@@ -98,6 +107,8 @@ struct MainTabView: View {
                 HealthDataView(healthKitService: healthKitService)
             case .export:
                 QuickExportView(healthKitService: healthKitService)
+            case .insights:
+                InsightsView(healthKitService: healthKitService)
             case .automations:
                 AutomationsView()
             case .settings:
@@ -117,6 +128,7 @@ enum AppTab: String, CaseIterable, Identifiable {
     case dashboard
     case healthData
     case export
+    case insights
     case automations
     case settings
 
@@ -127,6 +139,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         case .dashboard: String(localized: "tab.dashboard", defaultValue: "Dashboard")
         case .healthData: String(localized: "tab.healthData", defaultValue: "Health Data")
         case .export: String(localized: "tab.export", defaultValue: "Export")
+        case .insights: String(localized: "tab.insights", defaultValue: "Insights")
         case .automations: String(localized: "tab.automations", defaultValue: "Automations")
         case .settings: String(localized: "tab.settings", defaultValue: "Settings")
         }
@@ -137,6 +150,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         case .dashboard: "heart.text.square"
         case .healthData: "list.bullet.clipboard"
         case .export: "square.and.arrow.up"
+        case .insights: "chart.dots.scatter"
         case .automations: "bolt.horizontal"
         case .settings: "gear"
         }
