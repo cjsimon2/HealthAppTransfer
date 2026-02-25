@@ -1,37 +1,56 @@
-# Session Handoff — 2026-02-24
+# Session Handoff — 2026-02-24 22:25
 
 ## What Was Done
 
-Implemented the Data Insights & Correlation Analysis feature — a new **Insights tab** with auto-generated health pattern summaries and interactive cross-metric correlation scatter plots.
+Implemented the full **Insights Features + Polish Batch** (7 features):
 
-### Files Created (5)
-- `HealthAppTransfer/ViewModels/InsightsViewModel.swift` — All business logic: 4 insight generators (weekly summary, personal records, day-of-week patterns, IQR anomaly detection), Pearson correlation with scatter plot data, dual-path data fetching (HealthKit + SwiftData fallback)
-- `HealthAppTransfer/Views/Insights/InsightsView.swift` — Main tab view with Weekly Insights section (card list) and Correlations section (metric pickers, compare button, suggested pairs chips, scatter chart)
-- `HealthAppTransfer/Views/Insights/InsightCardView.swift` — Card per insight with category icon/color and contextual message
-- `HealthAppTransfer/Views/Insights/CorrelationChartView.swift` — Swift Charts scatter plot with PointMark, r-value header, strength label
-- `HealthAppTransferTests/InsightsViewModelTests.swift` — 13 tests covering Pearson correlation (6 edge cases), strength labels (3 boundary tests), initial state, suggested pairs, default types
+1. **Custom Goals** — User-configurable daily goals and streak thresholds via GoalSettingsView, SchemaV2 migration
+2. **Sparklines** — Mini AreaMark+LineMark charts on streak/goal insight cards (64x32)
+3. **Correlation History** — CorrelationRecord SwiftData model, auto-saved after each analysis, CorrelationHistoryView with r-value trend chart
+4. **Onboarding Callout** — Insights explanation between metrics and sync toggle in QuickSetupStepView
+5. **iPad Layout** — Two-column HStack layout via `@Environment(\.horizontalSizeClass)`
+6. **Notifications** — NotificationService actor with streak-at-risk and goal-nearly-met alerts, 24-hour cooldown, NotificationSettingsView
+7. **watchOS Companion** — 4 app views + 3 complication files, WCSession data push from iPhone
 
-### Files Modified (1)
-- `HealthAppTransfer/Views/MainTabView.swift` — Added `.insights` case to `AppTab` enum (after `.export`), wired in iOS TabView and macOS NavigationSplitView
+### New Files (12)
+- `Models/Persistence/CorrelationRecord.swift`
+- `Views/Insights/GoalSettingsView.swift`
+- `Views/Insights/CorrelationHistoryView.swift`
+- `Views/Settings/NotificationSettingsView.swift`
+- `Services/Notifications/NotificationService.swift`
+- `HealthAppTransferWatch/HealthAppTransferWatchApp.swift`
+- `HealthAppTransferWatch/WatchDashboardView.swift`
+- `HealthAppTransferWatch/WatchMetricRowView.swift`
+- `HealthAppTransferWatch/WatchConnectivityManager.swift`
+- `HealthAppTransferWatch/Complications/StreakComplication.swift`
+- `HealthAppTransferWatch/Complications/GoalProgressComplication.swift`
+- `HealthAppTransferWatch/Complications/WatchWidgetBundle.swift`
 
-### Also Updated
-- `HealthAppTransfer.xcodeproj/project.pbxproj` — 5 new file refs, Insights PBXGroup, build phase entries
-- `LEARNINGS.md` — Added mock name collision insight
-- `STATE.md` — Updated metrics (154 files, 563 tests, 11 VMs), added completed task, session history
+### Modified Files (9)
+- `Models/Persistence/UserPreferences.swift` — +5 properties
+- `Models/Persistence/SchemaVersions.swift` — +SchemaV2, migration
+- `ViewModels/InsightsViewModel.swift` — Custom goals, sparklines, correlation save, notifications, widget push
+- `Views/Insights/InsightsView.swift` — Goal settings sheet, correlation history link, iPad layout
+- `Views/Insights/InsightCardView.swift` — Sparkline chart
+- `Views/Onboarding/QuickSetupStepView.swift` — Insights callout
+- `Views/Settings/SettingsView.swift` — Notifications row
+- `Services/Widget/WidgetDataStore.swift` — Streak/goal data methods
+- `App/HealthAppTransferApp.swift` — WCSession + PhoneSessionDelegate
 
-## Verification Status
-- **Build:** Passing (zero errors)
-- **Tests:** 563 passed, 0 failed (full suite, no regressions)
-- **Not yet committed** — all changes are unstaged
+## Build Status
+- iOS: **PASSING** (0 errors)
+- Tests: **596 PASS** (8 new InsightsViewModel tests + 15 new NotificationService tests)
 
-## Decisions Made
-- Mock classes in test files prefixed with test context name (`InsightsMockStore`) to avoid cross-file collisions in test target
-- `pearsonCorrelation` and `correlationStrength` are `func` (not `private`) to enable direct unit testing
-- `CorrelationDataPoint` struct exists because SwiftUI Charts requires `Identifiable` — can't iterate tuples
-- Suggested pairs are a static constant on the ViewModel, not a separate config
+## Incomplete Work
+- **watchOS target** must be added in Xcode GUI (File > New > Target > watchOS App)
+- **watchOS complications** need a separate widget extension target
+- Shared files for watch target: WidgetMetricSnapshot, WidgetInsightSnapshot, WidgetDataStore, HealthDataType
+- Changes are **not yet committed**
+- **5 UI test failures** are pre-existing (same on base commit) — tab navigation flakiness
 
 ## Next Steps
-- Commit the changes
-- Consider adding more insight generators (e.g., streak detection, goal progress)
-- Could add persistence for favorite correlation pairs
-- Widget extension could surface top insight of the day
+- Add watchOS target in Xcode
+- Commit all changes
+- Test notifications on real device
+- Test watchOS on real Apple Watch
+- Fix pre-existing UI test flakiness

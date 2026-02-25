@@ -8,6 +8,7 @@ struct InsightsView: View {
     // MARK: - Environment
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     // MARK: - Observed Objects
 
@@ -16,6 +17,10 @@ struct InsightsView: View {
     // MARK: - Dependencies
 
     private let healthKitService: HealthKitService
+
+    // MARK: - State
+
+    @State private var showGoalSettings = false
 
     // MARK: - Init
 
@@ -28,19 +33,80 @@ struct InsightsView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
-                insightsSection
-                correlationSection
+            if sizeClass == .regular {
+                regularLayout
+            } else {
+                compactLayout
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
-            .padding(.bottom, 100)
         }
         .navigationTitle("Insights")
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    showGoalSettings = true
+                } label: {
+                    Image(systemName: "slider.horizontal.3")
+                }
+                .accessibilityLabel("Goal Settings")
+                .accessibilityIdentifier("insights.goalSettings")
+            }
+        }
+        .sheet(isPresented: $showGoalSettings) {
+            GoalSettingsView()
+        }
+        .onChange(of: showGoalSettings) { _, isShowing in
+            if !isShowing {
+                Task { await viewModel.loadInsights(modelContext: modelContext) }
+            }
+        }
         .task {
             viewModel.loadFavorites(modelContext: modelContext)
             await viewModel.loadInsights(modelContext: modelContext)
         }
+    }
+
+    private var compactLayout: some View {
+        VStack(spacing: 24) {
+            insightsSection
+            correlationSection
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
+        .padding(.bottom, 100)
+    }
+
+    private var regularLayout: some View {
+        HStack(alignment: .top, spacing: 24) {
+            // Left column: insights as adaptive grid
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))], spacing: 12) {
+                Text("Weekly Insights")
+                    .font(AppTypography.displaySmall)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .gridCellColumns(2)
+
+                if viewModel.isLoadingInsights {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 24)
+                } else if viewModel.insights.isEmpty {
+                    emptyInsightsState
+                } else {
+                    ForEach(viewModel.insights) { insight in
+                        InsightCardView(insight: insight)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity)
+
+            // Right column: correlations
+            VStack(alignment: .leading, spacing: 12) {
+                correlationSection
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
+        .padding(.bottom, 100)
     }
 
     // MARK: - Insights Section
@@ -124,6 +190,20 @@ struct InsightsView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityIdentifier("insights.favoriteToggle")
+
+                if !result.points.isEmpty {
+                    NavigationLink {
+                        CorrelationHistoryView(
+                            typeA: viewModel.selectedMetricA,
+                            typeB: viewModel.selectedMetricB
+                        )
+                    } label: {
+                        Label("View History", systemImage: "clock.arrow.circlepath")
+                            .font(.subheadline)
+                            .foregroundStyle(AppColors.primary)
+                    }
+                    .accessibilityIdentifier("insights.correlationHistory")
+                }
             }
         }
     }

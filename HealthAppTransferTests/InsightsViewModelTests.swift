@@ -149,6 +149,71 @@ final class InsightsViewModelTests: XCTestCase {
         XCTAssertEqual(vm.orderedSuggestedPairs().count, InsightsViewModel.suggestedPairs.count)
     }
 
+    // MARK: - Custom Goals Resolution
+
+    func testResolvedGoalFallsBackToDefaults() {
+        let vm = makeViewModel()
+        let result = vm.resolvedGoal(for: .stepCount, preferences: nil)
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result?.goal, 10_000)
+        XCTAssertEqual(result?.unit, "steps")
+    }
+
+    func testResolvedStreakThresholdFallsBackToDefaults() {
+        let vm = makeViewModel()
+        let result = vm.resolvedStreakThreshold(for: .stepCount, preferences: nil)
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result?.threshold, 10_000)
+        XCTAssertEqual(result?.unit, "steps")
+    }
+
+    func testResolvedGoalReturnsNilForUnconfiguredType() {
+        let vm = makeViewModel()
+        let result = vm.resolvedGoal(for: .heartRate, preferences: nil)
+        XCTAssertNil(result)
+    }
+
+    func testResolvedStreakThresholdReturnsNilForUnconfiguredType() {
+        let vm = makeViewModel()
+        let result = vm.resolvedStreakThreshold(for: .heartRate, preferences: nil)
+        XCTAssertNil(result)
+    }
+
+    // MARK: - InsightItem Sparkline
+
+    func testStreakInsightHasSparkline() {
+        let item = InsightItem.streak(type: .stepCount, days: 5, threshold: 10_000, unit: "steps", sparkline: [8000, 12000, 11000, 9500, 13000])
+        XCTAssertNotNil(item.sparkline)
+        XCTAssertEqual(item.sparkline?.count, 5)
+    }
+
+    func testGoalProgressInsightHasSparkline() {
+        let item = InsightItem.goalProgress(type: .stepCount, current: 7500, goal: 10_000, unit: "steps", sparkline: [5000, 6000, 7500])
+        XCTAssertNotNil(item.sparkline)
+        XCTAssertEqual(item.sparkline?.count, 3)
+    }
+
+    func testWeeklySummaryInsightHasNoSparkline() {
+        let item = InsightItem.weeklySummary(type: .stepCount, percentChange: 15.0, direction: "up")
+        XCTAssertNil(item.sparkline)
+    }
+
+    // MARK: - InsightItem Properties
+
+    func testStreakInsightMessage() {
+        let item = InsightItem.streak(type: .stepCount, days: 7, threshold: 10_000, unit: "steps", sparkline: [])
+        XCTAssertEqual(item.message, "7-day streak! Keep it going")
+        XCTAssertEqual(item.iconName, "flame")
+        XCTAssertEqual(item.id, "streak.stepCount")
+    }
+
+    func testGoalProgressInsightMessage() {
+        let item = InsightItem.goalProgress(type: .stepCount, current: 7500, goal: 10_000, unit: "steps", sparkline: [])
+        XCTAssertTrue(item.message.contains("75%"))
+        XCTAssertEqual(item.iconName, "target")
+        XCTAssertEqual(item.id, "goal.stepCount")
+    }
+
     // MARK: - Helpers
 
     private func makeViewModel() -> InsightsViewModel {

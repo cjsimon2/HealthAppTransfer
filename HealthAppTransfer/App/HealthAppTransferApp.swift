@@ -5,6 +5,10 @@ import SwiftUI
 import BackgroundTasks
 #endif
 
+#if canImport(WatchConnectivity)
+import WatchConnectivity
+#endif
+
 @main
 struct HealthAppTransferApp: App {
 
@@ -131,11 +135,25 @@ struct HealthAppTransferApp: App {
         #if os(iOS) && !targetEnvironment(macCatalyst)
         await backgroundSync.setupObserverQueries()
         await backgroundSync.scheduleAppRefresh()
+        activateWatchSession()
         #else
         // On macOS / Mac Catalyst, pull data from CloudKit on launch
         await performCloudKitSync()
         #endif
     }
+
+    // MARK: - Watch Connectivity
+
+    #if canImport(WatchConnectivity)
+    private func activateWatchSession() {
+        guard WCSession.isSupported() else { return }
+        let session = WCSession.default
+        if session.delegate == nil {
+            session.delegate = PhoneSessionDelegate.shared
+        }
+        session.activate()
+    }
+    #endif
 
     // MARK: - CloudKit Sync
 
@@ -153,6 +171,48 @@ struct HealthAppTransferApp: App {
         }
     }
 }
+
+// MARK: - Phone Session Delegate
+
+#if canImport(WatchConnectivity)
+/// WCSession delegate for the iPhone side — pushes widget data to the watch.
+class PhoneSessionDelegate: NSObject, WCSessionDelegate {
+
+    static let shared = PhoneSessionDelegate()
+
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        if activationState == .activated {
+            pushDataToWatch(session: session)
+        }
+    }
+
+    func sessionDidBecomeInactive(_ session: WCSession) {}
+    func sessionDidDeactivate(_ session: WCSession) {
+        session.activate()
+    }
+
+    func pushDataToWatch(session: WCSession? = nil) {
+        let wcSession = session ?? WCSession.default
+        guard wcSession.activationState == .activated, wcSession.isPaired else { return }
+
+        let store = WidgetDataStore.shared
+        var context: [String: Any] = [:]
+
+        if let snapshotData = try? JSONEncoder().encode(store.loadAll()) {
+            context["metric_snapshots"] = snapshotData
+        }
+
+        let streakData = store.loadStreakData()
+        if !streakData.isEmpty { context["streak_data"] = streakData }
+
+        let goalData = store.loadGoalProgress()
+        if !goalData.isEmpty { context["goal_progress"] = goalData }
+
+        guard !context.isEmpty else { return }
+        try? wcSession.updateApplicationContext(context)
+    }
+}
+#endif
 
 // MARK: - macOS Notification Names
 

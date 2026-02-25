@@ -9,8 +9,8 @@ enum InsightItem: Identifiable {
     case personalRecord(type: HealthDataType, value: Double, unit: String)
     case dayOfWeekPattern(type: HealthDataType, dayName: String)
     case anomaly(type: HealthDataType, metric: String, direction: String)
-    case streak(type: HealthDataType, days: Int, threshold: Double, unit: String)
-    case goalProgress(type: HealthDataType, current: Double, goal: Double, unit: String)
+    case streak(type: HealthDataType, days: Int, threshold: Double, unit: String, sparkline: [Double])
+    case goalProgress(type: HealthDataType, current: Double, goal: Double, unit: String, sparkline: [Double])
 
     var id: String {
         switch self {
@@ -18,8 +18,8 @@ enum InsightItem: Identifiable {
         case .personalRecord(let type, _, _): return "record.\(type.rawValue)"
         case .dayOfWeekPattern(let type, _): return "pattern.\(type.rawValue)"
         case .anomaly(let type, _, _): return "anomaly.\(type.rawValue)"
-        case .streak(let type, _, _, _): return "streak.\(type.rawValue)"
-        case .goalProgress(let type, _, _, _): return "goal.\(type.rawValue)"
+        case .streak(let type, _, _, _, _): return "streak.\(type.rawValue)"
+        case .goalProgress(let type, _, _, _, _): return "goal.\(type.rawValue)"
         }
     }
 
@@ -29,8 +29,8 @@ enum InsightItem: Identifiable {
         case .personalRecord(let type, _, _): return type
         case .dayOfWeekPattern(let type, _): return type
         case .anomaly(let type, _, _): return type
-        case .streak(let type, _, _, _): return type
-        case .goalProgress(let type, _, _, _): return type
+        case .streak(let type, _, _, _, _): return type
+        case .goalProgress(let type, _, _, _, _): return type
         }
     }
 
@@ -56,12 +56,20 @@ enum InsightItem: Identifiable {
             return "Most active on \(dayName)"
         case .anomaly(_, let metric, let direction):
             return "\(metric) \(direction) today"
-        case .streak(_, let days, _, _):
+        case .streak(_, let days, _, _, _):
             return "\(days)-day streak! Keep it going"
-        case .goalProgress(_, let current, let goal, let unit):
+        case .goalProgress(_, let current, let goal, let unit, _):
             let pct = Int((current / goal) * 100)
             let remaining = Int(goal - current)
             return "\(pct)% to goal — \(remaining.formatted()) \(unit) to go"
+        }
+    }
+
+    var sparkline: [Double]? {
+        switch self {
+        case .streak(_, _, _, _, let data): return data
+        case .goalProgress(_, _, _, _, let data): return data
+        default: return nil
         }
     }
 }
@@ -146,11 +154,36 @@ class InsightsViewModel: ObservableObject {
         self.aggregationEngine = aggregationEngine
     }
 
+    // MARK: - Goal Resolution
+
+    func resolvedGoal(for type: HealthDataType, preferences: UserPreferences?) -> (goal: Double, unit: String)? {
+        if let prefs = preferences, let custom = prefs.customGoals[type.rawValue], custom > 0 {
+            let unit = Self.dailyGoals[type]?.unit ?? ""
+            return (custom, unit)
+        }
+        return Self.dailyGoals[type]
+    }
+
+    func resolvedStreakThreshold(for type: HealthDataType, preferences: UserPreferences?) -> (threshold: Double, unit: String)? {
+        if let prefs = preferences, let custom = prefs.customStreakThresholds[type.rawValue], custom > 0 {
+            let unit = Self.streakThresholds[type]?.unit ?? ""
+            return (custom, unit)
+        }
+        return Self.streakThresholds[type]
+    }
+
     // MARK: - Load Insights
 
     func loadInsights(modelContext: ModelContext? = nil) async {
         isLoadingInsights = true
         defer { isLoadingInsights = false }
+
+        // Fetch user preferences for custom goals
+        var preferences: UserPreferences?
+        if let modelContext {
+            let descriptor = FetchDescriptor<UserPreferences>()
+            preferences = try? modelContext.fetch(descriptor).first
+        }
 
         var results: [InsightItem] = []
 
@@ -171,10 +204,10 @@ class InsightsViewModel: ObservableObject {
             if let insight = anomalyDetection(type: type, samples: active) {
                 results.append(insight)
             }
-            if let insight = streakDetection(type: type, samples: active) {
+            if let insight = streakDetection(type: type, samples: active, preferences: preferences) {
                 results.append(insight)
             }
-            if let insight = goalProgress(type: type, samples: active) {
+            if let insight = goalProgress(type: type, samples: active, preferences: preferences) {
                 results.append(insight)
             }
         }
@@ -192,6 +225,19 @@ class InsightsViewModel: ObservableObject {
                 lastUpdated: Date()
             )
             WidgetDataStore.shared.saveInsight(snapshot)
+        }
+
+        // Push streak/goal data to widget for watchOS
+        pushWidgetData(from: results)
+
+        // Push to watch if connected
+        #if canImport(WatchConnectivity)
+        PhoneSessionDelegate.shared.pushDataToWatch()
+        #endif
+
+        // Schedule notifications if enabled
+        if let preferences, let modelContext {
+            await scheduleNotificationsIfNeeded(insights: results, preferences: preferences, modelContext: modelContext)
         }
     }
 
@@ -238,14 +284,69 @@ class InsightsViewModel: ObservableObject {
         let xs = points.map(\.x)
         let ys = points.map(\.y)
         let r = pearsonCorrelation(xs: xs, ys: ys)
+        let strength = correlationStrength(r)
 
         correlationResult = CorrelationResult(
             typeA: selectedMetricA,
             typeB: selectedMetricB,
             points: points,
             rValue: r,
-            strengthLabel: correlationStrength(r)
+            strengthLabel: strength
         )
+
+        // Save correlation record for history
+        if let modelContext {
+            saveCorrelationRecord(
+                typeA: selectedMetricA,
+                typeB: selectedMetricB,
+                rValue: r,
+                pointCount: points.count,
+                strengthLabel: strength,
+                modelContext: modelContext
+            )
+        }
+    }
+
+    // MARK: - Correlation History
+
+    private func saveCorrelationRecord(
+        typeA: HealthDataType,
+        typeB: HealthDataType,
+        rValue: Double,
+        pointCount: Int,
+        strengthLabel: String,
+        modelContext: ModelContext
+    ) {
+        // Deduplicate: skip if same-day record exists for this pair
+        let calendar = Calendar.current
+        let todayStart = calendar.startOfDay(for: Date())
+        let tomorrowStart = calendar.date(byAdding: .day, value: 1, to: todayStart)!
+
+        let typeARaw = typeA.rawValue
+        let typeBRaw = typeB.rawValue
+
+        var descriptor = FetchDescriptor<CorrelationRecord>(
+            predicate: #Predicate<CorrelationRecord> {
+                $0.typeARaw == typeARaw &&
+                $0.typeBRaw == typeBRaw &&
+                $0.date >= todayStart &&
+                $0.date < tomorrowStart
+            }
+        )
+        descriptor.fetchLimit = 1
+
+        let existingCount = (try? modelContext.fetchCount(descriptor)) ?? 0
+        guard existingCount == 0 else { return }
+
+        let record = CorrelationRecord(
+            typeARaw: typeARaw,
+            typeBRaw: typeBRaw,
+            rValue: rValue,
+            pointCount: pointCount,
+            date: Date(),
+            strengthLabel: strengthLabel
+        )
+        modelContext.insert(record)
     }
 
     // MARK: - Favorites
@@ -286,6 +387,60 @@ class InsightsViewModel: ObservableObject {
 
     private func pairKey(typeA: HealthDataType, typeB: HealthDataType) -> String {
         "\(typeA.rawValue)|\(typeB.rawValue)"
+    }
+
+    // MARK: - Widget Data Push
+
+    private func pushWidgetData(from insights: [InsightItem]) {
+        var streakData: [String: Int] = [:]
+        var goalData: [String: Double] = [:]
+
+        for insight in insights {
+            switch insight {
+            case .streak(let type, let days, _, _, _):
+                streakData[type.rawValue] = days
+            case .goalProgress(let type, let current, let goal, _, _):
+                goalData[type.rawValue] = goal > 0 ? current / goal : 0
+            default:
+                break
+            }
+        }
+
+        if !streakData.isEmpty {
+            WidgetDataStore.shared.saveStreakData(streakData)
+        }
+        if !goalData.isEmpty {
+            WidgetDataStore.shared.saveGoalProgress(goalData)
+        }
+    }
+
+    // MARK: - Notifications
+
+    private func scheduleNotificationsIfNeeded(
+        insights: [InsightItem],
+        preferences: UserPreferences,
+        modelContext: ModelContext
+    ) async {
+        guard preferences.notificationsEnabled else { return }
+
+        for insight in insights {
+            switch insight {
+            case .streak(let type, let days, _, _, let sparkline) where preferences.streakAlertsEnabled:
+                // Alert if most recent day has zero activity (streak at risk)
+                if let lastValue = sparkline.last, lastValue == 0 {
+                    await NotificationService.shared.scheduleStreakAlert(type: type, streakDays: days)
+                }
+            case .goalProgress(let type, let current, let goal, let unit, _) where preferences.goalAlertsEnabled:
+                // Alert if >= 90% complete
+                if goal > 0, (current / goal) >= 0.9 {
+                    await NotificationService.shared.scheduleGoalNearlyMet(
+                        type: type, current: current, goal: goal, unit: unit
+                    )
+                }
+            default:
+                break
+            }
+        }
     }
 
     // MARK: - Data Fetching
@@ -412,8 +567,8 @@ class InsightsViewModel: ObservableObject {
         return nil
     }
 
-    private func streakDetection(type: HealthDataType, samples: [AggregatedSample]) -> InsightItem? {
-        guard let config = Self.streakThresholds[type] else { return nil }
+    private func streakDetection(type: HealthDataType, samples: [AggregatedSample], preferences: UserPreferences? = nil) -> InsightItem? {
+        guard let config = resolvedStreakThreshold(for: type, preferences: preferences) else { return nil }
 
         // Sort by date descending so we walk backwards from most recent
         let sorted = samples.sorted { $0.startDate > $1.startDate }
@@ -428,11 +583,15 @@ class InsightsViewModel: ObservableObject {
         }
 
         guard streakDays >= 3 else { return nil }
-        return .streak(type: type, days: streakDays, threshold: config.threshold, unit: config.unit)
+
+        // Extract last 7 daily values for sparkline
+        let sparkline = samples.suffix(7).map { sampleValue($0) }
+
+        return .streak(type: type, days: streakDays, threshold: config.threshold, unit: config.unit, sparkline: sparkline)
     }
 
-    private func goalProgress(type: HealthDataType, samples: [AggregatedSample]) -> InsightItem? {
-        guard let config = Self.dailyGoals[type] else { return nil }
+    private func goalProgress(type: HealthDataType, samples: [AggregatedSample], preferences: UserPreferences? = nil) -> InsightItem? {
+        guard let config = resolvedGoal(for: type, preferences: preferences) else { return nil }
         guard let today = samples.sorted(by: { $0.startDate < $1.startDate }).last else { return nil }
 
         let current = sampleValue(today)
@@ -440,7 +599,11 @@ class InsightsViewModel: ObservableObject {
 
         // Show if 10%-99% complete (at/above goal handled by streak)
         guard progress >= 0.10, progress < 1.0 else { return nil }
-        return .goalProgress(type: type, current: current, goal: config.goal, unit: config.unit)
+
+        // Extract last 7 daily values for sparkline
+        let sparkline = samples.suffix(7).map { sampleValue($0) }
+
+        return .goalProgress(type: type, current: current, goal: config.goal, unit: config.unit, sparkline: sparkline)
     }
 
     // MARK: - Statistical Functions

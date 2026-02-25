@@ -33,6 +33,21 @@ final class UserPreferences {
     /// Favorite correlation pairs stored as "typeA.rawValue|typeB.rawValue" strings.
     var favoriteCorrelationPairs: [String] = []
 
+    /// Custom daily goals keyed by HealthDataType.rawValue.
+    var customGoals: [String: Double] = [:]
+
+    /// Custom streak thresholds keyed by HealthDataType.rawValue.
+    var customStreakThresholds: [String: Double] = [:]
+
+    /// Whether push notifications are enabled.
+    var notificationsEnabled: Bool = true
+
+    /// Whether streak-at-risk alerts are enabled.
+    var streakAlertsEnabled: Bool = true
+
+    /// Whether goal-nearly-met alerts are enabled.
+    var goalAlertsEnabled: Bool = true
+
     /// When preferences were last modified.
     var updatedAt: Date = Date()
 

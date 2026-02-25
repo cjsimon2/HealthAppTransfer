@@ -20,6 +20,8 @@ struct QuickSetupStepView: View {
 
                 metricsSection
 
+                insightsCallout
+
                 syncToggle
 
                 Spacer(minLength: 80)
@@ -122,5 +124,25 @@ struct QuickSetupStepView: View {
         }
         .padding(20)
         .background(AppColors.surfaceElevated, in: RoundedRectangle(cornerRadius: 16))
+    }
+
+    private var insightsCallout: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "chart.dots.scatter")
+                .font(.title3)
+                .foregroundStyle(AppColors.primary)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Insights")
+                    .font(.subheadline.weight(.medium))
+
+                Text("Your selected metrics power the Insights tab — streaks, goals, and correlations are generated automatically.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(20)
+        .background(AppColors.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
     }
 }

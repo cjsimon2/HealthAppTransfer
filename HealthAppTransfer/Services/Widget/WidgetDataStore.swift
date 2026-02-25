@@ -11,6 +11,8 @@ final class WidgetDataStore: @unchecked Sendable {
     static let appGroupID = "group.com.caseysimon.HealthAppTransfer"
     private static let snapshotsKey = "widget_metric_snapshots"
     private static let insightKey = "widget_insight_snapshot"
+    private static let streakDataKey = "widget_streak_data"
+    private static let goalProgressKey = "widget_goal_progress"
 
     // MARK: - Singleton
 
@@ -60,5 +62,25 @@ final class WidgetDataStore: @unchecked Sendable {
             return nil
         }
         return snapshot
+    }
+
+    // MARK: - Streak Data
+
+    func saveStreakData(_ data: [String: Int]) {
+        defaults?.set(data, forKey: Self.streakDataKey)
+    }
+
+    func loadStreakData() -> [String: Int] {
+        defaults?.dictionary(forKey: Self.streakDataKey) as? [String: Int] ?? [:]
+    }
+
+    // MARK: - Goal Progress
+
+    func saveGoalProgress(_ data: [String: Double]) {
+        defaults?.set(data, forKey: Self.goalProgressKey)
+    }
+
+    func loadGoalProgress() -> [String: Double] {
+        defaults?.dictionary(forKey: Self.goalProgressKey) as? [String: Double] ?? [:]
     }
 }

@@ -63,6 +63,17 @@ struct SettingsView: View {
 
             Section {
                 NavigationLink {
+                    NotificationSettingsView()
+                } label: {
+                    settingsRow("Notifications", icon: "bell.badge", color: AppColors.secondary)
+                }
+                .accessibilityIdentifier("settings.notifications")
+            } header: {
+                Text("Notifications")
+            }
+
+            Section {
+                NavigationLink {
                     SecuritySettingsView(viewModel: securitySettingsViewModel)
                 } label: {
                     settingsRow("Security", icon: "lock.shield", color: AppColors.accent)

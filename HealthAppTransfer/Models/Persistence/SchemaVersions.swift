@@ -22,17 +22,38 @@ enum SchemaV1: VersionedSchema {
     }
 }
 
+enum SchemaV2: VersionedSchema {
+    static var versionIdentifier: Schema.Version = Schema.Version(2, 0, 0)
+
+    static var models: [any PersistentModel.Type] {
+        [
+            SyncConfiguration.self,
+            PairedDevice.self,
+            AuditEventRecord.self,
+            ExportRecord.self,
+            AutomationConfiguration.self,
+            UserPreferences.self,
+            SyncedHealthSample.self,
+            CorrelationRecord.self,
+        ]
+    }
+}
+
 // MARK: - Migration Plan
 
 enum HealthAppMigrationPlan: SchemaMigrationPlan {
     static var schemas: [any VersionedSchema.Type] {
-        [SchemaV1.self]
+        [SchemaV1.self, SchemaV2.self]
     }
 
     static var stages: [MigrationStage] {
-        // No migrations yet — add lightweight or custom stages here as schema evolves.
-        []
+        [migrateV1toV2]
     }
+
+    static let migrateV1toV2 = MigrationStage.lightweight(
+        fromVersion: SchemaV1.self,
+        toVersion: SchemaV2.self
+    )
 }
 
 // MARK: - Model Container Factory
@@ -41,7 +62,7 @@ enum PersistenceConfiguration {
 
     /// All SwiftData model types used by the app.
     static var allModelTypes: [any PersistentModel.Type] {
-        SchemaV1.models
+        SchemaV2.models
     }
 
     /// Creates the shared ModelContainer for the app.
