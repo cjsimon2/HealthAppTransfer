@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-24 23:03
+**Last Updated:** 2026-02-24 23:05
 
 ## Active Tasks
 
@@ -20,6 +20,7 @@
 <!-- Recently completed work (last 15, deduplicated) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ fix: handle 6-tab overflow in UI tests and update tracking docs | 2026-02-24 | See commit |
 | ✅ test: add NotificationService unit tests with protocol injection | 2026-02-24 | NotificationService.swift, NotificationServiceTests.swift, project.pbxproj |
 | ✅ feat: Insights batch — custom goals, sparklines, correlation history, notifications, iPad layout, onboarding callout, watchOS companion | 2026-02-24 | 12 new + 8 modified Swift files, project.pbxproj |
 | ✅ feat: streak detection, goal progress, favorites, Insight widget | 2026-02-24 | 3 new + 8 modified Swift files, project.pbxproj |
