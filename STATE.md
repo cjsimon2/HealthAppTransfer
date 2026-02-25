@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-24 22:23
+**Last Updated:** 2026-02-24 23:03
 
 ## Active Tasks
 
@@ -20,8 +20,8 @@
 <!-- Recently completed work (last 15, deduplicated) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ test: add NotificationService unit tests with protocol injection | 2026-02-24 | NotificationService.swift, NotificationServiceTests.swift, project.pbxproj |
 | ✅ feat: Insights batch — custom goals, sparklines, correlation history, notifications, iPad layout, onboarding callout, watchOS companion | 2026-02-24 | 12 new + 8 modified Swift files, project.pbxproj |
-| ✅ feat: add streak detection, goal progress, favorite pairs, and Insight widget | 2026-02-24 | See commit |
 | ✅ feat: streak detection, goal progress, favorites, Insight widget | 2026-02-24 | 3 new + 8 modified Swift files, project.pbxproj |
 | ✅ feat: add Insights tab with pattern detection and correlation analysis | 2026-02-24 | 5 new + 1 modified Swift files, project.pbxproj |
 | ✅ docs: comprehensive documentation sweep (README, STATE, LEARNINGS) | 2026-02-23 | README.md, STATE.md, LEARNINGS.md |
@@ -65,6 +65,7 @@
 <!-- Last 5 sessions summary -->
 | Date | Work Done | Key Outcomes |
 |------|-----------|--------------|
+| 2026-02-24 | NotificationService tests | Added NotificationCenterProtocol for DI, 15 unit tests covering streak/goal alerts, authorization, cooldown logic. LEARNINGS.md updated. |
 | 2026-02-24 | Insights features + polish batch | Custom goals (GoalSettingsView, SchemaV2), sparklines in insight cards, correlation history (CorrelationRecord + CorrelationHistoryView), notifications (NotificationService + settings), iPad layout, onboarding callout, watchOS companion (4 views + 3 complications). 12 new files, 8 modified, 8 new tests |
 | 2026-02-24 | Insights enhancements | Streak detection, goal progress generators, favorite correlation pairs with persistence, Insight of the Day widget (small+medium). 3 new files, 10 new tests |
 | 2026-02-24 | Insights tab feature | New Insights tab with weekly summaries, personal records, day-of-week patterns, anomaly detection, and cross-metric correlation scatter plots. 5 new files + 13 tests |

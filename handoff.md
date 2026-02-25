@@ -1,4 +1,4 @@
-# Session Handoff — 2026-02-24 22:25
+# Session Handoff — 2026-02-24 23:03
 
 ## What Was Done
 
@@ -12,7 +12,7 @@ Implemented the full **Insights Features + Polish Batch** (7 features):
 6. **Notifications** — NotificationService actor with streak-at-risk and goal-nearly-met alerts, 24-hour cooldown, NotificationSettingsView
 7. **watchOS Companion** — 4 app views + 3 complication files, WCSession data push from iPhone
 
-### New Files (12)
+### New Files (13)
 - `Models/Persistence/CorrelationRecord.swift`
 - `Views/Insights/GoalSettingsView.swift`
 - `Views/Insights/CorrelationHistoryView.swift`
@@ -25,6 +25,7 @@ Implemented the full **Insights Features + Polish Batch** (7 features):
 - `HealthAppTransferWatch/Complications/StreakComplication.swift`
 - `HealthAppTransferWatch/Complications/GoalProgressComplication.swift`
 - `HealthAppTransferWatch/Complications/WatchWidgetBundle.swift`
+- `HealthAppTransferTests/NotificationServiceTests.swift`
 
 ### Modified Files (9)
 - `Models/Persistence/UserPreferences.swift` — +5 properties

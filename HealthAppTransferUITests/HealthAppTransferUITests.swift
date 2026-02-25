@@ -22,6 +22,30 @@ final class HealthAppTransferUITests: XCTestCase {
         )
     }
 
+    /// Navigate to a tab, handling the "More" overflow when >5 tabs exist.
+    /// iOS shows at most 5 tab bar buttons; extras go under "More".
+    private func navigateToTab(_ name: String) {
+        let tabBar = app.tabBars
+        let directButton = tabBar.buttons[name]
+        if directButton.exists {
+            directButton.tap()
+            return
+        }
+        // Tab is behind the "More" tab
+        let moreButton = tabBar.buttons["More"]
+        guard moreButton.exists else {
+            XCTFail("Tab '\(name)' not found in tab bar or More menu")
+            return
+        }
+        moreButton.tap()
+        let moreItem = app.tables.buttons[name]
+        guard moreItem.waitForExistence(timeout: 3) else {
+            XCTFail("Tab '\(name)' not found in More list")
+            return
+        }
+        moreItem.tap()
+    }
+
     // MARK: - Onboarding
 
     func testOnboardingCanBeSkipped() {
@@ -45,28 +69,28 @@ final class HealthAppTransferUITests: XCTestCase {
         XCTAssertTrue(tabBar.buttons["Dashboard"].exists)
         XCTAssertTrue(tabBar.buttons["Health Data"].exists)
         XCTAssertTrue(tabBar.buttons["Export"].exists)
-        XCTAssertTrue(tabBar.buttons["Automations"].exists)
-        XCTAssertTrue(tabBar.buttons["Settings"].exists)
+        XCTAssertTrue(tabBar.buttons["Insights"].exists)
+        // Automations and Settings overflow into "More" with 6 tabs
+        XCTAssertTrue(tabBar.buttons["Automations"].exists || tabBar.buttons["More"].exists,
+                      "Automations should be visible directly or via More tab")
     }
 
     func testTabSwitching() {
         launchSkippingOnboarding()
 
-        let tabBar = app.tabBars
-
-        tabBar.buttons["Health Data"].tap()
+        navigateToTab("Health Data")
         XCTAssertTrue(app.navigationBars["Health Data"].waitForExistence(timeout: 5))
 
-        tabBar.buttons["Export"].tap()
+        navigateToTab("Export")
         XCTAssertTrue(app.navigationBars["Export"].waitForExistence(timeout: 5))
 
-        tabBar.buttons["Automations"].tap()
+        navigateToTab("Automations")
         XCTAssertTrue(app.navigationBars["Automations"].waitForExistence(timeout: 5))
 
-        tabBar.buttons["Settings"].tap()
+        navigateToTab("Settings")
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
 
-        tabBar.buttons["Dashboard"].tap()
+        navigateToTab("Dashboard")
         XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 5))
     }
 
@@ -106,7 +130,7 @@ final class HealthAppTransferUITests: XCTestCase {
     func testAutomationsAddMenu() {
         launchSkippingOnboarding()
 
-        app.tabBars.buttons["Automations"].tap()
+        navigateToTab("Automations")
 
         let addMenu = app.buttons["automations.addMenu"]
         // The add menu may be in toolbar or empty state
@@ -130,7 +154,7 @@ final class HealthAppTransferUITests: XCTestCase {
     func testSettingsShowsAllLinks() {
         launchSkippingOnboarding()
 
-        app.tabBars.buttons["Settings"].tap()
+        navigateToTab("Settings")
 
         XCTAssertTrue(app.buttons["settings.syncSettings"].waitForExistence(timeout: 3) ||
                       app.cells["settings.syncSettings"].waitForExistence(timeout: 1),
@@ -148,7 +172,7 @@ final class HealthAppTransferUITests: XCTestCase {
     func testSettingsNavigationToSyncSettings() {
         launchSkippingOnboarding()
 
-        app.tabBars.buttons["Settings"].tap()
+        navigateToTab("Settings")
 
         // Tap Sync Settings
         let syncLink = app.buttons["settings.syncSettings"].exists
