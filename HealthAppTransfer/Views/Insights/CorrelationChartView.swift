@@ -6,6 +6,10 @@ import Charts
 /// Scatter plot showing the correlation between two health metrics.
 struct CorrelationChartView: View {
 
+    // MARK: - Environment
+
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
     // MARK: - Properties
 
     let result: CorrelationResult
@@ -58,7 +62,7 @@ struct CorrelationChartView: View {
             }
             .chartXAxisLabel(result.typeA.displayName)
             .chartYAxisLabel(result.typeB.displayName)
-            .frame(height: 240)
+            .frame(height: sizeClass == .regular ? 280 : 240)
             .accessibilityHidden(true)
         }
     }
@@ -66,7 +70,7 @@ struct CorrelationChartView: View {
     private var emptyState: some View {
         RoundedRectangle(cornerRadius: 8)
             .fill(Color.secondary.opacity(0.06))
-            .frame(height: 240)
+            .frame(height: sizeClass == .regular ? 280 : 240)
             .overlay {
                 Text("Not enough matching data points")
                     .font(.subheadline)

@@ -18,6 +18,10 @@ enum AppLayout {
     static let shadowY: CGFloat = 4
     static let shadowOpacity: Double = 0.10
 
+    // MARK: - Content Width
+
+    static let maxContentWidth: CGFloat = 760
+
     // MARK: - Spacing Scale
 
     static let spacing4: CGFloat = 4

@@ -76,37 +76,162 @@ struct InsightsView: View {
     }
 
     private var regularLayout: some View {
-        HStack(alignment: .top, spacing: 24) {
-            // Left column: insights as adaptive grid
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))], spacing: 12) {
-                Text("Weekly Insights")
-                    .font(AppTypography.displaySmall)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .gridCellColumns(2)
+        VStack(spacing: 32) {
+            insightsSectionRegular
+            sectionDivider
+            correlationSectionRegular
+        }
+        .frame(maxWidth: AppLayout.maxContentWidth)
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 32)
+        .padding(.top, 8)
+        .padding(.bottom, 100)
+    }
 
-                if viewModel.isLoadingInsights {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 24)
-                } else if viewModel.insights.isEmpty {
-                    emptyInsightsState
-                } else {
+    // MARK: - iPad Insights Section
+
+    private var insightsSectionRegular: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Weekly Insights")
+                .font(AppTypography.displaySmall)
+
+            if viewModel.isLoadingInsights {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 24)
+            } else if viewModel.insights.isEmpty {
+                emptyInsightsStateRegular
+            } else {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 220))], spacing: 12) {
                     ForEach(viewModel.insights) { insight in
                         InsightCardView(insight: insight)
                     }
                 }
             }
-            .frame(maxWidth: .infinity)
-
-            // Right column: correlations
-            VStack(alignment: .leading, spacing: 12) {
-                correlationSection
-            }
-            .frame(maxWidth: .infinity)
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 8)
-        .padding(.bottom, 100)
+    }
+
+    private var emptyInsightsStateRegular: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "chart.dots.scatter")
+                .font(.system(size: 48))
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+
+            Text("Not enough data yet")
+                .font(AppTypography.displaySmall)
+                .foregroundStyle(.secondary)
+
+            Text("Insights appear after a week of health data.")
+                .font(.subheadline)
+                .foregroundStyle(.tertiary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 32)
+        .warmCard()
+    }
+
+    private var sectionDivider: some View {
+        Rectangle()
+            .fill(AppColors.primary.opacity(0.15))
+            .frame(height: 1)
+    }
+
+    // MARK: - iPad Correlation Section
+
+    private var correlationSectionRegular: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Correlations")
+                .font(AppTypography.displaySmall)
+
+            metricPickersRegular
+            compareButtonRegular
+            suggestedPairsRow
+
+            if viewModel.isLoadingCorrelation {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 24)
+            } else if let result = viewModel.correlationResult {
+                correlationResultRegular(result: result)
+            }
+        }
+    }
+
+    private var metricPickersRegular: some View {
+        HStack(spacing: 12) {
+            Picker("Metric A", selection: $viewModel.selectedMetricA) {
+                ForEach(quantityTypes, id: \.self) { type in
+                    Text(type.displayName).tag(type)
+                }
+            }
+            .accessibilityIdentifier("insights.pickerA")
+
+            Picker("Metric B", selection: $viewModel.selectedMetricB) {
+                ForEach(quantityTypes, id: \.self) { type in
+                    Text(type.displayName).tag(type)
+                }
+            }
+            .accessibilityIdentifier("insights.pickerB")
+        }
+    }
+
+    private var compareButtonRegular: some View {
+        Button {
+            Task { await viewModel.loadCorrelation(modelContext: modelContext) }
+        } label: {
+            Label("Compare", systemImage: "chart.dots.scatter")
+                .font(.subheadline.weight(.semibold))
+                .frame(maxWidth: 320)
+        }
+        .buttonStyle(.borderedProminent)
+        .disabled(viewModel.selectedMetricA == viewModel.selectedMetricB)
+        .accessibilityIdentifier("insights.compareButton")
+        .frame(maxWidth: .infinity)
+    }
+
+    private func correlationResultRegular(result: CorrelationResult) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            CorrelationChartView(result: result)
+
+            HStack(spacing: 16) {
+                Button {
+                    viewModel.toggleFavorite(
+                        typeA: viewModel.selectedMetricA,
+                        typeB: viewModel.selectedMetricB,
+                        modelContext: modelContext
+                    )
+                } label: {
+                    let isFav = viewModel.isFavorite(
+                        typeA: viewModel.selectedMetricA,
+                        typeB: viewModel.selectedMetricB
+                    )
+                    Label(
+                        isFav ? "Remove from Favorites" : "Add to Favorites",
+                        systemImage: isFav ? "star.fill" : "star"
+                    )
+                    .font(.subheadline)
+                    .foregroundStyle(isFav ? .yellow : .secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("insights.favoriteToggle")
+
+                if !result.points.isEmpty {
+                    NavigationLink {
+                        CorrelationHistoryView(
+                            typeA: viewModel.selectedMetricA,
+                            typeB: viewModel.selectedMetricB
+                        )
+                    } label: {
+                        Label("View History", systemImage: "clock.arrow.circlepath")
+                            .font(.subheadline)
+                            .foregroundStyle(AppColors.primary)
+                    }
+                    .accessibilityIdentifier("insights.correlationHistory")
+                }
+            }
+        }
     }
 
     // MARK: - Insights Section

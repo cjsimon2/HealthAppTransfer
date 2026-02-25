@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-24 23:05
+**Last Updated:** 2026-02-24 23:40
 
 ## Active Tasks
 
@@ -20,6 +20,10 @@
 <!-- Recently completed work (last 15, deduplicated) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ feat: iPad Insights centered magazine column layout redesign | 2026-02-24 | InsightsView.swift, CorrelationChartView.swift, AppLayout.swift |
+| ✅ docs: update LEARNINGS.md with TabView 6-tab overflow UI test pattern | 2026-02-24 | See commit |
+| ✅ fix: repair 5 UI tests broken by 6-tab overflow into More tab | 2026-02-24 | See commit |
+| ✅ docs: update STATE.md with latest session progress | 2026-02-24 | See commit |
 | ✅ fix: handle 6-tab overflow in UI tests and update tracking docs | 2026-02-24 | See commit |
 | ✅ test: add NotificationService unit tests with protocol injection | 2026-02-24 | NotificationService.swift, NotificationServiceTests.swift, project.pbxproj |
 | ✅ feat: Insights batch — custom goals, sparklines, correlation history, notifications, iPad layout, onboarding callout, watchOS companion | 2026-02-24 | 12 new + 8 modified Swift files, project.pbxproj |
