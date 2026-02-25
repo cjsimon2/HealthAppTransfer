@@ -30,6 +30,9 @@ final class UserPreferences {
     /// Raw values of HealthDataType cases shown on the dashboard. Empty = default set.
     var dashboardMetricTypes: [String] = []
 
+    /// Favorite correlation pairs stored as "typeA.rawValue|typeB.rawValue" strings.
+    var favoriteCorrelationPairs: [String] = []
+
     /// When preferences were last modified.
     var updatedAt: Date = Date()
 

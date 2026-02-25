@@ -37,7 +37,10 @@ struct InsightsView: View {
             .padding(.bottom, 100)
         }
         .navigationTitle("Insights")
-        .task { await viewModel.loadInsights(modelContext: modelContext) }
+        .task {
+            viewModel.loadFavorites(modelContext: modelContext)
+            await viewModel.loadInsights(modelContext: modelContext)
+        }
     }
 
     // MARK: - Insights Section
@@ -100,6 +103,27 @@ struct InsightsView: View {
                     .padding(.vertical, 24)
             } else if let result = viewModel.correlationResult {
                 CorrelationChartView(result: result)
+
+                Button {
+                    viewModel.toggleFavorite(
+                        typeA: viewModel.selectedMetricA,
+                        typeB: viewModel.selectedMetricB,
+                        modelContext: modelContext
+                    )
+                } label: {
+                    let isFav = viewModel.isFavorite(
+                        typeA: viewModel.selectedMetricA,
+                        typeB: viewModel.selectedMetricB
+                    )
+                    Label(
+                        isFav ? "Remove from Favorites" : "Add to Favorites",
+                        systemImage: isFav ? "star.fill" : "star"
+                    )
+                    .font(.subheadline)
+                    .foregroundStyle(isFav ? .yellow : .secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("insights.favoriteToggle")
             }
         }
     }
@@ -143,17 +167,24 @@ struct InsightsView: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(InsightsViewModel.suggestedPairs, id: \.0) { pair in
+                    ForEach(viewModel.orderedSuggestedPairs(), id: \.0) { pair in
                         Button {
                             viewModel.selectedMetricA = pair.0
                             viewModel.selectedMetricB = pair.1
                             Task { await viewModel.loadCorrelation(modelContext: modelContext) }
                         } label: {
-                            Text("\(shortName(pair.0)) vs \(shortName(pair.1))")
-                                .font(.caption)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 6)
-                                .background(AppColors.primary.opacity(0.1), in: Capsule())
+                            HStack(spacing: 4) {
+                                if viewModel.isFavorite(typeA: pair.0, typeB: pair.1) {
+                                    Image(systemName: "star.fill")
+                                        .font(.caption2)
+                                        .foregroundStyle(.yellow)
+                                }
+                                Text("\(shortName(pair.0)) vs \(shortName(pair.1))")
+                                    .font(.caption)
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(AppColors.primary.opacity(0.1), in: Capsule())
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel("Compare \(pair.0.displayName) and \(pair.1.displayName)")

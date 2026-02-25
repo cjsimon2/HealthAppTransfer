@@ -99,6 +99,56 @@ final class InsightsViewModelTests: XCTestCase {
         }
     }
 
+    func testDefaultInsightTypesIncludesAppleExerciseTime() {
+        XCTAssertTrue(InsightsViewModel.defaultInsightTypes.contains(.appleExerciseTime))
+    }
+
+    // MARK: - Streak Thresholds
+
+    func testStreakThresholdsContainExpectedTypes() {
+        let types = InsightsViewModel.streakThresholds.keys
+        XCTAssertTrue(types.contains(.stepCount))
+        XCTAssertTrue(types.contains(.activeEnergyBurned))
+        XCTAssertTrue(types.contains(.distanceWalkingRunning))
+        XCTAssertTrue(types.contains(.appleExerciseTime))
+    }
+
+    func testStreakThresholdValuesArePositive() {
+        for (_, config) in InsightsViewModel.streakThresholds {
+            XCTAssertGreaterThan(config.threshold, 0)
+            XCTAssertFalse(config.unit.isEmpty)
+        }
+    }
+
+    // MARK: - Daily Goals
+
+    func testDailyGoalsContainExpectedTypes() {
+        let types = InsightsViewModel.dailyGoals.keys
+        XCTAssertTrue(types.contains(.stepCount))
+        XCTAssertTrue(types.contains(.activeEnergyBurned))
+        XCTAssertTrue(types.contains(.distanceWalkingRunning))
+        XCTAssertTrue(types.contains(.appleExerciseTime))
+    }
+
+    func testDailyGoalValuesArePositive() {
+        for (_, config) in InsightsViewModel.dailyGoals {
+            XCTAssertGreaterThan(config.goal, 0)
+            XCTAssertFalse(config.unit.isEmpty)
+        }
+    }
+
+    // MARK: - Favorites
+
+    func testIsFavoriteDefaultsFalse() {
+        let vm = makeViewModel()
+        XCTAssertFalse(vm.isFavorite(typeA: .stepCount, typeB: .heartRate))
+    }
+
+    func testOrderedSuggestedPairsCountMatchesSuggestedPairs() {
+        let vm = makeViewModel()
+        XCTAssertEqual(vm.orderedSuggestedPairs().count, InsightsViewModel.suggestedPairs.count)
+    }
+
     // MARK: - Helpers
 
     private func makeViewModel() -> InsightsViewModel {

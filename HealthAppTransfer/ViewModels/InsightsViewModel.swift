@@ -9,6 +9,8 @@ enum InsightItem: Identifiable {
     case personalRecord(type: HealthDataType, value: Double, unit: String)
     case dayOfWeekPattern(type: HealthDataType, dayName: String)
     case anomaly(type: HealthDataType, metric: String, direction: String)
+    case streak(type: HealthDataType, days: Int, threshold: Double, unit: String)
+    case goalProgress(type: HealthDataType, current: Double, goal: Double, unit: String)
 
     var id: String {
         switch self {
@@ -16,6 +18,8 @@ enum InsightItem: Identifiable {
         case .personalRecord(let type, _, _): return "record.\(type.rawValue)"
         case .dayOfWeekPattern(let type, _): return "pattern.\(type.rawValue)"
         case .anomaly(let type, _, _): return "anomaly.\(type.rawValue)"
+        case .streak(let type, _, _, _): return "streak.\(type.rawValue)"
+        case .goalProgress(let type, _, _, _): return "goal.\(type.rawValue)"
         }
     }
 
@@ -25,6 +29,39 @@ enum InsightItem: Identifiable {
         case .personalRecord(let type, _, _): return type
         case .dayOfWeekPattern(let type, _): return type
         case .anomaly(let type, _, _): return type
+        case .streak(let type, _, _, _): return type
+        case .goalProgress(let type, _, _, _): return type
+        }
+    }
+
+    var iconName: String {
+        switch self {
+        case .weeklySummary(_, let pct, _): return pct > 0 ? "arrow.up.right" : "arrow.down.right"
+        case .personalRecord: return "trophy"
+        case .dayOfWeekPattern: return "calendar"
+        case .anomaly: return "exclamationmark.triangle"
+        case .streak: return "flame"
+        case .goalProgress: return "target"
+        }
+    }
+
+    var message: String {
+        switch self {
+        case .weeklySummary(let type, let pct, let dir):
+            let p = Int(abs(pct))
+            return "\(type.displayName) \(dir) \(p)% vs last week"
+        case .personalRecord(let type, _, _):
+            return "New highest \(type.displayName.lowercased()) this month!"
+        case .dayOfWeekPattern(_, let dayName):
+            return "Most active on \(dayName)"
+        case .anomaly(_, let metric, let direction):
+            return "\(metric) \(direction) today"
+        case .streak(_, let days, _, _):
+            return "\(days)-day streak! Keep it going"
+        case .goalProgress(_, let current, let goal, let unit):
+            let pct = Int((current / goal) * 100)
+            let remaining = Int(goal - current)
+            return "\(pct)% to goal — \(remaining.formatted()) \(unit) to go"
         }
     }
 }
@@ -63,6 +100,7 @@ class InsightsViewModel: ObservableObject {
     @Published var isLoadingCorrelation = false
     @Published var selectedMetricA: HealthDataType = .stepCount
     @Published var selectedMetricB: HealthDataType = .heartRate
+    @Published var favoritePairs: Set<String> = []
 
     // MARK: - Constants
 
@@ -72,7 +110,22 @@ class InsightsViewModel: ObservableObject {
         .activeEnergyBurned,
         .distanceWalkingRunning,
         .restingHeartRate,
-        .bodyMass
+        .bodyMass,
+        .appleExerciseTime
+    ]
+
+    static let streakThresholds: [HealthDataType: (threshold: Double, unit: String)] = [
+        .stepCount: (10_000, "steps"),
+        .activeEnergyBurned: (500, "kcal"),
+        .distanceWalkingRunning: (5_000, "m"),
+        .appleExerciseTime: (30, "min"),
+    ]
+
+    static let dailyGoals: [HealthDataType: (goal: Double, unit: String)] = [
+        .stepCount: (10_000, "steps"),
+        .activeEnergyBurned: (500, "kcal"),
+        .distanceWalkingRunning: (5_000, "m"),
+        .appleExerciseTime: (30, "min"),
     ]
 
     static let suggestedPairs: [(HealthDataType, HealthDataType)] = [
@@ -118,9 +171,28 @@ class InsightsViewModel: ObservableObject {
             if let insight = anomalyDetection(type: type, samples: active) {
                 results.append(insight)
             }
+            if let insight = streakDetection(type: type, samples: active) {
+                results.append(insight)
+            }
+            if let insight = goalProgress(type: type, samples: active) {
+                results.append(insight)
+            }
         }
 
         insights = results
+
+        // Push top insight to widget
+        if let top = results.first {
+            let snapshot = WidgetInsightSnapshot(
+                id: top.id,
+                iconName: top.iconName,
+                metricName: top.dataType.displayName,
+                message: top.message,
+                categoryIconName: top.dataType.category.iconName,
+                lastUpdated: Date()
+            )
+            WidgetDataStore.shared.saveInsight(snapshot)
+        }
     }
 
     // MARK: - Load Correlation
@@ -174,6 +246,46 @@ class InsightsViewModel: ObservableObject {
             rValue: r,
             strengthLabel: correlationStrength(r)
         )
+    }
+
+    // MARK: - Favorites
+
+    func loadFavorites(modelContext: ModelContext) {
+        let descriptor = FetchDescriptor<UserPreferences>()
+        guard let prefs = try? modelContext.fetch(descriptor).first else { return }
+        favoritePairs = Set(prefs.favoriteCorrelationPairs)
+    }
+
+    func toggleFavorite(typeA: HealthDataType, typeB: HealthDataType, modelContext: ModelContext) {
+        let key = pairKey(typeA: typeA, typeB: typeB)
+        if favoritePairs.contains(key) {
+            favoritePairs.remove(key)
+        } else {
+            favoritePairs.insert(key)
+        }
+
+        let descriptor = FetchDescriptor<UserPreferences>()
+        if let prefs = try? modelContext.fetch(descriptor).first {
+            prefs.favoriteCorrelationPairs = Array(favoritePairs)
+            prefs.updatedAt = Date()
+        }
+    }
+
+    func isFavorite(typeA: HealthDataType, typeB: HealthDataType) -> Bool {
+        favoritePairs.contains(pairKey(typeA: typeA, typeB: typeB))
+    }
+
+    func orderedSuggestedPairs() -> [(HealthDataType, HealthDataType)] {
+        Self.suggestedPairs.sorted { a, b in
+            let aFav = isFavorite(typeA: a.0, typeB: a.1)
+            let bFav = isFavorite(typeA: b.0, typeB: b.1)
+            if aFav != bFav { return aFav }
+            return false
+        }
+    }
+
+    private func pairKey(typeA: HealthDataType, typeB: HealthDataType) -> String {
+        "\(typeA.rawValue)|\(typeB.rawValue)"
     }
 
     // MARK: - Data Fetching
@@ -298,6 +410,37 @@ class InsightsViewModel: ObservableObject {
         }
 
         return nil
+    }
+
+    private func streakDetection(type: HealthDataType, samples: [AggregatedSample]) -> InsightItem? {
+        guard let config = Self.streakThresholds[type] else { return nil }
+
+        // Sort by date descending so we walk backwards from most recent
+        let sorted = samples.sorted { $0.startDate > $1.startDate }
+        var streakDays = 0
+
+        for sample in sorted {
+            if sampleValue(sample) >= config.threshold {
+                streakDays += 1
+            } else {
+                break
+            }
+        }
+
+        guard streakDays >= 3 else { return nil }
+        return .streak(type: type, days: streakDays, threshold: config.threshold, unit: config.unit)
+    }
+
+    private func goalProgress(type: HealthDataType, samples: [AggregatedSample]) -> InsightItem? {
+        guard let config = Self.dailyGoals[type] else { return nil }
+        guard let today = samples.sorted(by: { $0.startDate < $1.startDate }).last else { return nil }
+
+        let current = sampleValue(today)
+        let progress = current / config.goal
+
+        // Show if 10%-99% complete (at/above goal handled by streak)
+        guard progress >= 0.10, progress < 1.0 else { return nil }
+        return .goalProgress(type: type, current: current, goal: config.goal, unit: config.unit)
     }
 
     // MARK: - Statistical Functions

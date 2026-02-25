@@ -83,4 +83,32 @@ final class WidgetDataStoreTests: XCTestCase {
         let loaded = sut.loadAll()
         XCTAssertTrue(loaded.isEmpty)
     }
+
+    // MARK: - Insight Snapshot
+
+    func testSaveAndLoadInsightRoundtrip() {
+        let insight = WidgetInsightSnapshot(
+            id: "streak.stepCount",
+            iconName: "flame",
+            metricName: "Step Count",
+            message: "5-day streak! Keep it going",
+            categoryIconName: "flame.fill",
+            lastUpdated: Date()
+        )
+
+        sut.saveInsight(insight)
+        let loaded = sut.loadInsight()
+
+        XCTAssertNotNil(loaded)
+        XCTAssertEqual(loaded?.id, "streak.stepCount")
+        XCTAssertEqual(loaded?.iconName, "flame")
+        XCTAssertEqual(loaded?.metricName, "Step Count")
+        XCTAssertEqual(loaded?.message, "5-day streak! Keep it going")
+        XCTAssertEqual(loaded?.categoryIconName, "flame.fill")
+    }
+
+    func testLoadInsightReturnsNilWhenEmpty() {
+        let loaded = sut.loadInsight()
+        XCTAssertNil(loaded)
+    }
 }

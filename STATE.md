@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-24
+**Last Updated:** 2026-02-24 19:45
 
 ## Active Tasks
 
@@ -20,6 +20,7 @@
 <!-- Recently completed work (last 15, deduplicated) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ feat: streak detection, goal progress, favorites, Insight widget | 2026-02-24 | 3 new + 8 modified Swift files, project.pbxproj |
 | ✅ feat: add Insights tab with pattern detection and correlation analysis | 2026-02-24 | 5 new + 1 modified Swift files, project.pbxproj |
 | ✅ docs: comprehensive documentation sweep (README, STATE, LEARNINGS) | 2026-02-23 | README.md, STATE.md, LEARNINGS.md |
 | ✅ fix: correct 4 UI test assertion mismatches and timing brittleness | 2026-02-22 | HealthAppTransferUITests.swift, LEARNINGS.md |
@@ -59,6 +60,7 @@
 <!-- Last 5 sessions summary -->
 | Date | Work Done | Key Outcomes |
 |------|-----------|--------------|
+| 2026-02-24 | Insights enhancements | Streak detection, goal progress generators, favorite correlation pairs with persistence, Insight of the Day widget (small+medium). 3 new files, 10 new tests |
 | 2026-02-24 | Insights tab feature | New Insights tab with weekly summaries, personal records, day-of-week patterns, anomaly detection, and cross-metric correlation scatter plots. 5 new files + 13 tests |
 | 2026-02-23 | Documentation sweep (`/document ALL`) | README updated (widgets, Catalyst, corrected metrics), STATE.md cleaned up (deduped tasks, accurate counts), LEARNINGS.md filled in (key abstractions, integration points, library quirks) |
 | 2026-02-22 | Catalyst data fix, 13-bug deep debug, UI test fixes | Runtime HealthKit checks replaced compile-time `#if os(macOS)`, TLS/auth/sync hardening, UI test timing fixes |
@@ -104,7 +106,7 @@
 ## Metrics
 
 <!-- Project health indicators -->
-- **Source Files:** 103 app + 5 widget + 46 test = 154 Swift files
+- **Source Files:** 104 app + 7 widget + 46 test = 157 Swift files
 - **Source Directories:** 21 (11 app, 1 widget extension, 2 test targets)
 - **Health Data Types:** 180+ (quantity, category, correlation, characteristic, workout)
 - **Tests:** 563 unit tests, 9 UI tests (45 test files + 1 UI test file)
@@ -116,7 +118,7 @@
 - **Accessibility:** ~90%+ (labels/identifiers on all interactive elements)
 - **Export Formats:** 4 (JSON flat, JSON grouped, CSV, GPX with heart rate)
 - **Automation Types:** 5 (REST, MQTT, Home Assistant, Cloud Storage, Calendar)
-- **Widget Sizes:** 3 (small, medium, large) + Live Activity
+- **Widget Sizes:** 3 (small, medium, large) + Insight of the Day (small, medium) + Live Activity
 - **Siri Shortcuts:** 3 (Get value, Sync, Export)
 - **API Endpoints:** 4 (/status, /api/v1/pair, /health/types, /health/data)
 - **Last Successful Build:** 2026-02-24

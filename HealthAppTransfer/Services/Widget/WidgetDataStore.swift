@@ -10,6 +10,7 @@ final class WidgetDataStore: @unchecked Sendable {
 
     static let appGroupID = "group.com.caseysimon.HealthAppTransfer"
     private static let snapshotsKey = "widget_metric_snapshots"
+    private static let insightKey = "widget_insight_snapshot"
 
     // MARK: - Singleton
 
@@ -42,5 +43,22 @@ final class WidgetDataStore: @unchecked Sendable {
 
     func snapshot(for metricType: String) -> WidgetMetricSnapshot? {
         loadAll().first { $0.metricType == metricType }
+    }
+
+    // MARK: - Insight Write
+
+    func saveInsight(_ snapshot: WidgetInsightSnapshot) {
+        guard let data = try? JSONEncoder().encode(snapshot) else { return }
+        defaults?.set(data, forKey: Self.insightKey)
+    }
+
+    // MARK: - Insight Read
+
+    func loadInsight() -> WidgetInsightSnapshot? {
+        guard let data = defaults?.data(forKey: Self.insightKey),
+              let snapshot = try? JSONDecoder().decode(WidgetInsightSnapshot.self, from: data) else {
+            return nil
+        }
+        return snapshot
     }
 }
