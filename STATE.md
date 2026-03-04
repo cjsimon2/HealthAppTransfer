@@ -6,20 +6,26 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-03-03
+**Last Updated:** 2026-03-03 23:14
 
 ## Active Tasks
 
 <!-- Tasks currently being worked on -->
 | Task | Status | Progress | Blocker |
 |------|--------|----------|---------|
-| _None_ | - | - | - |
+| Mac import feature (JSON/CSV file import) | Completed | 100% | None |
 
 ## Completed Tasks
 
 <!-- Recently completed work (last 15, deduplicated) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ fix: commit uncommitted macOS build fixes and xcodegen artifacts | 2026-03-03 | See commit |
+| ✅ feat: Mac import feature — JSON v1/v2 + CSV file import via ImportParserService, ImportViewModel, ImportView | 2026-03-03 | ImportParserService.swift, ImportViewModel.swift, ImportView.swift, QuickExportView.swift, ServiceContainer.swift, project.pbxproj |
+| ✅ fix: wrap navigationBarTitleDisplayMode, restore entitlements, fix widget build | 2026-03-03 | PairingView.swift, entitlements, WidgetDataStore.swift, InsightOfDayWidget.swift, project.yml, project.pbxproj |
+| ✅ fix: add macOS network entitlements for LAN sync and pairing | 2026-03-03 | See commit |
+| ✅ fix: resolve Swift 6 concurrency warnings in NetworkServer | 2026-03-03 | See commit |
+| ✅ fix: resolve 5 macOS build and runtime bugs | 2026-03-03 | See commit |
 | ✅ docs: update STATE.md timestamp and deduplicate task entry | 2026-02-25 | See commit |
 | ✅ feat: iPad Insights centered magazine column layout redesign | 2026-02-24 | InsightsView.swift, CorrelationChartView.swift, AppLayout.swift |
 | ✅ docs: update LEARNINGS.md with TabView 6-tab overflow UI test pattern | 2026-02-24 | See commit |
@@ -71,6 +77,7 @@
 <!-- Last 5 sessions summary -->
 | Date | Work Done | Key Outcomes |
 |------|-----------|--------------|
+| 2026-03-03 | Build fixes + review | Wrapped 2 remaining navigationBarTitleDisplayMode calls in PairingView.swift, restored missing network entitlements, fixed WidgetDataStore ambiguous type error, added WidgetInsightSnapshot to widget target, reviewed LAN sync + SwiftData persistence code |
 | 2026-03-03 | macOS bug fixes | Fixed: navigationBarTitleDisplayMode on macOS, SwiftData migration crash (removed stale versioned schemas, added 3-tier recovery), NWListener race condition (continuation-based start), macOS NavigationSplitView missing NavigationStack, QuickSetup chip hit-testing with .contentShape |
 | 2026-02-24 | NotificationService tests | Added NotificationCenterProtocol for DI, 15 unit tests covering streak/goal alerts, authorization, cooldown logic. LEARNINGS.md updated. |
 | 2026-02-24 | Insights features + polish batch | Custom goals (GoalSettingsView, SchemaV2), sparklines in insight cards, correlation history (CorrelationRecord + CorrelationHistoryView), notifications (NotificationService + settings), iPad layout, onboarding callout, watchOS companion (4 views + 3 complications). 12 new files, 8 modified, 8 new tests |
@@ -120,13 +127,13 @@
 ## Metrics
 
 <!-- Project health indicators -->
-- **Source Files:** 112 app + 7 widget + 7 watchOS + 47 test = 173 Swift files
+- **Source Files:** 115 app + 7 widget + 7 watchOS + 47 test = 176 Swift files
 - **Source Directories:** 23 (12 app, 1 widget extension, 2 watchOS, 2 test targets)
 - **Health Data Types:** 180+ (quantity, category, correlation, characteristic, workout)
 - **Tests:** 596 unit tests, 9 UI tests (46 test files + 1 UI test file)
 - **Test Coverage:** ~90% file coverage
 - **SwiftData Models:** 8 (SyncConfiguration, PairedDevice, ExportRecord, AuditEventRecord, AutomationConfiguration, UserPreferences, SyncedHealthSample, CorrelationRecord)
-- **ViewModels:** 11 (Dashboard, HealthData, HealthDataDetail, Chart, Export, Insights, Pairing, LANSync, SecuritySettings, SyncSettings, Onboarding)
+- **ViewModels:** 12 (Dashboard, HealthData, HealthDataDetail, Chart, Export, Import, Insights, Pairing, LANSync, SecuritySettings, SyncSettings, Onboarding)
 - **Build:** Passing (iOS + macOS Catalyst, 0 errors)
 - **App Store Readiness:** HealthKit entitlement, camera description, encryption declaration, device capabilities — all added
 - **Accessibility:** ~90%+ (labels/identifiers on all interactive elements)

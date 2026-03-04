@@ -68,4 +68,9 @@ extension ServiceContainer {
     func makeSecuritySettingsViewModel() -> SecuritySettingsViewModel {
         SecuritySettingsViewModel(biometricService: biometricService)
     }
+
+    @MainActor
+    func makeImportViewModel() -> ImportViewModel {
+        ImportViewModel()
+    }
 }

@@ -38,6 +38,9 @@ struct QuickExportView: View {
             dateRangeSection
             aggregationSection
             exportSection
+            #if os(macOS)
+            importSection
+            #endif
         }
         .navigationTitle("Export")
         .task { await viewModel.loadAvailableTypes(modelContext: modelContext) }
@@ -215,6 +218,26 @@ struct QuickExportView: View {
         }
         .padding(.vertical, 4)
     }
+
+    // MARK: - Import Section (macOS)
+
+    #if os(macOS)
+    private var importSection: some View {
+        Section {
+            NavigationLink {
+                ImportView()
+            } label: {
+                Label("Import Data", systemImage: "square.and.arrow.down")
+            }
+            .accessibilityLabel("Import health data from file")
+            .accessibilityIdentifier("export.importButton")
+        } header: {
+            Text("Import")
+        } footer: {
+            Text("Import previously exported .json or .csv files into the local data store.")
+        }
+    }
+    #endif
 
     // MARK: - Type Picker Sheet
 
