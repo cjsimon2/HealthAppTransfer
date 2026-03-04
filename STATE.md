@@ -20,6 +20,7 @@
 <!-- Recently completed work (last 15, deduplicated) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ feat: add Mac import feature for JSON and CSV health data files | 2026-03-03 | See commit |
 | ✅ fix: commit uncommitted macOS build fixes and xcodegen artifacts | 2026-03-03 | See commit |
 | ✅ feat: Mac import feature — JSON v1/v2 + CSV file import via ImportParserService, ImportViewModel, ImportView | 2026-03-03 | ImportParserService.swift, ImportViewModel.swift, ImportView.swift, QuickExportView.swift, ServiceContainer.swift, project.pbxproj |
 | ✅ fix: wrap navigationBarTitleDisplayMode, restore entitlements, fix widget build | 2026-03-03 | PairingView.swift, entitlements, WidgetDataStore.swift, InsightOfDayWidget.swift, project.yml, project.pbxproj |
