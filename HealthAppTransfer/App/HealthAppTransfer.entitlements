@@ -18,6 +18,10 @@
 	<array>
 		<string>iCloud.com.caseysimon.HealthAppTransfer</string>
 	</array>
+	<key>com.apple.security.network.server</key>
+	<true/>
+	<key>com.apple.security.network.client</key>
+	<true/>
 	<key>com.apple.developer.healthkit</key>
 	<true/>
 	<key>com.apple.developer.healthkit.access</key>
