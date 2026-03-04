@@ -1,31 +1,12 @@
 import Foundation
 import SwiftData
 
-// MARK: - Schema Versions
+// MARK: - Model Container Factory
 
-/// Schema versioning for SwiftData migrations.
-/// Add new VersionedSchema conformances here when the model changes.
+enum PersistenceConfiguration {
 
-enum SchemaV1: VersionedSchema {
-    static var versionIdentifier: Schema.Version = Schema.Version(1, 0, 0)
-
-    static var models: [any PersistentModel.Type] {
-        [
-            SyncConfiguration.self,
-            PairedDevice.self,
-            AuditEventRecord.self,
-            ExportRecord.self,
-            AutomationConfiguration.self,
-            UserPreferences.self,
-            SyncedHealthSample.self,
-        ]
-    }
-}
-
-enum SchemaV2: VersionedSchema {
-    static var versionIdentifier: Schema.Version = Schema.Version(2, 0, 0)
-
-    static var models: [any PersistentModel.Type] {
+    /// All SwiftData model types used by the app.
+    static var allModelTypes: [any PersistentModel.Type] {
         [
             SyncConfiguration.self,
             PairedDevice.self,
@@ -37,56 +18,46 @@ enum SchemaV2: VersionedSchema {
             CorrelationRecord.self,
         ]
     }
-}
 
-// MARK: - Migration Plan
-
-enum HealthAppMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] {
-        [SchemaV1.self, SchemaV2.self]
+    /// Store file URLs to delete on recovery. Checked in both group container and default location.
+    private static var storeURLCandidates: [URL] {
+        [
+            FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.caseysimon.HealthAppTransfer")?
+                .appending(path: "Library/Application Support/default.store"),
+            URL.applicationSupportDirectory.appending(path: "default.store"),
+        ].compactMap { $0 }
     }
 
-    static var stages: [MigrationStage] {
-        [migrateV1toV2]
-    }
-
-    static let migrateV1toV2 = MigrationStage.lightweight(
-        fromVersion: SchemaV1.self,
-        toVersion: SchemaV2.self
-    )
-}
-
-// MARK: - Model Container Factory
-
-enum PersistenceConfiguration {
-
-    /// All SwiftData model types used by the app.
-    static var allModelTypes: [any PersistentModel.Type] {
-        SchemaV2.models
+    /// Deletes the persistent store files (main + WAL/SHM) from all candidate locations.
+    static func deleteStoreFiles() {
+        for base in storeURLCandidates {
+            for suffix in ["", "-shm", "-wal"] {
+                let url = URL(filePath: base.path() + suffix)
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
     }
 
     /// Creates the shared ModelContainer for the app.
-    /// Uses the migration plan so future schema changes are handled automatically.
-    /// Pass `deleteExisting: true` to wipe and recreate the store on corruption.
-    static func makeModelContainer(deleteExisting: Bool = false) throws -> ModelContainer {
+    static func makeModelContainer() throws -> ModelContainer {
         let schema = Schema(allModelTypes)
-
-        if deleteExisting {
-            let base = URL.applicationSupportDirectory.appending(path: "default.store")
-            for suffix in ["", "-shm", "-wal"] {
-                try? FileManager.default.removeItem(at: URL(filePath: base.path() + suffix))
-            }
-        }
-
         let configuration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
             cloudKitDatabase: .none
         )
-        return try ModelContainer(
-            for: schema,
-            migrationPlan: HealthAppMigrationPlan.self,
-            configurations: [configuration]
+        return try ModelContainer(for: schema, configurations: [configuration])
+    }
+
+    /// Creates a fresh in-memory ModelContainer as a last-resort fallback.
+    /// Data won't persist across launches, but the app won't crash-loop.
+    static func makeInMemoryContainer() throws -> ModelContainer {
+        let schema = Schema(allModelTypes)
+        let configuration = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: true,
+            cloudKitDatabase: .none
         )
+        return try ModelContainer(for: schema, configurations: [configuration])
     }
 }

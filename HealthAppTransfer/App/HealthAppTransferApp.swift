@@ -29,37 +29,32 @@ struct HealthAppTransferApp: App {
         let services = ServiceContainer()
         self.services = services
 
+        let container: ModelContainer
         do {
-            let container = try PersistenceConfiguration.makeModelContainer()
-            self.modelContainer = container
-            self.backgroundSync = BackgroundSyncService(
-                healthKitService: services.healthKitService,
-                modelContainer: container
-            )
-            self.automationScheduler = AutomationScheduler(
-                healthKitService: services.healthKitService,
-                modelContainer: container,
-                keychain: services.keychain
-            )
+            container = try PersistenceConfiguration.makeModelContainer()
         } catch {
-            // Attempt recovery by deleting the corrupt store and recreating
+            // Store is corrupt or migration version is unknown — delete and retry
             Loggers.persistence.error("ModelContainer creation failed, attempting recovery: \(error.localizedDescription)")
+            PersistenceConfiguration.deleteStoreFiles()
             do {
-                let container = try PersistenceConfiguration.makeModelContainer(deleteExisting: true)
-                self.modelContainer = container
-                self.backgroundSync = BackgroundSyncService(
-                    healthKitService: services.healthKitService,
-                    modelContainer: container
-                )
-                self.automationScheduler = AutomationScheduler(
-                    healthKitService: services.healthKitService,
-                    modelContainer: container,
-                    keychain: services.keychain
-                )
+                container = try PersistenceConfiguration.makeModelContainer()
             } catch {
-                fatalError("Failed to create ModelContainer even after recovery: \(error)")
+                // File may still be locked by this process — fall back to in-memory
+                Loggers.persistence.error("Recovery delete failed, using in-memory store: \(error.localizedDescription)")
+                container = try! PersistenceConfiguration.makeInMemoryContainer()
             }
         }
+
+        self.modelContainer = container
+        self.backgroundSync = BackgroundSyncService(
+            healthKitService: services.healthKitService,
+            modelContainer: container
+        )
+        self.automationScheduler = AutomationScheduler(
+            healthKitService: services.healthKitService,
+            modelContainer: container,
+            keychain: services.keychain
+        )
 
         #if canImport(UIKit)
         BackgroundSyncService.registerBackgroundTasks(service: backgroundSync)

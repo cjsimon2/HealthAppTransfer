@@ -49,7 +49,7 @@ actor NetworkServer {
 
     // MARK: - Server Lifecycle
 
-    /// Start the TLS server.
+    /// Start the TLS server. Suspends until the listener is ready or fails.
     func start() async throws {
         guard case .stopped = state else {
             Loggers.network.warning("Server already running or starting")
@@ -82,22 +82,47 @@ actor NetworkServer {
         let nwPort: NWEndpoint.Port = port == 0 ? .any : NWEndpoint.Port(rawValue: port)!
         let newListener = try NWListener(using: params, on: nwPort)
 
-        newListener.stateUpdateHandler = { [weak self] newState in
-            Task { [weak self] in
-                await self?.handleListenerStateChange(newState)
+        // Wait for the listener to reach .ready or .failed before returning
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            var resumed = false
+
+            newListener.stateUpdateHandler = { [weak self] newState in
+                Task { [weak self] in
+                    await self?.handleListenerStateChange(newState)
+                }
+
+                switch newState {
+                case .ready:
+                    if !resumed {
+                        resumed = true
+                        continuation.resume()
+                    }
+                case .failed(let error):
+                    if !resumed {
+                        resumed = true
+                        continuation.resume(throwing: error)
+                    }
+                case .cancelled:
+                    if !resumed {
+                        resumed = true
+                        continuation.resume(throwing: NetworkServerError.listenerCancelled)
+                    }
+                default:
+                    break
+                }
             }
+
+            newListener.newConnectionHandler = { [weak self] connection in
+                Task { [weak self] in
+                    await self?.handleNewConnection(connection)
+                }
+            }
+
+            listener = newListener
+            newListener.start(queue: .global(qos: .userInitiated))
         }
 
-        newListener.newConnectionHandler = { [weak self] connection in
-            Task { [weak self] in
-                await self?.handleNewConnection(connection)
-            }
-        }
-
-        listener = newListener
-        newListener.start(queue: .global(qos: .userInitiated))
-
-        Loggers.network.info("Network server starting on port \(self.port)")
+        Loggers.network.info("Network server started on port \(self.actualPort ?? 0)")
     }
 
     /// Advertise this server via Bonjour so Mac clients can discover it.
@@ -382,11 +407,14 @@ actor NetworkServer {
 
 enum NetworkServerError: LocalizedError {
     case tlsSetupFailed
+    case listenerCancelled
 
     var errorDescription: String? {
         switch self {
         case .tlsSetupFailed:
             return "Failed to create TLS identity for secure connections"
+        case .listenerCancelled:
+            return "Network listener was cancelled before it could start"
         }
     }
 }

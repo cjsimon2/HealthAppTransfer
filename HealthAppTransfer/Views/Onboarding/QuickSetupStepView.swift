@@ -91,6 +91,7 @@ struct QuickSetupStepView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 10)
             .padding(.horizontal, 4)
+            .contentShape(Rectangle())
             .background(
                 metric.isSelected ? AppColors.primary.opacity(0.15) : Color.clear,
                 in: RoundedRectangle(cornerRadius: 10)

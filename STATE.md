@@ -6,7 +6,7 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-02-25
+**Last Updated:** 2026-03-03
 
 ## Active Tasks
 
@@ -20,6 +20,7 @@
 <!-- Recently completed work (last 15, deduplicated) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
+| ✅ docs: update STATE.md timestamp and deduplicate task entry | 2026-02-25 | See commit |
 | ✅ feat: iPad Insights centered magazine column layout redesign | 2026-02-24 | InsightsView.swift, CorrelationChartView.swift, AppLayout.swift |
 | ✅ docs: update LEARNINGS.md with TabView 6-tab overflow UI test pattern | 2026-02-24 | See commit |
 | ✅ fix: repair 5 UI tests broken by 6-tab overflow into More tab | 2026-02-24 | See commit |
@@ -50,7 +51,7 @@
 <!-- Important decisions made during development -->
 | Decision | Rationale | Date | Reversible |
 |----------|-----------|------|------------|
-| SchemaV2 lightweight migration | New model (CorrelationRecord) + new UserPreferences fields, all with defaults for lightweight migration | 2026-02-24 | No |
+| Drop VersionedSchema migration plan | Models evolved past SchemaV1/V2 hashes during dev; removed migration plan in favor of auto-migration. Reintroduce when shipping a breaking schema to real users. | 2026-03-03 | Yes |
 | WCSession for watchOS data push | App Group UserDefaults does NOT sync to watchOS — must use WCSession.updateApplicationContext() | 2026-02-24 | Yes |
 | 24-hour notification cooldown | Prevent notification spam via UserDefaults timestamp per notification identifier | 2026-02-24 | Yes |
 | Swift actors for all services | Thread-safe HealthKit/Network/Pairing without manual locking | 2026-02-21 | No |
@@ -70,6 +71,7 @@
 <!-- Last 5 sessions summary -->
 | Date | Work Done | Key Outcomes |
 |------|-----------|--------------|
+| 2026-03-03 | macOS bug fixes | Fixed: navigationBarTitleDisplayMode on macOS, SwiftData migration crash (removed stale versioned schemas, added 3-tier recovery), NWListener race condition (continuation-based start), macOS NavigationSplitView missing NavigationStack, QuickSetup chip hit-testing with .contentShape |
 | 2026-02-24 | NotificationService tests | Added NotificationCenterProtocol for DI, 15 unit tests covering streak/goal alerts, authorization, cooldown logic. LEARNINGS.md updated. |
 | 2026-02-24 | Insights features + polish batch | Custom goals (GoalSettingsView, SchemaV2), sparklines in insight cards, correlation history (CorrelationRecord + CorrelationHistoryView), notifications (NotificationService + settings), iPad layout, onboarding callout, watchOS companion (4 views + 3 complications). 12 new files, 8 modified, 8 new tests |
 | 2026-02-24 | Insights enhancements | Streak detection, goal progress generators, favorite correlation pairs with persistence, Insight of the Day widget (small+medium). 3 new files, 10 new tests |
@@ -112,7 +114,7 @@
 | `AutomationScheduler.swift` | Automation trigger engine | HKObserverQuery + interval timers |
 | `PairingService.swift` | Token management actor | Code generation, validation, device-token mapping, Keychain persistence |
 | `ContentView.swift` | Root view | Onboarding gate, biometric lock, HealthKit auth flow |
-| `SchemaVersions.swift` | SwiftData setup | Model container factory, migration plan, store recovery |
+| `SchemaVersions.swift` | SwiftData setup | Model container factory, store recovery, in-memory fallback |
 | `WidgetDataStore.swift` | Widget data bridge | App Groups shared UserDefaults for widget metric snapshots |
 
 ## Metrics
@@ -123,7 +125,7 @@
 - **Health Data Types:** 180+ (quantity, category, correlation, characteristic, workout)
 - **Tests:** 596 unit tests, 9 UI tests (46 test files + 1 UI test file)
 - **Test Coverage:** ~90% file coverage
-- **SwiftData Models:** 9 (SyncConfiguration, PairedDevice, ExportRecord, AuditEventRecord, AutomationConfiguration, UserPreferences, SyncedHealthSample, CorrelationRecord, SchemaVersions V2)
+- **SwiftData Models:** 8 (SyncConfiguration, PairedDevice, ExportRecord, AuditEventRecord, AutomationConfiguration, UserPreferences, SyncedHealthSample, CorrelationRecord)
 - **ViewModels:** 11 (Dashboard, HealthData, HealthDataDetail, Chart, Export, Insights, Pairing, LANSync, SecuritySettings, SyncSettings, Onboarding)
 - **Build:** Passing (iOS + macOS Catalyst, 0 errors)
 - **App Store Readiness:** HealthKit entitlement, camera description, encryption declaration, device capabilities — all added
@@ -133,7 +135,7 @@
 - **Widget Sizes:** 3 (small, medium, large) + Insight of the Day (small, medium) + Live Activity + 2 watchOS complications
 - **Siri Shortcuts:** 3 (Get value, Sync, Export)
 - **API Endpoints:** 4 (/status, /api/v1/pair, /health/types, /health/data)
-- **Last Successful Build:** 2026-02-24
+- **Last Successful Build:** 2026-03-03
 
 ---
 *This file is updated automatically by Claude. Manual edits are preserved.*

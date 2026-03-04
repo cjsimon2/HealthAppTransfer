@@ -52,7 +52,6 @@ class PairingViewModel: ObservableObject {
 
         do {
             try await networkServer.start()
-            try await Task.sleep(for: .milliseconds(500))
 
             guard let port = await networkServer.actualPort else {
                 error = "Server failed to start — no port assigned"

@@ -100,19 +100,21 @@ struct MainTabView: View {
             }
             .navigationTitle("HealthAppTransfer")
         } detail: {
-            switch selectedTab {
-            case .dashboard:
-                DashboardView(healthKitService: healthKitService)
-            case .healthData:
-                HealthDataView(healthKitService: healthKitService)
-            case .export:
-                QuickExportView(healthKitService: healthKitService)
-            case .insights:
-                InsightsView(healthKitService: healthKitService)
-            case .automations:
-                AutomationsView()
-            case .settings:
-                SettingsView(pairingViewModel: pairingViewModel, lanSyncViewModel: lanSyncViewModel, securitySettingsViewModel: securitySettingsViewModel, healthKitService: healthKitService)
+            NavigationStack {
+                switch selectedTab {
+                case .dashboard:
+                    DashboardView(healthKitService: healthKitService)
+                case .healthData:
+                    HealthDataView(healthKitService: healthKitService)
+                case .export:
+                    QuickExportView(healthKitService: healthKitService)
+                case .insights:
+                    InsightsView(healthKitService: healthKitService)
+                case .automations:
+                    AutomationsView()
+                case .settings:
+                    SettingsView(pairingViewModel: pairingViewModel, lanSyncViewModel: lanSyncViewModel, securitySettingsViewModel: securitySettingsViewModel, healthKitService: healthKitService)
+                }
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .macNavigateToExport)) { _ in

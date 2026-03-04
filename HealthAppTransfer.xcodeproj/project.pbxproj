@@ -811,7 +811,6 @@
 			children = (
 				3D82BE359EE1B4247E8661F9 /* NotificationService.swift */,
 			);
-			name = Notifications;
 			path = Notifications;
 			sourceTree = "<group>";
 		};
