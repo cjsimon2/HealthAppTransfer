@@ -1,5 +1,6 @@
 import Foundation
 import Network
+import os
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -84,31 +85,28 @@ actor NetworkServer {
 
         // Wait for the listener to reach .ready or .failed before returning
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            var resumed = false
+            let resumed = OSAllocatedUnfairLock(initialState: false)
 
             newListener.stateUpdateHandler = { [weak self] newState in
                 Task { [weak self] in
                     await self?.handleListenerStateChange(newState)
                 }
 
-                switch newState {
-                case .ready:
-                    if !resumed {
-                        resumed = true
+                resumed.withLock { flag in
+                    guard !flag else { return }
+                    switch newState {
+                    case .ready:
+                        flag = true
                         continuation.resume()
-                    }
-                case .failed(let error):
-                    if !resumed {
-                        resumed = true
+                    case .failed(let error):
+                        flag = true
                         continuation.resume(throwing: error)
-                    }
-                case .cancelled:
-                    if !resumed {
-                        resumed = true
+                    case .cancelled:
+                        flag = true
                         continuation.resume(throwing: NetworkServerError.listenerCancelled)
+                    default:
+                        break
                     }
-                default:
-                    break
                 }
             }
 
