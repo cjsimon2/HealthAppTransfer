@@ -125,6 +125,7 @@ targets:
       - path: HealthAppTransfer/Models/SyncActivityAttributes.swift
       - path: HealthAppTransfer/Models/HealthDataType.swift
       - path: HealthAppTransfer/Models/WidgetMetricSnapshot.swift
+      - path: HealthAppTransfer/Models/WidgetInsightSnapshot.swift
       - path: HealthAppTransfer/Services/Widget/WidgetDataStore.swift
     settings:
       base:

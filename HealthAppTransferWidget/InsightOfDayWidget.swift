@@ -25,8 +25,9 @@ struct InsightOfDayProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<InsightEntry>) -> Void) {
         let insight = dataStore.loadInsight()
-        let entry = InsightEntry(date: .now, insight: insight)
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: .now) ?? .now
+        let now = Date.now
+        let entry = InsightEntry(date: now, insight: insight)
+        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: now) ?? now
         completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
     }
 

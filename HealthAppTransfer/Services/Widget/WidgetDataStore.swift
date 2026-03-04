@@ -57,11 +57,10 @@ final class WidgetDataStore: @unchecked Sendable {
     // MARK: - Insight Read
 
     func loadInsight() -> WidgetInsightSnapshot? {
-        guard let data = defaults?.data(forKey: Self.insightKey),
-              let snapshot = try? JSONDecoder().decode(WidgetInsightSnapshot.self, from: data) else {
+        guard let data = defaults?.data(forKey: Self.insightKey) else {
             return nil
         }
-        return snapshot
+        return try? JSONDecoder().decode(WidgetInsightSnapshot.self, from: data)
     }
 
     // MARK: - Streak Data

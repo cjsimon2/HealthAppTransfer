@@ -29,7 +29,15 @@ actor CertificateService {
 
         // Generate new key pair and certificate
         Loggers.security.info("Generating new TLS identity")
-        return try await generateAndStoreIdentity()
+        do {
+            return try await generateAndStoreIdentity()
+        } catch {
+            // If generation failed (e.g. stale Keychain state preventing identity pairing),
+            // clean up everything and try once more from scratch.
+            Loggers.security.warning("First identity generation failed: \(error.localizedDescription) — cleaning up and retrying")
+            try? await cleanup()
+            return try await generateAndStoreIdentity()
+        }
     }
 
     /// Force-regenerate the TLS identity.
@@ -149,19 +157,13 @@ actor CertificateService {
     // MARK: - Identity Loading
 
     private func loadIdentity() async throws -> SecIdentity? {
-        // Check if certificate exists
-        guard try await keychain.loadCertificate(label: Self.certificateLabel) != nil else {
-            return nil
-        }
-
-        // Check if private key exists
-        guard try await keychain.loadKey(tag: Self.privateKeyTag) != nil else {
-            return nil
-        }
-
-        // Use SecIdentityCreateWithCertificate (macOS) or query-based approach
+        // Query for an identity whose private key matches our application tag.
+        // This is more reliable than an unfiltered kSecClassIdentity query,
+        // which can fail on Simulator or return the wrong identity on devices
+        // with multiple certs (MDM, enterprise profiles, etc.).
         let query: [String: Any] = [
             kSecClass as String: kSecClassIdentity,
+            kSecAttrApplicationTag as String: Data(Self.privateKeyTag.utf8),
             kSecReturnRef as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
@@ -170,6 +172,7 @@ actor CertificateService {
         let status = SecItemCopyMatching(query as CFDictionary, &result)
 
         guard status == errSecSuccess, let result else {
+            Loggers.security.debug("Identity query returned \(status) — no matching identity found")
             return nil
         }
 

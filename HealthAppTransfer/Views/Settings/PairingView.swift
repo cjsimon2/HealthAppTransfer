@@ -47,7 +47,9 @@ private struct iOSPairingView: View {
             .padding(.vertical, 24)
         }
         .navigationTitle("Pair Device")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 
     // MARK: - Sections
@@ -208,7 +210,9 @@ private struct catalystPairingView: View {
             .padding(.vertical, 24)
         }
         .navigationTitle("Pair with iPhone")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 
     // MARK: - Sections
