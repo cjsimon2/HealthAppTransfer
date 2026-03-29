@@ -6,5 +6,9 @@ xcuserdata/
 # Claudify artifacts
 .claudify/
 
+# Python bytecode
+__pycache__/
+*.pyc
+
 # Plans
 plans/
