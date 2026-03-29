@@ -2,6 +2,10 @@ import OSLog
 
 // MARK: - App Loggers
 
+/// Centralised `Logger` instances for each subsystem used by the app.
+///
+/// Using named loggers (instead of raw `print` statements) lets you filter log
+/// output by category in Console.app and in Xcode's debug console.
 enum Loggers {
     static let healthKit = Logger(subsystem: Bundle.main.bundleIdentifier ?? "HealthAppTransfer", category: "HealthKit")
     static let network = Logger(subsystem: Bundle.main.bundleIdentifier ?? "HealthAppTransfer", category: "Network")

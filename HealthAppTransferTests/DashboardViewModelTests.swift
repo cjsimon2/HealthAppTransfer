@@ -1,3 +1,5 @@
+/// Unit tests for `DashboardViewModel` — widget snapshot loading, metric
+/// ordering, and goal-progress computation using a file-private mock store.
 import XCTest
 import HealthKit
 @testable import HealthAppTransfer

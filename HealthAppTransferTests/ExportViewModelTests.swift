@@ -1,3 +1,5 @@
+/// Unit tests for `ExportViewModel` — format selection, date range validation,
+/// export triggering, and share-sheet state using a file-private mock store.
 import XCTest
 import HealthKit
 @testable import HealthAppTransfer

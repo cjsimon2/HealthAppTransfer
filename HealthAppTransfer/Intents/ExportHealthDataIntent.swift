@@ -1,3 +1,7 @@
+/// App Intent that exports health data to a file and returns it to the caller.
+///
+/// This file also defines `IntentError`, the shared error type used by all
+/// health-related App Intents in this module.
 import AppIntents
 import Foundation
 

@@ -1,3 +1,8 @@
+/// Unit tests for `GetLatestValueIntent` static properties and the `formatSample`
+/// helper (verified indirectly through the intent's perform path).
+///
+/// No live HealthKit queries are made; tests only inspect static/computed
+/// properties that are safe to call without an entitlement.
 import XCTest
 @testable import HealthAppTransfer
 

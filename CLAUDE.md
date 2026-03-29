@@ -7,15 +7,19 @@ An iOS application built with SwiftUI.
 ```
 HealthAppTransfer/
 ├── HealthAppTransfer/
-│   ├── App/                   # App entry point
-│   ├── Views/                 # SwiftUI views
-│   ├── ViewModels/            # MVVM view models
-│   ├── Models/                # Data models
-│   ├── Services/              # Business logic, singletons
+│   ├── App/                   # App entry point, Info.plist, entitlements
+│   ├── Views/                 # SwiftUI views (Onboarding, Dashboard, HealthData, Insights, Settings, Chart, Export, Import, Pairing)
+│   ├── ViewModels/            # MVVM view models (12 main ViewModels)
+│   ├── Models/                # Data models (8 SwiftData @Model classes + DTOs)
+│   ├── Services/              # Actor-based services (HealthKit, Network, Sync, Export, Import, Automation, etc.)
 │   ├── Extensions/            # Swift extensions
+│   ├── Intents/               # App Intents (Siri Shortcuts)
+│   ├── Theme/                 # AppColors, AppLayout, AppTypography, ChartColors
 │   └── Resources/             # Assets, strings
-├── HealthAppTransferTests/     # Unit tests
-└── HealthAppTransferUITests/   # UI tests
+├── HealthAppTransferWidget/    # WidgetKit extension (iOS only)
+├── HealthAppTransferWatch/     # watchOS companion app
+├── HealthAppTransferTests/     # Unit tests (~596 tests, ~90% coverage)
+└── HealthAppTransferUITests/   # UI tests (9 tests)
 ```
 
 ## Tech Stack
@@ -23,8 +27,11 @@ HealthAppTransfer/
 - **Language:** Swift 5.9+
 - **UI Framework:** SwiftUI
 - **Architecture:** MVVM with Combine
+- **Persistence:** SwiftData with CloudKit sync
 - **Minimum iOS:** 17.0
+- **macOS Support:** 14.0+ (Mac Catalyst)
 - **IDE:** Xcode 15+
+- **External Dependency:** CocoaMQTT 2.1.6
 
 ## Extended Thinking Triggers
 
@@ -188,12 +195,15 @@ Use `/learn pattern: [description]` to record what works, or `/learn mistake: [d
 ### Data & Persistence Commands
 - `/swiftdata-review` - Review SwiftData models and queries
 - `/cloudkit-check` - Check CloudKit sync implementation
+- `/healthkit-audit` - Audit HealthKit integration for correctness and privacy
+- `/privacy-audit` - Audit data privacy across the application
 
 ### Code Quality Commands
 - `/accessibility-add` - Add accessibility features to views
 - `/memory-audit` - Find memory leaks and retain cycles
 - `/deprecated-check` - Find deprecated APIs
 - `/combine-check` - Review Combine usage
+- `/project-audit` - Full 7-dimension project audit with findings report
 
 ### Testing & Release Commands
 - `/uitest-generate` - Generate UI tests
@@ -202,6 +212,7 @@ Use `/learn pattern: [description]` to record what works, or `/learn mistake: [d
 
 ## Skills
 
+### Core Patterns
 - `swiftui-patterns` - SwiftUI best practices and view structure
 - `swift-safety` - Safe Swift patterns (optionals, errors, memory)
 - `swiftui-performance` - Performance optimization for SwiftUI
@@ -211,6 +222,15 @@ Use `/learn pattern: [description]` to record what works, or `/learn mistake: [d
 - `swiftdata-patterns` - SwiftData persistence patterns
 - `watchos-patterns` - watchOS development guide
 - `widget-patterns` - WidgetKit implementation guide
+- `healthkit-integration` - HealthKit authorization, queries, privacy, Mac Catalyst gotchas
+
+### Process & Quality
+- `anti-overengineering-guard` - Decision tree before adding abstractions
+- `verify-before-complete` - Pre-completion verification checklist
+- `pattern-matching` - Find and follow existing codebase patterns
+- `isolated-review` - Review code in isolation to catch hidden assumptions
+- `parallel-test-analysis` - Analyze all test failures simultaneously
+- `context-recovery` - Protocol for recovering lost context mid-session
 
 ## Checklists
 

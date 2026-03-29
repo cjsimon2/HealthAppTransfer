@@ -1,3 +1,5 @@
+/// Unit tests for `LANSyncViewModel` — Bonjour service discovery state,
+/// server start/stop lifecycle, and IP address display.
 import XCTest
 import SwiftUI
 @testable import HealthAppTransfer

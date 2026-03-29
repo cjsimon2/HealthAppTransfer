@@ -1,3 +1,7 @@
+/// Unit tests for `QRPairingPayload` encoding and decoding.
+///
+/// Validates that pairing payloads survive a JSON round-trip and that the
+/// Base64-encoded certificate field is preserved exactly.
 import XCTest
 @testable import HealthAppTransfer
 

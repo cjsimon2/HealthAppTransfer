@@ -4,12 +4,14 @@ Date: 2026-02-23
 Project: `HealthAppTransfer`
 Scope: Major debug run without changing application code
 
+> **Note (2026-03-29):** The 4 failing UI tests documented below were subsequently fixed in commit `acaa4d7` (fix: repair 5 UI tests broken by 6-tab overflow into More tab). All 9 UI tests are expected to pass as of that commit.
+
 ## Executive Summary
 
 - Clean build succeeded.
-- Unit tests passed (`550/550`).
-- UI tests failed (`4/9` in full run, `4/4` in targeted rerun).
-- Primary issues are UI test brittleness and selector mismatches, not compile failures.
+- Unit tests passed (`550/550`). *(596 as of 2026-03-03)*
+- UI tests failed (`4/9` in full run, `4/4` in targeted rerun). *(Fixed in commit acaa4d7)*
+- Primary issues were UI test brittleness and selector mismatches, not compile failures.
 
 ## Environment and Commands Run
 

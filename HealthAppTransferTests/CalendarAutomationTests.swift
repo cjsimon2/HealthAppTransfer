@@ -1,3 +1,7 @@
+/// Unit tests for the Calendar automation target.
+///
+/// Verifies event creation, date interpolation, and the EventKit interaction
+/// layer without requiring calendar access on the test device.
 import XCTest
 @testable import HealthAppTransfer
 

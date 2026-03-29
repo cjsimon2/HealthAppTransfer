@@ -1,3 +1,8 @@
+/// App Intents entity and query types for health data types.
+///
+/// Defines the `HealthTypeAppEntity` that surfaces individual `HealthDataType`
+/// values in the Shortcuts app, along with convenience `AppEnum` wrappers for
+/// export format and date range selection.
 import AppIntents
 import Foundation
 
@@ -35,6 +40,8 @@ struct HealthTypeAppEntity: AppEntity {
 
 // MARK: - Entity Query
 
+/// Resolves `HealthTypeAppEntity` values by identifier or search string for
+/// the Shortcuts parameter picker.
 struct HealthTypeEntityQuery: EntityStringQuery {
 
     func entities(for identifiers: [String]) async throws -> [HealthTypeAppEntity] {

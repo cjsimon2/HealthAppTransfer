@@ -1,3 +1,5 @@
+/// Unit tests for `HealthDataViewModel` — data loading, filtering, and
+/// pagination using a file-private `MockHealthStore` stub.
 import XCTest
 import HealthKit
 @testable import HealthAppTransfer

@@ -1,3 +1,7 @@
+/// Static widget that surfaces the most recently generated health insight.
+///
+/// The timeline refreshes every 30 minutes. When no insight is available the
+/// entry stores `nil` and the view renders an empty-state placeholder.
 import SwiftUI
 import WidgetKit
 

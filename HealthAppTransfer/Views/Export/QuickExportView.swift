@@ -3,6 +3,8 @@ import SwiftData
 
 // MARK: - Quick Export View
 
+/// Main export screen for selecting data types, format, date range,
+/// and sharing the resulting file. Includes an import shortcut on macOS.
 struct QuickExportView: View {
 
     // MARK: - Environment

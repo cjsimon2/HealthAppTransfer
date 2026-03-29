@@ -1,3 +1,8 @@
+/// Live Activity and Dynamic Island UI shown while a health data sync is in progress.
+///
+/// Renders on the Lock Screen via `LockScreenSyncView` and in the Dynamic Island
+/// via compact, minimal, and expanded layouts. Colour-codes the progress indicator
+/// based on sync status (`.syncing`, `.completed`, `.failed`).
 import ActivityKit
 import SwiftUI
 import WidgetKit

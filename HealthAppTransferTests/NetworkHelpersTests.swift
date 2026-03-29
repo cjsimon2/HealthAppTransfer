@@ -1,3 +1,7 @@
+/// Unit tests for `NetworkHelpers`.
+///
+/// The `localIPAddress` test is intentionally lenient: it accepts `nil` (device
+/// not on WiFi) or a valid dotted-decimal IPv4 string.
 import XCTest
 @testable import HealthAppTransfer
 

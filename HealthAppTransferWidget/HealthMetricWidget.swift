@@ -1,3 +1,8 @@
+/// User-configurable widget that displays health metrics in small, medium, or large sizes.
+///
+/// Uses `AppIntentConfiguration` so users can pick which metrics to show via the
+/// Shortcuts-backed `SelectMetricsIntent` in the widget editor. The `MetricEntity`
+/// and `MetricEntityQuery` types back the Shortcuts parameter picker.
 import AppIntents
 import SwiftUI
 import WidgetKit

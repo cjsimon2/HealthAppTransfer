@@ -1,3 +1,8 @@
+/// Integration-style unit tests for `ExportService`.
+///
+/// Uses a `MockHealthStore` to inject sample data so no real HealthKit
+/// entitlement is required. Verifies file creation, format selection, and
+/// that `ExportResult` metadata is accurate.
 import HealthKit
 import XCTest
 @testable import HealthAppTransfer

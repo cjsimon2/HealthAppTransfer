@@ -3,6 +3,8 @@ import SwiftData
 
 // MARK: - Security Settings View
 
+/// Settings screen for configuring biometric lock (Face ID / Touch ID)
+/// and viewing the audit log of security events.
 struct SecuritySettingsView: View {
 
     // MARK: - Environment

@@ -1,3 +1,5 @@
+/// Unit tests for `SyncSettingsViewModel` — CloudKit toggle state, background
+/// refresh interval persistence, and observer-query wiring.
 import XCTest
 @testable import HealthAppTransfer
 

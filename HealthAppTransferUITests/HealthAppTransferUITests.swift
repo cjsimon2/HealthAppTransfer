@@ -1,3 +1,8 @@
+/// UI tests that exercise the app's main user flows using XCUI automation.
+///
+/// Tests use a launch argument (`-UITestingSkipOnboarding`) to bypass onboarding
+/// so they start directly from the tab bar. A `navigateToTab(_:)` helper handles
+/// both direct tabs and the iOS "More" overflow automatically.
 import XCTest
 
 final class HealthAppTransferUITests: XCTestCase {

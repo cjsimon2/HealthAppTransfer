@@ -1,3 +1,7 @@
+/// Unit tests for the Cloud Storage automation target.
+///
+/// Validates file naming, upload payload encoding, and provider-specific URL
+/// construction without making real network requests.
 import XCTest
 @testable import HealthAppTransfer
 

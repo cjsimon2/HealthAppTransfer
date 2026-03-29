@@ -1,3 +1,7 @@
+/// Unit tests for HTTP-related types used by the network server and REST automation.
+///
+/// Covers status code categorisation, header parsing, and request/response
+/// model Codable conformance.
 import XCTest
 @testable import HealthAppTransfer
 

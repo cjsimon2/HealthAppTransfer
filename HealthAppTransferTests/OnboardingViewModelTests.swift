@@ -1,3 +1,5 @@
+/// Unit tests for `OnboardingViewModel` — authorization request flow, step
+/// progression, and error presentation using a file-private mock store.
 import XCTest
 import HealthKit
 @testable import HealthAppTransfer

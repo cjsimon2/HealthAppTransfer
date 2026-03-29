@@ -1,3 +1,6 @@
+/// Unit tests for `AutomationConfiguration` SwiftData model persistence.
+///
+/// Uses an in-memory `ModelContainer` so tests are fully isolated and fast.
 import XCTest
 import SwiftData
 @testable import HealthAppTransfer

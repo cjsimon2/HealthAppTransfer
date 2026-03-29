@@ -14,6 +14,7 @@ An iOS/macOS app for exporting, syncing, and automating Apple Health data. Built
 - **Siri Shortcuts** — App Intents for "Get latest value", "Sync now", and "Export health data".
 - **Biometric Lock** — Optional Face ID / Touch ID gate on app launch.
 - **Bonjour Discovery** — Automatic LAN discovery via `_healthsync._tcp` so Mac clients find the iOS server.
+- **Import (Mac)** — Import JSON (v1/v2) and CSV health data files on macOS via `ImportParserService`, surfaced in the Export tab.
 - **Mac Catalyst** — Runs natively on macOS via Mac Catalyst with NavigationSplitView sidebar, macOS menu commands (Cmd+Shift+R sync, Cmd+E export), and SwiftData fallback for health data (since HealthKit is unavailable on Mac).
 
 ## Requirements
@@ -31,14 +32,20 @@ An iOS/macOS app for exporting, syncing, and automating Apple Health data. Built
    cd HealthAppTransfer
    ```
 
-2. **Open in Xcode**
+2. **Regenerate Xcode project (if needed)**
+   The project is generated from `project.yml` using [XcodeGen](https://github.com/yonaskolb/XcodeGen). The `.xcodeproj` is checked in, so this step is only needed after editing `project.yml`.
+   ```bash
+   xcodegen generate
+   ```
+
+3. **Open in Xcode**
    ```bash
    open HealthAppTransfer.xcodeproj
    ```
 
-3. **Configure signing** — Select your development team under Signing & Capabilities.
+4. **Configure signing** — Select your development team under Signing & Capabilities.
 
-4. **Build and run** — `Cmd+R` to launch on a simulator or device.
+5. **Build and run** — `Cmd+R` to launch on a simulator or device.
 
 > HealthKit is not available in the iOS Simulator. To test with real data, run on a physical device.
 
@@ -47,12 +54,12 @@ An iOS/macOS app for exporting, syncing, and automating Apple Health data. Built
 MVVM with Combine, using Swift actors for thread-safe service layer.
 
 ```
-HealthAppTransfer/                  # Main app target (99 Swift files)
+HealthAppTransfer/                  # Main app target (112 Swift files)
 ├── App/                            # App entry point, entitlements, Info.plist
 ├── Views/                          # SwiftUI views (MVVM)
 │   ├── Dashboard/                  # Health metrics dashboard with metric cards
 │   ├── HealthData/                 # Browse & detail views for all types
-│   ├── Export/                     # Quick export UI
+│   ├── Export/                     # Quick export + import UI
 │   ├── Automations/                # REST, MQTT, Calendar, Cloud, Home Assistant forms
 │   ├── Settings/                   # Pairing, LAN sync, security, sync config
 │   ├── Onboarding/                 # Welcome, HealthKit, notification, quick-setup steps
@@ -62,8 +69,9 @@ HealthAppTransfer/                  # Main app target (99 Swift files)
 │   └── Persistence/                # SwiftData @Model classes (8 models)
 ├── Services/
 │   ├── HealthKit/                  # HealthKitService (actor), BackgroundSyncService, AggregationEngine
-│   ├── Export/                     # ExportService (actor), JSON v1/v2, CSV, GPX formatters
+│   ├── Export/                     # ExportService (actor), JSON v1/v2, CSV, GPX formatters, ImportParserService
 │   ├── Network/                    # NetworkServer (TLS HTTP), BonjourDiscovery, LANSyncClient
+│   ├── Notifications/              # NotificationService with cooldown + protocol injection
 │   ├── Security/                   # PairingService, CertificateService, KeychainStore, BiometricService
 │   ├── Sync/                       # CloudKitSyncService, CloudKitRecordMapper
 │   ├── Automations/                # AutomationScheduler, AutomationExecutor, 5 automation types
@@ -74,14 +82,26 @@ HealthAppTransfer/                  # Main app target (99 Swift files)
 ├── Theme/                          # AppColors, AppTypography, AppLayout, ChartColors, ViewModifiers
 └── Resources/                      # Assets catalog, localization
 
-HealthAppTransferWidget/            # Widget extension (5 Swift files)
+HealthAppTransferWidget/            # Widget extension (7 Swift files)
 ├── HealthAppTransferWidgetBundle   # Widget bundle entry point
 ├── HealthMetricWidget              # Configurable health metric widget (small/medium/large)
 ├── HealthMetricProvider            # AppIntentTimelineProvider with HealthKit queries
 ├── HealthWidgetViews               # Widget views: small, medium, large + sparkline
+├── InsightOfDayWidget              # Insight of the Day widget (small/medium)
+├── InsightOfDayViews               # Views for Insight of the Day widget
 └── SyncLiveActivity                # Live Activity for background sync progress
 
-HealthAppTransferTests/             # Unit tests (44 files, 550 tests)
+HealthAppTransferWatch/             # watchOS companion app (7 Swift files)
+├── HealthAppTransferWatchApp       # Watch app entry point
+├── WatchConnectivityManager        # WCSession data bridge from iPhone
+├── WatchDashboardView              # Main watch dashboard
+├── WatchMetricRowView              # Individual metric row
+└── Complications/                  # watchOS 10+ WidgetKit complications
+    ├── GoalProgressComplication    # Goal progress circular complication
+    ├── StreakComplication           # Streak rectangular complication
+    └── WatchWidgetBundle           # Complication bundle
+
+HealthAppTransferTests/             # Unit tests (46 files, 596 tests)
 HealthAppTransferUITests/           # UI tests (1 file, 9 tests)
 ```
 
@@ -172,7 +192,7 @@ Shows background sync progress on Dynamic Island and Lock Screen via `ActivityKi
 ## Testing
 
 ```bash
-# Run unit tests (550 tests)
+# Run unit tests (596 tests)
 xcodebuild test -project HealthAppTransfer.xcodeproj -scheme HealthAppTransfer -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 
 # Run UI tests (9 tests)
@@ -181,7 +201,7 @@ xcodebuild test -project HealthAppTransfer.xcodeproj -scheme HealthAppTransfer -
 
 | Metric | Value |
 |--------|-------|
-| Unit tests | 550 across 44 test files |
+| Unit tests | 596 across 46 test files |
 | UI tests | 9 covering onboarding, navigation, export, settings, dashboard |
 | File coverage | ~90% |
 | Simulator | iPhone 17 Pro (no iPhone 16 simulators available) |

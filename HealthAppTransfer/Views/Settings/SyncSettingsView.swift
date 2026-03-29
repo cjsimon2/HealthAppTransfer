@@ -3,6 +3,8 @@ import SwiftUI
 
 // MARK: - Sync Settings View
 
+/// Configuration screen for CloudKit and LAN sync options,
+/// including type selection, sync frequency, and manual sync trigger.
 struct SyncSettingsView: View {
 
     // MARK: - Environment

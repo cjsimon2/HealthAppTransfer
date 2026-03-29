@@ -1,3 +1,5 @@
+/// Unit tests for `SecuritySettingsViewModel` — biometric lock toggle,
+/// export encryption settings, and keychain read/write paths.
 import XCTest
 @testable import HealthAppTransfer
 

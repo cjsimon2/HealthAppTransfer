@@ -1,3 +1,7 @@
+/// Unit tests for `CloudKitRecordMapper`.
+///
+/// Verifies that `HealthSampleDTO` values are correctly mapped to `CKRecord`
+/// fields and that the reverse mapping produces an equivalent DTO.
 import XCTest
 import CloudKit
 @testable import HealthAppTransfer

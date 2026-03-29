@@ -1,3 +1,8 @@
+/// Unit tests for core data model types: `HealthSampleDTO`, `HealthDataBatch`,
+/// `AggregatedSample`, and the aggregation-related enums.
+///
+/// All tests exercise Codable round-trips and basic invariants. No HealthKit
+/// access is required; tests run entirely in-process.
 import XCTest
 @testable import HealthAppTransfer
 

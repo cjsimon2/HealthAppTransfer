@@ -2,6 +2,8 @@ import SwiftUI
 
 // MARK: - Settings View
 
+/// Root settings navigation list linking to sync, security, pairing,
+/// LAN sync, paired devices, automations, and notification settings.
 struct SettingsView: View {
 
     // MARK: - Dependencies

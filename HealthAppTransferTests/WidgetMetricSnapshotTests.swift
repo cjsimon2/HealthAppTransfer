@@ -1,3 +1,4 @@
+/// Unit tests for `WidgetMetricSnapshot` Codable conformance and computed helpers.
 import XCTest
 @testable import HealthAppTransfer
 

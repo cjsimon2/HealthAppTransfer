@@ -1,3 +1,8 @@
+/// Registers all App Intents with the system Shortcuts app.
+///
+/// Phrases defined here appear as suggested shortcuts in the Shortcuts app and
+/// can be triggered via Siri. The `\(.applicationName)` placeholder is
+/// substituted with the app's display name at runtime.
 import AppIntents
 
 // MARK: - App Shortcuts Provider

@@ -1,3 +1,7 @@
+/// Unit tests for the `SyncedHealthSample` SwiftData model.
+///
+/// Verifies that samples are correctly persisted, retrieved, and deduplicated
+/// using an in-memory `ModelContainer`.
 import XCTest
 import SwiftData
 @testable import HealthAppTransfer

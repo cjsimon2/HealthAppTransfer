@@ -1,3 +1,5 @@
+/// Unit tests for `HealthDataDetailViewModel` — sample loading, statistics
+/// computation, and chart-data preparation for a single health type.
 import XCTest
 @testable import HealthAppTransfer
 

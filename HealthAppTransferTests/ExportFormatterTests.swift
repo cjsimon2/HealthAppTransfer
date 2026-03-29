@@ -1,3 +1,7 @@
+/// Unit tests for all export formatters (JSON v1, JSON v2, CSV, GPX).
+///
+/// Each test verifies that a known `HealthSampleDTO` fixture produces the
+/// expected output structure without touching the file system.
 import XCTest
 @testable import HealthAppTransfer
 

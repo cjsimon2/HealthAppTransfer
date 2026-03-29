@@ -1,3 +1,8 @@
+/// Manages the WatchConnectivity session on the watchOS side.
+///
+/// Listens for both `applicationContext` updates (pushed by the iPhone app on
+/// activation) and `userInfo` transfers, then persists the received data into
+/// `WidgetDataStore` so complications and the dashboard view can read it.
 import Foundation
 import WatchConnectivity
 

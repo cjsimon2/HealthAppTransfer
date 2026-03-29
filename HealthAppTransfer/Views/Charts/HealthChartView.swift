@@ -4,6 +4,8 @@ import Accessibility
 
 // MARK: - Health Chart View
 
+/// Interactive Swift Charts view for a single health data type.
+/// Supports bar, line, and point mark styles with selectable date ranges.
 struct HealthChartView: View {
 
     // MARK: - Environment

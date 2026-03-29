@@ -1,3 +1,8 @@
+/// Unit tests for the REST API automation target.
+///
+/// Uses a `MockURLProtocol` to intercept `URLSession` requests so no real
+/// network calls are made. Tests cover request construction, response parsing,
+/// and error propagation.
 import XCTest
 @testable import HealthAppTransfer
 

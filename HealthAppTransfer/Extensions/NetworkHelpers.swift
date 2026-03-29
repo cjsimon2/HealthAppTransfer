@@ -2,6 +2,7 @@ import Foundation
 
 // MARK: - Network Helpers
 
+/// Utility functions for network-related queries that don't belong to a specific service.
 enum NetworkHelpers {
 
     /// Returns the device's local WiFi IP address (IPv4).

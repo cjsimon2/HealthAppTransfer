@@ -1,3 +1,7 @@
+/// Unit tests for `DEREncoder`.
+///
+/// Validates DER length encoding, primitive TLV construction (INTEGER, BIT STRING,
+/// OCTET STRING, UTF8String, UTCTime, NULL), and the X.509 helper methods.
 import XCTest
 @testable import HealthAppTransfer
 

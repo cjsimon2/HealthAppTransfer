@@ -1,3 +1,7 @@
+/// Unit tests for `HealthSampleMapper`.
+///
+/// Validates conversion from `HKSample` subclasses to `HealthSampleDTO` and
+/// round-trip fidelity for quantity, category, correlation, and workout types.
 import XCTest
 import HealthKit
 @testable import HealthAppTransfer

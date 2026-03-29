@@ -1,3 +1,5 @@
+/// Unit tests for `ServiceContainer` — verifies that all expected services are
+/// non-nil after initialisation and that singletons are returned consistently.
 import XCTest
 @testable import HealthAppTransfer
 

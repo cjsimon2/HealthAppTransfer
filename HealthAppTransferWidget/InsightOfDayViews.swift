@@ -1,3 +1,7 @@
+/// SwiftUI views for the `InsightOfDayWidget` in small and medium sizes.
+///
+/// `InsightOfDayEntryView` routes to `SmallInsightView` or `MediumInsightView`.
+/// The medium variant adds a relative-time timestamp below the insight message.
 import SwiftUI
 import WidgetKit
 

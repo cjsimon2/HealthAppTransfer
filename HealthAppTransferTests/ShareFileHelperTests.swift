@@ -1,3 +1,7 @@
+/// Unit tests for `ShareFileHelper`.
+///
+/// Verifies UTType mapping for known file extensions, temporary file creation
+/// and content fidelity, and that cleanup removes the share directory.
 import XCTest
 import UniformTypeIdentifiers
 @testable import HealthAppTransfer

@@ -6,52 +6,36 @@
 
 **Phase:** Active Development
 **Status:** In Progress
-**Last Updated:** 2026-03-03 23:14
+**Last Updated:** 2026-03-29
 
 ## Active Tasks
 
 <!-- Tasks currently being worked on -->
 | Task | Status | Progress | Blocker |
 |------|--------|----------|---------|
-| Mac import feature (JSON/CSV file import) | Completed | 100% | None |
+| _None_ | — | — | — |
 
 ## Completed Tasks
 
 <!-- Recently completed work (last 15, deduplicated) -->
 | Task | Completed | Files Changed |
 |------|-----------|---------------|
-| ✅ feat: add Mac import feature for JSON and CSV health data files | 2026-03-03 | See commit |
+| ✅ Comprehensive documentation sweep (3-agent team) | 2026-03-29 | README.md, STATE.md, handoff.md, Codex_Findings.md, style_plan.md, 70+ Swift files (doc comments) |
+| ✅ Claude Code config update — hooks, commands, skills, settings | 2026-03-29 | .claude/settings.json, CLAUDE.md, new hook/command/skill files |
+| ✅ docs: update STATE.md with import feature completion | 2026-03-03 | See commit |
+| ✅ feat: add Mac import feature for JSON and CSV health data files | 2026-03-03 | ImportParserService.swift, ImportViewModel.swift, ImportView.swift, QuickExportView.swift, ServiceContainer.swift |
 | ✅ fix: commit uncommitted macOS build fixes and xcodegen artifacts | 2026-03-03 | See commit |
-| ✅ feat: Mac import feature — JSON v1/v2 + CSV file import via ImportParserService, ImportViewModel, ImportView | 2026-03-03 | ImportParserService.swift, ImportViewModel.swift, ImportView.swift, QuickExportView.swift, ServiceContainer.swift, project.pbxproj |
-| ✅ fix: wrap navigationBarTitleDisplayMode, restore entitlements, fix widget build | 2026-03-03 | PairingView.swift, entitlements, WidgetDataStore.swift, InsightOfDayWidget.swift, project.yml, project.pbxproj |
-| ✅ fix: add macOS network entitlements for LAN sync and pairing | 2026-03-03 | See commit |
-| ✅ fix: resolve Swift 6 concurrency warnings in NetworkServer | 2026-03-03 | See commit |
-| ✅ fix: resolve 5 macOS build and runtime bugs | 2026-03-03 | See commit |
-| ✅ docs: update STATE.md timestamp and deduplicate task entry | 2026-02-25 | See commit |
+| ✅ fix: add macOS network entitlements for LAN sync and pairing | 2026-03-03 | HealthAppTransfer.entitlements, project.yml |
+| ✅ fix: resolve Swift 6 concurrency warnings in NetworkServer | 2026-03-03 | NetworkServer.swift |
+| ✅ fix: resolve 5 macOS build and runtime bugs | 2026-03-03 | SchemaVersions.swift, NetworkServer.swift, PairingViewModel.swift, GoalSettingsView.swift, MainTabView.swift, QuickSetupStepView.swift |
 | ✅ feat: iPad Insights centered magazine column layout redesign | 2026-02-24 | InsightsView.swift, CorrelationChartView.swift, AppLayout.swift |
-| ✅ docs: update LEARNINGS.md with TabView 6-tab overflow UI test pattern | 2026-02-24 | See commit |
-| ✅ fix: repair 5 UI tests broken by 6-tab overflow into More tab | 2026-02-24 | See commit |
-| ✅ docs: update STATE.md with latest session progress | 2026-02-24 | See commit |
-| ✅ fix: handle 6-tab overflow in UI tests and update tracking docs | 2026-02-24 | See commit |
-| ✅ test: add NotificationService unit tests with protocol injection | 2026-02-24 | NotificationService.swift, NotificationServiceTests.swift, project.pbxproj |
-| ✅ feat: Insights batch — custom goals, sparklines, correlation history, notifications, iPad layout, onboarding callout, watchOS companion | 2026-02-24 | 12 new + 8 modified Swift files, project.pbxproj |
-| ✅ feat: streak detection, goal progress, favorites, Insight widget | 2026-02-24 | 3 new + 8 modified Swift files, project.pbxproj |
-| ✅ feat: add Insights tab with pattern detection and correlation analysis | 2026-02-24 | 5 new + 1 modified Swift files, project.pbxproj |
+| ✅ fix: repair 5 UI tests broken by 6-tab overflow into More tab | 2026-02-24 | HealthAppTransferUITests.swift |
+| ✅ feat: Insights batch — custom goals, sparklines, correlation history, notifications, iPad layout, onboarding callout, watchOS companion | 2026-02-24 | 12 new + 8 modified Swift files |
+| ✅ feat: streak detection, goal progress, favorites, Insight widget | 2026-02-24 | 3 new + 8 modified Swift files |
+| ✅ feat: add Insights tab with pattern detection and correlation analysis | 2026-02-24 | 5 new + 1 modified Swift files |
 | ✅ docs: comprehensive documentation sweep (README, STATE, LEARNINGS) | 2026-02-23 | README.md, STATE.md, LEARNINGS.md |
-| ✅ fix: correct 4 UI test assertion mismatches and timing brittleness | 2026-02-22 | HealthAppTransferUITests.swift, LEARNINGS.md |
-| ✅ docs: update LEARNINGS.md with Catalyst #if os(macOS) gotcha | 2026-02-22 | LEARNINGS.md |
 | ✅ fix: use runtime HealthKit checks instead of compile-time #if os(macOS) for Catalyst | 2026-02-22 | 6 ViewModels, SyncedHealthSample.swift |
 | ✅ fix: resolve 13 bugs across sync, Catalyst, TLS, auth, and crash safety | 2026-02-22 | 16 files |
-| ✅ fix: Mac Catalyst pairing and sync issues | 2026-02-22 | See commit |
-| ✅ fix: use correct unit for physicalEffort in HealthSampleMapper | 2026-02-22 | HealthSampleMapper.swift |
-| ✅ style: Wes Anderson UI overhaul with warm theme system | 2026-02-22 | Theme/, 10 view files |
-| ✅ docs: add comprehensive README | 2026-02-22 | README.md, STATE.md |
-| ✅ fix: App Store audit — entitlements, Info.plist, fatalErrors, version | 2026-02-22 | 6 files |
-| ✅ fix: harden GPX export — double-resume guard, altitude filter, HR rounding | 2026-02-22 | HealthKitService, ExportService, GPXFormatter |
-| ✅ feat: add heart rate data to GPX export | 2026-02-22 | ExportService.swift, GPXFormatter.swift |
-| ✅ style: UI/UX polish across 10 view files | 2026-02-21 | 10 view files |
-| ✅ test: add 34 test files to increase coverage from 14% to ~90% | 2026-02-21 | 44 test files |
-| ✅ fix: enable macOS Catalyst build and resolve Info.plist warnings | 2026-02-21 | project.pbxproj, Info.plist, entitlements |
 
 ## Key Decisions
 
@@ -78,17 +62,11 @@
 <!-- Last 5 sessions summary -->
 | Date | Work Done | Key Outcomes |
 |------|-----------|--------------|
-| 2026-03-03 | Build fixes + review | Wrapped 2 remaining navigationBarTitleDisplayMode calls in PairingView.swift, restored missing network entitlements, fixed WidgetDataStore ambiguous type error, added WidgetInsightSnapshot to widget target, reviewed LAN sync + SwiftData persistence code |
-| 2026-03-03 | macOS bug fixes | Fixed: navigationBarTitleDisplayMode on macOS, SwiftData migration crash (removed stale versioned schemas, added 3-tier recovery), NWListener race condition (continuation-based start), macOS NavigationSplitView missing NavigationStack, QuickSetup chip hit-testing with .contentShape |
-| 2026-02-24 | NotificationService tests | Added NotificationCenterProtocol for DI, 15 unit tests covering streak/goal alerts, authorization, cooldown logic. LEARNINGS.md updated. |
-| 2026-02-24 | Insights features + polish batch | Custom goals (GoalSettingsView, SchemaV2), sparklines in insight cards, correlation history (CorrelationRecord + CorrelationHistoryView), notifications (NotificationService + settings), iPad layout, onboarding callout, watchOS companion (4 views + 3 complications). 12 new files, 8 modified, 8 new tests |
-| 2026-02-24 | Insights enhancements | Streak detection, goal progress generators, favorite correlation pairs with persistence, Insight of the Day widget (small+medium). 3 new files, 10 new tests |
-| 2026-02-24 | Insights tab feature | New Insights tab with weekly summaries, personal records, day-of-week patterns, anomaly detection, and cross-metric correlation scatter plots. 5 new files + 13 tests |
-| 2026-02-23 | Documentation sweep (`/document ALL`) | README updated (widgets, Catalyst, corrected metrics), STATE.md cleaned up (deduped tasks, accurate counts), LEARNINGS.md filled in (key abstractions, integration points, library quirks) |
-| 2026-02-22 | Catalyst data fix, 13-bug deep debug, UI test fixes | Runtime HealthKit checks replaced compile-time `#if os(macOS)`, TLS/auth/sync hardening, UI test timing fixes |
-| 2026-02-22 | UI theme, App Store audit, GPX improvements | Wes Anderson warm theme, entitlements/Info.plist fixes, HR data in GPX, app icon |
-| 2026-02-21 | Test coverage, Catalyst build, UI polish | 550 tests across 44 files (~90% coverage), macOS Catalyst support, accessibility labels, 9 UI tests |
-| 2026-02-21 | Initial project build fixes | Concurrency warnings, CloudKit entitlement, widget config, Info.plist |
+| 2026-03-29 | Claude Code config update + documentation sweep | Added 7 hooks, 3 commands, 7 skills, updated settings.json + CLAUDE.md. Then ran 3-agent documentation team: updated README, STATE, handoff, Codex_Findings, style_plan; added doc comments to 70+ Swift files. |
+| 2026-03-03 | macOS bug fixes + import feature | Mac import (JSON/CSV) via ImportParserService + ImportView + ImportViewModel. Fixed: navigationBarTitleDisplayMode, SwiftData migration crash (3-tier recovery), NWListener race (continuation-based), macOS NavSplitView, chip hit-testing |
+| 2026-02-24 | Insights features + NotificationService | Custom goals, sparklines, correlation history, notifications, iPad magazine layout, onboarding callout, watchOS companion (4 views + 3 complications). 596 unit tests, 9 UI tests. |
+| 2026-02-23 | Documentation sweep | README, STATE, LEARNINGS comprehensive update |
+| 2026-02-22 | Catalyst + 13-bug fix + UI theme | Runtime HealthKit checks, TLS/auth/sync hardening, Wes Anderson warm theme, UI test timing fixes |
 
 ## Codebase Insights
 
@@ -128,7 +106,7 @@
 ## Metrics
 
 <!-- Project health indicators -->
-- **Source Files:** 115 app + 7 widget + 7 watchOS + 47 test = 176 Swift files
+- **Source Files:** 112 app + 7 widget + 7 watchOS + 47 test = 173 Swift files
 - **Source Directories:** 23 (12 app, 1 widget extension, 2 watchOS, 2 test targets)
 - **Health Data Types:** 180+ (quantity, category, correlation, characteristic, workout)
 - **Tests:** 596 unit tests, 9 UI tests (46 test files + 1 UI test file)
@@ -143,7 +121,7 @@
 - **Widget Sizes:** 3 (small, medium, large) + Insight of the Day (small, medium) + Live Activity + 2 watchOS complications
 - **Siri Shortcuts:** 3 (Get value, Sync, Export)
 - **API Endpoints:** 4 (/status, /api/v1/pair, /health/types, /health/data)
-- **Last Successful Build:** 2026-03-03
+- **Last Successful Build:** 2026-03-03 (no new code changes since)
 
 ---
 *This file is updated automatically by Claude. Manual edits are preserved.*

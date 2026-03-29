@@ -1,3 +1,8 @@
+/// Unit tests for `AggregationEngine` using a `MockHealthStore` stub.
+///
+/// Tests cover type validation (category and workout types are rejected),
+/// correct delegation to the underlying statistics query, and proper error
+/// propagation when the store throws.
 import XCTest
 import HealthKit
 @testable import HealthAppTransfer

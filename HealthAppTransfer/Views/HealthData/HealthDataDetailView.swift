@@ -2,6 +2,8 @@ import SwiftUI
 
 // MARK: - Health Data Detail View
 
+/// Per-type detail screen showing a chart, summary statistics,
+/// and a list of recent samples for a single ``HealthDataType``.
 struct HealthDataDetailView: View {
 
     // MARK: - Environment

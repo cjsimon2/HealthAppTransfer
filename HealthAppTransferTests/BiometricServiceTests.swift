@@ -1,3 +1,5 @@
+/// Unit tests for `BiometricService` — validates authentication policy
+/// selection and error mapping without requiring a real biometric sensor.
 import XCTest
 @testable import HealthAppTransfer
 

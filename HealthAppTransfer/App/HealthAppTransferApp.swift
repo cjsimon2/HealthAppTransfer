@@ -1,3 +1,9 @@
+/// Entry point for the HealthAppTransfer application.
+///
+/// Bootstraps the SwiftData model container, all core services, the background sync
+/// scheduler, and the automation scheduler. On iOS this also registers background
+/// task handlers and activates the WatchConnectivity session; on macOS it triggers
+/// a CloudKit pull on each launch instead.
 import SwiftData
 import SwiftUI
 
@@ -186,6 +192,9 @@ class PhoneSessionDelegate: NSObject, WCSessionDelegate {
         session.activate()
     }
 
+    /// Serializes widget snapshots, streak data, and goal progress from
+    /// `WidgetDataStore` and pushes them to the watch via `updateApplicationContext`.
+    /// Silently no-ops if the session is not activated or no watch is paired.
     func pushDataToWatch(session: WCSession? = nil) {
         let wcSession = session ?? WCSession.default
         guard wcSession.activationState == .activated, wcSession.isPaired else { return }

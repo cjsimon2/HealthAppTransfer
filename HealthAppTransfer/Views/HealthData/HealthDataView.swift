@@ -3,6 +3,8 @@ import SwiftData
 
 // MARK: - Health Data View
 
+/// Browses available health data types grouped by category.
+/// Tapping a type navigates to ``HealthDataDetailView``.
 struct HealthDataView: View {
 
     // MARK: - Environment

@@ -1,3 +1,8 @@
+/// App Intent that returns the most recent value for a chosen health data type.
+///
+/// Handles all four HealthKit sample kinds: quantity, category, correlation,
+/// and workout. Characteristic types (biological sex, date of birth, etc.) are
+/// read directly from `HKHealthStore` rather than fetching time-series samples.
 import AppIntents
 import Foundation
 import HealthKit

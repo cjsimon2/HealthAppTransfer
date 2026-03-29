@@ -1,3 +1,7 @@
+/// Unit tests for the Home Assistant automation target.
+///
+/// Verifies entity state payload construction and the REST call made to the
+/// Home Assistant API using a `MockURLProtocol` stub.
 import XCTest
 @testable import HealthAppTransfer
 

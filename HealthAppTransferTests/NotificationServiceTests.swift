@@ -1,3 +1,7 @@
+/// Unit tests for `NotificationService`.
+///
+/// Validates notification content construction, category registration, and
+/// scheduling logic using a `UNUserNotificationCenter` test double.
 import UserNotifications
 import XCTest
 @testable import HealthAppTransfer

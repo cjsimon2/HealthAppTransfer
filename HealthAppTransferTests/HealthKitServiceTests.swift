@@ -1,3 +1,8 @@
+/// Unit tests for `HealthKitService` using `MockHealthStore`.
+///
+/// Covers authorization forwarding, sample-count queries, data-existence checks,
+/// and error propagation. The `MockHealthStore` stub in this file satisfies
+/// `HealthStoreProtocol` so no real HealthKit entitlement is needed.
 import XCTest
 import HealthKit
 @testable import HealthAppTransfer

@@ -1,3 +1,5 @@
+/// Unit tests for `PairingService` QR code generation, payload parsing, and
+/// the TLS certificate handshake flow.
 import XCTest
 @testable import HealthAppTransfer
 

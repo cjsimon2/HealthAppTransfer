@@ -1,3 +1,5 @@
+/// Unit tests for `AutomationScheduler` — covers scheduling, triggering,
+/// and cancellation of time-based automation rules.
 import XCTest
 @testable import HealthAppTransfer
 

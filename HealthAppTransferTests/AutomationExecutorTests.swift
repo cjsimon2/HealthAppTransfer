@@ -1,3 +1,6 @@
+/// Unit tests for `AutomationExecutor` — verifies that each automation type
+/// (REST, MQTT, Home Assistant, CloudStorage, Calendar) is dispatched correctly
+/// and that execution results are recorded.
 import XCTest
 @testable import HealthAppTransfer
 

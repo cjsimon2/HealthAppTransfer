@@ -1,3 +1,9 @@
+/// SwiftUI views for the `HealthMetricWidget` in all three supported sizes.
+///
+/// `HealthWidgetEntryView` routes to `SmallMetricView`, `MediumMetricView`, or
+/// `LargeMetricView` depending on `WidgetFamily`. Also contains `SparklineView`,
+/// a lightweight `Path`-based chart, and `formattedValue(_:)`, a shared
+/// number-formatting helper used across all widget views.
 import SwiftUI
 import WidgetKit
 

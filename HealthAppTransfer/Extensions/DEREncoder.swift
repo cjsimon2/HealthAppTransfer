@@ -2,6 +2,13 @@ import Foundation
 
 // MARK: - DER/ASN.1 Encoder for X.509 Certificate Construction
 
+/// Pure-Swift encoder that produces Distinguished Encoding Rules (DER) / ASN.1
+/// byte sequences used when constructing self-signed X.509 v3 certificates for
+/// the TLS pairing flow.
+///
+/// Only the subset of ASN.1 types needed by this app is implemented: INTEGER,
+/// BIT STRING, OCTET STRING, UTF8String, PrintableString, UTCTime, NULL,
+/// SEQUENCE, SET, and context-specific constructed wrappers.
 enum DEREncoder {
 
     // MARK: - ASN.1 Tag Constants
@@ -47,7 +54,11 @@ enum DEREncoder {
 
     // MARK: - Primitive Encoding
 
-    /// Encode a DER length field.
+    /// Encode a DER length field using the definite short or long form.
+    ///
+    /// - lengths < 128: single byte
+    /// - lengths 128–255: 0x81 prefix + one length byte
+    /// - lengths 256–65535: 0x82 prefix + two length bytes
     static func encodeLength(_ length: Int) -> [UInt8] {
         if length < 0x80 {
             return [UInt8(length)]
@@ -166,7 +177,18 @@ enum DEREncoder {
         sequence(utcTime(notBefore) + utcTime(notAfter))
     }
 
-    /// Build the TBSCertificate structure.
+    /// Build the TBSCertificate (To-Be-Signed) structure as defined in RFC 5280.
+    ///
+    /// The resulting bytes must be signed with ECDSA/SHA-256 to produce a complete
+    /// X.509 certificate.
+    ///
+    /// - Parameters:
+    ///   - serialNumber: Certificate serial number.
+    ///   - issuer: DER-encoded X.500 issuer name.
+    ///   - validityBytes: DER-encoded Validity period.
+    ///   - subject: DER-encoded X.500 subject name.
+    ///   - publicKeyInfo: DER-encoded SubjectPublicKeyInfo.
+    /// - Returns: DER-encoded TBSCertificate SEQUENCE bytes.
     static func tbsCertificate(
         serialNumber: Int,
         issuer: [UInt8],

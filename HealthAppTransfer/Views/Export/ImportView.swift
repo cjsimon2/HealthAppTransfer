@@ -4,6 +4,8 @@ import UniformTypeIdentifiers
 
 // MARK: - Import View
 
+/// Allows users to import previously exported health data files (JSON or CSV)
+/// back into the app's local SwiftData store.
 struct ImportView: View {
 
     // MARK: - Environment

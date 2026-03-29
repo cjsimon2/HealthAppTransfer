@@ -8,19 +8,26 @@
   "mcpToolSearchThreshold": "auto:5",
   "permissions": {
     "allow": [
-      "Bash(npm *)",
-      "Bash(npx *)",
-      "Bash(pytest *)",
+      "Bash(xcodebuild *)",
+      "Bash(swift *)",
+      "Bash(swiftlint *)",
+      "Bash(xcrun *)",
+      "Bash(simctl *)",
+      "Bash(git *)",
+      "Bash(open *.xcodeproj)",
+      "Bash(open *.xcworkspace)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(rm *.swift)",
+      "Bash(python3 *)",
       "Bash(python *)",
       "Bash(pip install *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
       "Bash(uv *)",
-      "Bash(cargo *)",
-      "Bash(go *)",
-      "Bash(git commit *)",
-      "Bash(git push *)",
-      "Bash(git status)",
-      "Bash(git diff *)",
-      "Bash(git log *)",
+      "Bash(which *)",
+      "Bash(ls *)",
       "Task(agent_type=general-purpose)",
       "Task(agent_type=Explore)",
       "Task(agent_type=Plan)",
@@ -28,18 +35,31 @@
     ],
     "deny": [
       "Bash(rm -rf /)",
+      "Bash(rm -rf ~)",
       "Bash(sudo *)",
       "Bash(chmod 777 *)"
     ]
   },
   "hooks": {
-    "Setup": [
+    "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/project-setup.py",
+            "command": "python3 /Users/caseysimon/HealthAppTransfer/.claude/hooks/project-setup.py",
             "timeout": 15000
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/caseysimon/HealthAppTransfer/.claude/hooks/safety-check.py",
+            "timeout": 5000
           }
         ]
       }
@@ -49,7 +69,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/permission-request.py",
+            "command": "python3 /Users/caseysimon/HealthAppTransfer/.claude/hooks/permission-request.py",
             "timeout": 5000
           }
         ]
@@ -60,7 +80,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/notification.py",
+            "command": "python3 /Users/caseysimon/HealthAppTransfer/.claude/hooks/notification.py",
             "timeout": 5000
           }
         ]
@@ -71,7 +91,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/user-prompt-submit.py",
+            "command": "python3 /Users/caseysimon/HealthAppTransfer/.claude/hooks/user-prompt-submit.py",
             "timeout": 5000
           }
         ]
@@ -82,7 +102,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/subagent-tracker.py",
+            "command": "python3 /Users/caseysimon/HealthAppTransfer/.claude/hooks/subagent-tracker.py",
             "timeout": 5000
           }
         ]
@@ -93,7 +113,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/subagent-tracker.py",
+            "command": "python3 /Users/caseysimon/HealthAppTransfer/.claude/hooks/subagent-tracker.py",
             "timeout": 5000
           }
         ]
@@ -105,8 +125,41 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python /Users/caseysimon/HealthAppTransfer/.claude/hooks/tool-failure-tracker.py",
+            "command": "python3 /Users/caseysimon/HealthAppTransfer/.claude/hooks/tool-failure-tracker.py",
             "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/caseysimon/HealthAppTransfer/.claude/hooks/task-completed.py",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "TeammateIdle": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/caseysimon/HealthAppTransfer/.claude/hooks/teammate-idle.py",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/caseysimon/HealthAppTransfer/.claude/hooks/session-logger.py",
+            "timeout": 5000
           }
         ]
       }

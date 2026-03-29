@@ -1,3 +1,7 @@
+/// Unit tests for `CSVFormatter` output correctness.
+///
+/// Verifies header row generation, value escaping (commas, quotes, newlines),
+/// and round-trip fidelity for all sample kinds supported by the CSV export.
 import XCTest
 @testable import HealthAppTransfer
 

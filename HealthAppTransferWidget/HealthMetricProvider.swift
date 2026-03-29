@@ -1,3 +1,8 @@
+/// Timeline provider and supporting types for the `HealthMetricWidget`.
+///
+/// On each timeline refresh the provider first attempts a live HealthKit query
+/// for fresh values, then falls back to the data cached in `WidgetDataStore`.
+/// Timeline entries refresh every 15 minutes (within the system's widget budget).
 import HealthKit
 import WidgetKit
 

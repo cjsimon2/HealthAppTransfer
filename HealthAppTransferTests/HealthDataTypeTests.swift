@@ -1,3 +1,7 @@
+/// Unit tests for the `HealthDataType` enum.
+///
+/// Verifies display names, HKQuantityType/HKCategoryType mappings, unit strings,
+/// category grouping, and Codable round-trips for every case.
 import XCTest
 import HealthKit
 @testable import HealthAppTransfer

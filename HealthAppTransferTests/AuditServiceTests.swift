@@ -1,3 +1,6 @@
+/// Unit tests for `AuditService` log-entry creation and retrieval.
+///
+/// Tests run entirely in-memory; no persistent store is involved.
 import XCTest
 @testable import HealthAppTransfer
 

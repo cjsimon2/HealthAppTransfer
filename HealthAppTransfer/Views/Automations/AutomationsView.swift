@@ -3,6 +3,8 @@ import SwiftUI
 
 // MARK: - Automations View
 
+/// Lists all saved automation configurations with add, edit, and delete
+/// actions. Supports REST, MQTT, Home Assistant, iCloud, and Calendar automations.
 struct AutomationsView: View {
 
     // MARK: - Environment

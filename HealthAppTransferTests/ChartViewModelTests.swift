@@ -1,3 +1,5 @@
+/// Unit tests for `ChartViewModel` — date range label generation, data point
+/// formatting, and aggregation interval selection.
 import XCTest
 @testable import HealthAppTransfer
 

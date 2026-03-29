@@ -1,3 +1,8 @@
+/// App Intent that triggers an on-demand health data sync from Shortcuts or Siri.
+///
+/// Creates its own `BackgroundSyncService` instance rather than reusing the
+/// app's shared service so the intent can run without the app being in the
+/// foreground.
 import AppIntents
 import Foundation
 import SwiftData

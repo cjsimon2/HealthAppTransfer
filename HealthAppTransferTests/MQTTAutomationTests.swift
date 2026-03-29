@@ -1,3 +1,7 @@
+/// Unit tests for the MQTT automation target.
+///
+/// Verifies message construction, QoS level mapping, and topic interpolation
+/// with health sample values.
 import XCTest
 @testable import HealthAppTransfer
 

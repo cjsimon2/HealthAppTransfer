@@ -1,3 +1,5 @@
+/// Unit tests for `InsightsViewModel` — initial state, insight generation,
+/// and error handling using a `MockHealthStore`.
 import HealthKit
 import XCTest
 @testable import HealthAppTransfer

@@ -1,3 +1,5 @@
+/// Unit tests for `CertificateService` — self-signed certificate generation and
+/// fingerprint computation using the DER encoder and Secure Enclave keys.
 import XCTest
 @testable import HealthAppTransfer
 

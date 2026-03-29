@@ -1,95 +1,83 @@
-# Session Handoff — 2026-03-03
+# Session Handoff — 2026-03-29
 
 ## Session Goal
-Fix macOS build errors and runtime bugs preventing the app from launching and functioning on Mac.
+Update Claude Code configuration: add hooks, commands, skills, and update CLAUDE.md and settings.json.
 
 ## Completed This Session
 
-- [x] **Fix navigationBarTitleDisplayMode build error**
-  - Files: `HealthAppTransfer/Views/Insights/GoalSettingsView.swift`
-  - Summary: Wrapped `.navigationBarTitleDisplayMode(.inline)` in `#if os(iOS)` — unavailable on macOS
+- [x] **Update settings.json**
+  - Files: `.claude/settings.json`
+  - Summary: Added hook configurations for auto-learner, context-monitor, session-logger, state-tracker, task-completed, teammate-idle, and verify-completion events.
 
-- [x] **Fix SwiftData "unknown model version" crash**
-  - Files: `HealthAppTransfer/Models/Persistence/SchemaVersions.swift`, `HealthAppTransfer/App/HealthAppTransferApp.swift`
-  - Summary: Removed stale VersionedSchema/MigrationPlan (model classes had evolved past the frozen schema hashes). Added 3-tier recovery: normal → delete store files → in-memory fallback. Store recovery now checks group container path, not just default Application Support.
+- [x] **Update CLAUDE.md**
+  - Files: `CLAUDE.md`
+  - Summary: Refreshed project-level guidance document with new skills, commands, and review roles.
 
-- [x] **Fix NWListener race condition in pairing server**
-  - Files: `HealthAppTransfer/Services/Network/NetworkServer.swift`, `HealthAppTransfer/ViewModels/PairingViewModel.swift`
-  - Summary: Replaced fire-and-forget `NWListener.start()` + 500ms sleep with `withCheckedThrowingContinuation` that awaits `.ready`/`.failed`. Used `OSAllocatedUnfairLock` for Swift 6 concurrency safety.
+- [x] **Add hook scripts**
+  - Files: `.claude/hooks/auto-learner.py`, `context-monitor.py`, `session-logger.py`, `state-tracker.py`, `task-completed.py`, `teammate-idle.py`, `verify-completion.py`
+  - Summary: Seven Python hook scripts for automated session tracking, learning capture, and task verification.
 
-- [x] **Fix macOS NavigationSplitView stuck navigation**
-  - Files: `HealthAppTransfer/Views/MainTabView.swift`
-  - Summary: Wrapped macOS detail pane in `NavigationStack` so `NavigationLink` pushes (e.g., Settings → Sync Settings) show a back button.
+- [x] **Add custom commands**
+  - Files: `.claude/commands/healthkit-audit.md`, `privacy-audit.md`, `project-audit.md`
+  - Summary: Three slash commands for targeted audits.
 
-- [x] **Fix onboarding chip selection on macOS**
-  - Files: `HealthAppTransfer/Views/Onboarding/QuickSetupStepView.swift`
-  - Summary: Added `.contentShape(Rectangle())` — `.buttonStyle(.plain)` on macOS only registers clicks on visible content, and unselected chips had `Color.clear` background.
+- [x] **Add skill definitions**
+  - Files: `.claude/skills/anti-overengineering-guard.md`, `context-recovery.md`, `healthkit-integration.md`, `isolated-review.md`, `parallel-test-analysis.md`, `pattern-matching.md`, `verify-before-complete.md`
+  - Summary: Seven skill files for reusable Claude Code patterns.
 
-- [x] **Add macOS network entitlements**
-  - Files: `HealthAppTransfer/App/HealthAppTransfer.entitlements`, `project.yml`
-  - Summary: Added `com.apple.security.network.server` and `network.client` required for NWListener and NWBrowser on macOS.
+- [x] **Update markdown documentation**
+  - Files: `STATE.md`, `handoff.md`
+  - Summary: Updated STATE.md with current date, refreshed session history and metrics. Updated handoff.md with this session summary.
 
-- [x] **Fix Swift 6 concurrency warnings**
-  - Files: `HealthAppTransfer/Services/Network/NetworkServer.swift`
-  - Summary: Replaced `var resumed` with `OSAllocatedUnfairLock(initialState: false)` for thread-safe continuation guard.
+- [x] **Comprehensive documentation sweep (3-agent team)**
+  - Files: README.md, STATE.md, handoff.md, Codex_Findings.md, style_plan.md + 70+ Swift files
+  - Summary: `doc-project` updated markdown files; `doc-src-1` added doc comments to App/, Extensions/, Intents/, Tests, Watch, Widget; `doc-src-2` added doc comments to 9 View files.
 
 ## In Progress
 
-- [ ] **LAN Sync / Pair Device on macOS** — Untested end-to-end
-  - Done: Network entitlements added, NWListener race fixed, Bonjour config in Info.plist
-  - Remaining: Needs test with iPhone running iOS build + Mac on same WiFi
-  - Note: On macOS, Pair Device and LAN Sync are the **client** side — they require an iPhone counterpart running "Start Sharing". Without an iPhone, "No devices found" is expected.
+None. All work complete.
 
 ## Blockers
 
-None — all build/runtime crashes resolved. LAN sync needs iPhone counterpart for testing.
+None.
 
 ## Key Decisions Made
 
-### Drop VersionedSchema migration plan
-- **Decision**: Removed SchemaV1, SchemaV2, and HealthAppMigrationPlan entirely
-- **Rationale**: Model classes had been modified after schemas were frozen, making the stored hash unrecognizable. The store was deleted anyway; no users to migrate.
-- **Alternatives Considered**: Creating SchemaV3 with current models — deferred until shipping to real users
-- **Impact**: SwiftData uses automatic lightweight migration. Migration plan must be reintroduced before any App Store release with existing user data.
-
-### 3-tier ModelContainer recovery
-- **Decision**: Normal → delete store files → in-memory fallback (never fatalError)
-- **Rationale**: The first failed ModelContainer creation locks the SQLite file in-process, so FileManager.removeItem silently fails. In-memory ensures the app never crash-loops.
-
-### Continuation-based NWListener start
-- **Decision**: Use `withCheckedThrowingContinuation` instead of sleep hack
-- **Rationale**: 500ms sleep was unreliable on macOS with TLS identity setup. Continuation guarantees port is assigned before returning.
+### Config files left uncommitted
+The new `.claude/` files (hooks, commands, skills) are untracked. The modified `settings.json` and `CLAUDE.md` are unstaged. These were not committed because no explicit commit request was made.
 
 ## Files Changed
 
 | File | Change | Description |
 |------|--------|-------------|
-| `HealthAppTransferApp.swift` | Modified | 3-tier ModelContainer recovery, removed fatalError |
-| `SchemaVersions.swift` | Modified | Removed versioned schemas/migration plan; added deleteStoreFiles(), makeInMemoryContainer() |
-| `NetworkServer.swift` | Modified | Continuation-based start(), OSAllocatedUnfairLock, listenerCancelled error |
-| `PairingViewModel.swift` | Modified | Removed 500ms sleep hack |
-| `GoalSettingsView.swift` | Modified | `#if os(iOS)` for navigationBarTitleDisplayMode |
-| `MainTabView.swift` | Modified | NavigationStack in macOS detail pane |
-| `QuickSetupStepView.swift` | Modified | .contentShape(Rectangle()) for macOS hit-testing |
-| `HealthAppTransfer.entitlements` | Modified | Added network.server + network.client |
-| `project.yml` | Modified | Added network entitlements to entitlements.properties |
-| `LEARNINGS.md` | Modified | Updated store recovery entry with group container gotcha |
-| `STATE.md` | Modified | Updated date, decisions, session history, metrics |
+| `.claude/settings.json` | Modified | Hook configurations added |
+| `CLAUDE.md` | Modified | Updated with new skills, commands, roles |
+| `STATE.md` | Modified | Date, session history, active tasks, metrics |
+| `handoff.md` | Replaced | This file |
+| `.claude/hooks/*.py` | New (untracked) | 7 hook scripts |
+| `.claude/commands/*.md` | New (untracked) | 3 command files |
+| `.claude/skills/*.md` | New (untracked) | 7 skill files |
+| `README.md` | Modified | Feature list, file counts, architecture tree |
+| `Codex_Findings.md` | Modified | Noted UI test fixes |
+| `style_plan.md` | Modified | Updated phase statuses |
+| 70+ `.swift` files | Modified | Doc comments added (no code logic changes) |
 
 ## Git Status
 - Branch: `main`
-- Last commit: `c7a12e3 - fix: add macOS network entitlements for LAN sync and pairing`
-- Uncommitted changes: Minor xcodegen artifacts (xcscheme, Info.plist regeneration) — safe to ignore or commit
+- Last commit: `0ef6915 - docs: update STATE.md with import feature completion`
+- Uncommitted changes: `.claude/settings.json`, `CLAUDE.md`, `STATE.md` (modified); new hooks/commands/skills (untracked)
 
 ## Next Session Priorities
 
-1. **End-to-end LAN sync test**: Run iOS build on iPhone + macOS build on Mac, verify Bonjour discovery, pairing, and data transfer
-2. **Verify store persistence**: Confirm fresh SwiftData store persists correctly across app launches (no more "unknown model version")
-3. **Check remaining `navigationBarTitleDisplayMode` calls**: 18 occurrences found — only GoalSettingsView was wrapped. Others may cause build errors if those views compile for macOS.
+1. **Commit the config changes** — Stage and commit `.claude/` and `CLAUDE.md` changes if desired
+2. **End-to-end LAN sync test** — Run iOS build on iPhone + macOS build on Mac, verify Bonjour discovery and pairing
+3. **Verify SwiftData persistence** — Confirm fresh store persists correctly across app launches
+4. **Check remaining `navigationBarTitleDisplayMode` calls** — ~18 occurrences in the codebase, only a subset wrapped with `#if os(iOS)`
 
 ## Context Notes
 
-- The corrupt SwiftData store was manually deleted from `~/Library/Group Containers/group.com.caseysimon.HealthAppTransfer/Library/Application Support/default.store`. If it reappears, the 3-tier recovery handles it automatically.
-- `project.yml` `entitlements.properties` overrides the `.entitlements` file at build time (xcodegen regenerates it). Both must be updated when adding entitlements.
-- SourceKit diagnostics showing "Cannot find type X in scope" are editor noise for cross-file types — NOT build failures.
-- The `ForEach` warning about duplicate `stepCount` ID is a pre-existing issue in HealthDataView, not from this session.
+- Import feature (JSON/CSV) is complete: `ImportParserService.swift`, `ImportView.swift`, `ImportViewModel.swift` in place, wired through `ServiceContainer` and `QuickExportView`.
+- watchOS companion has 4 views + 3 complications (GoalProgressComplication, StreakComplication, WatchWidgetBundle).
+- Widget extension has InsightOfDayWidget (small+medium) in addition to HealthMetricWidget.
+- 596 unit tests across 46 test files; 9 UI tests.
+- Codex_Findings.md records a snapshot from 2026-02-23 when 4 UI tests were still failing. Those were subsequently fixed (commit acaa4d7).

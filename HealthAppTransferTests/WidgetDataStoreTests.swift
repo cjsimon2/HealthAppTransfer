@@ -1,3 +1,7 @@
+/// Unit tests for `WidgetDataStore` persistence operations.
+///
+/// Each test uses a fresh `WidgetDataStore` instance (not the shared singleton)
+/// so tests are isolated and don't affect app state on the test device.
 import XCTest
 @testable import HealthAppTransfer
 

@@ -1,3 +1,7 @@
+/// Unit tests for `GPXFormatter`.
+///
+/// Verifies that workout route samples are encoded as valid GPX 1.1 track
+/// points with correct latitude, longitude, elevation, and timestamp fields.
 import XCTest
 @testable import HealthAppTransfer
 

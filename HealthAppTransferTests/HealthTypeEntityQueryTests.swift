@@ -1,3 +1,8 @@
+/// Unit tests for `HealthTypeAppEntity`, `HealthTypeEntityQuery`, `ExportFormatAppEnum`,
+/// and `DateRangeAppEnum`.
+///
+/// No HealthKit or App Intents runtime is required; tests validate business logic
+/// only (field mapping, date arithmetic, format conversion).
 import XCTest
 @testable import HealthAppTransfer
 

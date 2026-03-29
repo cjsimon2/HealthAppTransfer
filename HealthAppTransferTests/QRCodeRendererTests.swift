@@ -1,3 +1,7 @@
+/// Unit tests for `QRCodeRenderer`.
+///
+/// Verifies that CGImage and SwiftUI Image generation work for non-empty strings
+/// and that empty or very long strings are handled gracefully.
 import XCTest
 @testable import HealthAppTransfer
 

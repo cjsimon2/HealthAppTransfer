@@ -1,3 +1,5 @@
+/// Unit tests for `PairingViewModel` — QR code generation, scan result handling,
+/// and pairing state transitions.
 import XCTest
 @testable import HealthAppTransfer
 
